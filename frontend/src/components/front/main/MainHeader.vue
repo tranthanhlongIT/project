@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-xl-2 col-lg-2">
                             <div class="logo-img">
-                                <img src="img/logo.png" alt="" width="70px" height="70px">
+                                <img src="img/logo1.png" alt="">
                             </div>
                         </div>
                         <div class="col-xl-5 col-lg-4 d-none d-lg-block">
@@ -40,12 +40,12 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <router-link to="/">Book a room</router-link>
+                                <router-link to="/"><span class="text-white">Book a room</span></router-link>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="mobile_menu d-block d-lg-none"></div>
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
                     </div>
                 </div>
             </div>

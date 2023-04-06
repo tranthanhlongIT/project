@@ -6,14 +6,39 @@ Vue.use(Router);
 const routes = [
   {
     path: "/home",
-    alias: "/",
-    component: () => import("./components/front/main/MainPage"),
+    component: () => import("./components/front/FrontIndex.vue"),
+    children: [
+      {
+        path: "/home",
+        component: () => import('./components/front/main/MainPage.vue')
+      }
+    ]
   },
+  {
+    path: "/dashboard",
+    component: () => import("./components/back/BackIndex.vue"),
+    // children: [
+    //   // Dashboard
+    //   {
+    //     name: 'Dashboard',
+    //     path: '',
+    //     component: () => import('./components/back/dashboard/Dashboard'),
+    //   },
+    // ],
+  }
 ];
 
 const router = new Router({
   mode: "history",
   routes: routes,
+  linkActiveClass: "nav-item active",
+  scrollBehavior: (to) => {
+    if (to.hash) {
+      return { selector: to.hash };
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
 });
 
 // router.beforeEach((to, from, next) => {

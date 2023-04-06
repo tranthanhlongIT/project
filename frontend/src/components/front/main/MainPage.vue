@@ -4,8 +4,8 @@
         <MainSlider />
         <SpecialtyArea />
         <OfferArea />
-        <AboutArea />
         <VideoArea />
+        <AboutArea />
         <FeatureArea />
         <InstagramArea />
         <MainFooter />
