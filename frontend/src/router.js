@@ -5,18 +5,18 @@ Vue.use(Router);
 
 const routes = [
   {
-    path: "/home",
-    component: () => import("./components/front/FrontIndex.vue"),
+    path: "/",
+    component: () => import("./components/front/HomeIndex.vue"),
     children: [
       {
-        path: "/home",
+        path: "home",
         component: () => import('./components/front/main/MainPage.vue')
       }
     ]
   },
   {
-    path: "/dashboard",
-    component: () => import("./components/back/BackIndex.vue"),
+    path: "/admin",
+    component: () => import("./components/back/AdminIndex.vue"),
     // children: [
     //   // Dashboard
     //   {
