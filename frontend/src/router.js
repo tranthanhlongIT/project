@@ -6,17 +6,17 @@ Vue.use(Router);
 const routes = [
   {
     path: "/",
-    component: () => import("./components/front/HomeIndex.vue"),
+    component: () => import("./components/home/HomeIndex.vue"),
     children: [
       {
         path: "home",
-        component: () => import('./components/front/main/MainPage.vue')
+        component: () => import('./components/home/main/MainPage.vue')
       }
     ]
   },
   {
     path: "/admin",
-    component: () => import("./components/back/AdminIndex.vue"),
+    component: () => import("./components/admin/AdminIndex.vue"),
     // children: [
     //   // Dashboard
     //   {
@@ -31,14 +31,6 @@ const routes = [
 const router = new Router({
   mode: "history",
   routes: routes,
-  linkActiveClass: "nav-item active",
-  scrollBehavior: (to) => {
-    if (to.hash) {
-      return { selector: to.hash };
-    } else {
-      return { x: 0, y: 0 };
-    }
-  },
 });
 
 // router.beforeEach((to, from, next) => {

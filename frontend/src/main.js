@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
@@ -6,16 +5,15 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import Vuex from "vuex";
 import vuetify from "./plugins/vuetify";
-import LightBootstrap from "./plugins/light-bootstrap-main";
-import "./registerServiceWorker";
+import VueMeta from 'vue-meta'
+
+Vue.use(VueMeta)
 
 Vue.use(Vuex);
 
 Vue.use(VueAxios, axios);
 
 Vue.config.productionTip = false;
-
-Vue.use(LightBootstrap);
 
 export const EventBus = new Vue();
 

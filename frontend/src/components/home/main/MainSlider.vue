@@ -31,12 +31,12 @@ export default {
         {
           title: 'Vue Hotel',
           content: 'Unlock to enjoy the view of Martine',
-          image: "http://localhost:8080/img/banner/banner1.png",
+          image: "http://localhost:8080/home/img/banner/banner1.png",
         },
         {
           title: 'Life is Beautiful',
           content: 'Bring you to a promise stay',
-          image: "http://localhost:8080/img/banner/banner2.png",
+          image: "http://localhost:8080/home/img/banner/banner2.png",
         },
       ]
     }
