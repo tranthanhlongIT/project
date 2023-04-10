@@ -9,23 +9,33 @@ const routes = [
     component: () => import("./components/home/HomeIndex.vue"),
     children: [
       {
+        name: "home",
         path: "home",
-        component: () => import('./components/home/main/MainPage.vue')
-      }
-    ]
+        component: () => import("./components/home/main/MainPage.vue"),
+      },
+    ],
   },
   {
     path: "/admin",
     component: () => import("./components/admin/AdminIndex.vue"),
-    // children: [
-    //   // Dashboard
-    //   {
-    //     name: 'Dashboard',
-    //     path: '',
-    //     component: () => import('./components/back/dashboard/Dashboard'),
-    //   },
-    // ],
-  }
+    children: [
+      {
+        name: "dashboard",
+        path: "dashboard",
+        component: () => import("./components/admin/page/Dashboard.vue"),
+      },
+      {
+        name: "user",
+        path: "user",
+        component: () => import("./components/admin/page/UserList.vue"),
+      },
+      {
+        name: "room",
+        path: "room",
+        component: () => import("./components/admin/page/RoomList.vue"),
+      },
+    ],
+  },
 ];
 
 const router = new Router({
