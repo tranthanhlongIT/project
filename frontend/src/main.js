@@ -12,6 +12,7 @@ Vue.config.productionTip = false;
 
 Vue.prototype.env = {
   apiURL: "http://127.0.0.1:8000/api",
+  apiImage: "http://127.0.0.1:8000/api/storage/app/images",
 };
 
 export const EventBus = new Vue();

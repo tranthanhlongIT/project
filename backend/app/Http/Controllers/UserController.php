@@ -27,7 +27,33 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            if (isset($request->image) && $request->image != "") {
+                $file = request()->file('image');
+                $fileName = $file->getClientOriginalName();
+                $file->storeAs('images', $fileName);
+            }
+
+            if ($this->validate($request)) {
+                $data = $request->all();
+                $data['password'] = bcrypt($request->password);
+                $data['image'] = $fileName;
+            }
+
+            $this->checkEmailExist($request);
+
+            User::create($data);
+
+            return response()->json([
+                'status' => true,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -55,10 +81,44 @@ class UserController extends Controller
     }
 
     public function prepareData() {
-        $role = DB::table('roles')->select('id', 'name')->get();
+        $roles = DB::table('roles')->select('id', 'name')->get();
 
         return response()->json([
-            'role' => $role
+            'roles' => $roles
         ]);
+    }
+
+    public function validate(Request $request) {
+        $passwordValidation = Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ->symbols()
+            ->uncompromised();
+
+        $validate = Validator::make($request->all(), [
+            'name' => ['bail', 'required', 'max:30'],
+            'email' => ['bail', 'required', 'email', 'unique:users'],
+            'password' => ['bail', 'required', $passwordValidation],
+            'role_id' => ['bail', 'required'],
+            'active' => ['bail', 'required'],
+            'fname' => ['bail', 'required'],
+            'lname' => ['bail', 'required'],
+            'gender' => ['bail', 'required'],
+            'phone' => ['required']
+        ]);
+
+        return $validate;
+    }
+
+    public function checkEmailExist(Request $request) {
+        $user = User::where('email', '=', $request->email)->count();
+
+        if ($user > 0) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User already existed'
+            ]);
+        }
     }
 }

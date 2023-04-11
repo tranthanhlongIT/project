@@ -24,21 +24,20 @@
                 <v-col cols="12" md="4">
                   <v-col cols="12" class="py-0">
                     <v-img
-                      lazy-src="/admin/img/user-default.png"
+                      v-if="file != null"
+                      lazy-src="/admin/img/user-default.jpg"
+                      :src="fileURL"
+                      class="d-flex d-justify-content-center"
+                    ></v-img>
+                    <v-img
+                      v-else
+                      lazy-src="/admin/img/user-default.jpg"
                       src="/admin/img/user-default.jpg"
                       class="d-flex d-justify-content-center"
                     ></v-img>
                   </v-col>
                   <v-col cols="12" class="d-flex justify-content-center">
-                    <v-btn
-                      x-small
-                      plain
-                      rounded
-                      elevation="0"
-                      :ripple="false"
-                      color="primary"
-                      >Upload image <v-icon>mdi-upload</v-icon></v-btn
-                    >
+                    <UploadButton />
                   </v-col>
                 </v-col>
                 <v-col cols="12" md="8">
@@ -198,6 +197,8 @@ import {
 } from "vuelidate/lib/validators";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
+import UploadButton from "./UploadButton.vue";
+import { EventBus } from "@/main";
 
 export default {
   name: "UserDialog",
@@ -237,6 +238,10 @@ export default {
     },
   },
 
+  components: {
+    UploadButton,
+  },
+
   data() {
     return {
       user: {},
@@ -274,7 +279,6 @@ export default {
   props: {
     action: String,
     userSelected: Object,
-    width: String,
   },
 
   computed: {
@@ -423,6 +427,10 @@ export default {
     this.address = this.user.address;
     this.gender = this.user.gender;
     this.phone = this.user.phone;
+
+    EventBus.$on("onFileChange", (file) => {
+      this.file = file;
+    });
   },
 
   watch: {
