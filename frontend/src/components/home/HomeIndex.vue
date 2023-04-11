@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <v-app>
+    <router-view />
+  </v-app>
 </template>
 
 <script>
@@ -9,9 +11,29 @@ export default {
 </script>
 
 <style>
-/* width */
+html {
+  overflow: overlay;
+}
+
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 6px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #00000000;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: #00000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #00000040;
+  border-radius: 25px;
 }
 
 @media (min-width: 1140px) {

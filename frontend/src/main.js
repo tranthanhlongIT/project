@@ -3,19 +3,22 @@ import App from "./App.vue";
 import router from "./router";
 import axios from "axios";
 import VueAxios from "vue-axios";
-import Vuex from "vuex";
+import { store } from "./store/index";
 import vuetify from "./plugins/vuetify";
-
-Vue.use(Vuex);
 
 Vue.use(VueAxios, axios);
 
 Vue.config.productionTip = false;
+
+Vue.prototype.env = {
+  apiURL: "http://127.0.0.1:8000/api",
+};
 
 export const EventBus = new Vue();
 
 new Vue({
   router,
   vuetify,
+  store,
   render: (h) => h(App),
 }).$mount("#app");

@@ -1,81 +1,53 @@
 <template>
   <v-app>
-
-    <v-navigation-drawer app v-model="drawer" color="#222e3c">
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="text-h6">
-            Vue Hotel
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list dense nav>
-        <v-list-item v-for="item in items" :key="item.title" link>
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-app-bar app color="white" style="box-shadow: 0 0 2rem 0 rgba(33,37,41,.1)">
-      <v-row no-gutters>
-        <v-col>
-          <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-        </v-col>
-        <v-col cols="2 " class="d-flex justify-end">
-          <v-menu app rounded="lg" offset-y>
-            <template v-slot:activator="{ on }">
-              <v-btn plain class="ma-2" retain-focus-on-click="true">
-                <v-avatar>
-                  <img src="https://picsum.photos/200" alt="">
-                </v-avatar>
-                Upload
-              </v-btn>
-            </template>
-            <v-card>
-              <v-list-item-content class="justify-center">
-                <div class="mx-auto text-center">
-                  <v-btn depressed rounded text>
-                    Edit Account
-                  </v-btn>
-                  <v-divider></v-divider>
-                  <v-btn depressed rounded text>
-                    Disconnect
-                  </v-btn>
-                </div>
-              </v-list-item-content>
-            </v-card>
-          </v-menu>
-        </v-col>
-      </v-row>
-    </v-app-bar>
-
-    <v-main style="background: #f5f7fb">
-
-      <v-container>
-
-        <router-view></router-view>
-      </v-container>
-    </v-main>
-
-    <v-footer app>
-    </v-footer>
+    <NavDrawer />
+    <AppBar />
+    <AppContainer />
   </v-app>
 </template>
 
-<script >
+<script>
+import NavDrawer from "./components/NavDrawer.vue";
+import AppBar from "./components/AppBar.vue";
+import AppContainer from "./components/AppContainer.vue";
+
 export default {
-  data: () => ({
-    drawer: true,
-    group: null,
-  }),
-}
+  name: "AdminIndex",
+  components: {
+    NavDrawer,
+    AppBar,
+    AppContainer,
+  },
+};
 </script>
 
-<style></style>
+<style>
+html {
+  overflow: overlay;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #00000000;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: #00000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #00000040;
+  border-radius: 25px;
+}
+
+@import "~/public/admin/css/app.css";
+@import "https://use.fontawesome.com/releases/v5.0.13/css/all.css";
+@import "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css";
+</style>
