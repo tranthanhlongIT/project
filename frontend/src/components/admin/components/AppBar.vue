@@ -1,25 +1,13 @@
 <template>
-  <v-app-bar
-    app
-    color="white"
-    style="box-shadow: 0 0 2rem 0 rgba(33, 37, 41, 0.1)"
-  >
+  <v-app-bar app color="white" style="box-shadow: 0 0 2rem 0 rgba(33, 37, 41, 0.1)">
     <v-row no-gutters>
       <v-col>
-        <v-app-bar-nav-icon
-          @click="commitDrawer({ drawer: !drawer })"
-        ></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
       </v-col>
       <v-col cols="2" class="d-flex justify-end">
         <v-menu app rounded="lg" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              plain
-              class="my-auto p-0"
-              :ripple="false"
-              v-bind="attrs"
-              v-on="on"
-            >
+            <v-btn plain class="my-auto p-0" :ripple="false" v-bind="attrs" v-on="on">
               <v-avatar rounded size="40" class="mr-2">
                 <img src="https://picsum.photos/200" alt="" />
               </v-avatar>
@@ -45,19 +33,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { EventBus } from '@/main';
 
 export default {
   name: "AppBar",
-  computed: {
-    ...mapGetters({
-      drawer: "getDrawer",
-    }),
-  },
   methods: {
-    ...mapActions(["commitDrawer"]),
-  },
+    toggleDrawer() {
+      EventBus.$emit("drawer");
+    }
+  }
 };
 </script>
-
-<style lang="scss" scoped></style>

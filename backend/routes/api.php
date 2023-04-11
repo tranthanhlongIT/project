@@ -18,5 +18,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users/preparedata', [UserController::class, 'prepareData']);
+Route::get('/storage/app/images/{filename}', [UserController::class, 'getImage']);
+
 Route::apiResource('/users', UserController::class);

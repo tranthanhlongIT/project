@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" class="m-0 p-0">
-    <v-dialog v-model="show" persistent width="40%">
+    <v-dialog v-model="show" persistent width="35%">
       <v-card width="100vw">
         <form>
           <v-card-title class="m-0 p-0">
@@ -10,174 +10,99 @@
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
-          <v-divider class="m-0 p-0"></v-divider>
-          <v-card-text
-            v-if="action == 'add' || action == 'upd' || action == 'det'"
-            class="m-0 p-0"
-          >
+          <v-divider color="grey" class="m-0 p-0"></v-divider>
+          <v-card-text v-if="action == 'add' || action == 'upd' || action == 'det'" class="m-0 p-0">
             <v-container>
               <v-row no-gutters>
                 <div class="text-subtitle-2">Account Info</div>
-                <v-divider color="yellow"></v-divider>
+                <v-divider color="blue"></v-divider>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="4" xl="3">
                   <v-col cols="12" class="py-0">
-                    <v-img
-                      v-if="file != null"
-                      lazy-src="/admin/img/user-default.jpg"
-                      :src="fileURL"
-                      class="d-flex d-justify-content-center"
-                    ></v-img>
-                    <v-img
-                      v-else
-                      lazy-src="/admin/img/user-default.jpg"
-                      src="/admin/img/user-default.jpg"
-                      class="d-flex d-justify-content-center"
-                    ></v-img>
+                    <v-img v-if="file != null" lazy-src="/admin/img/user-default.jpg" :src="fileURL"
+                      class="d-flex d-justify-content-center"></v-img>
+                    <v-img v-else lazy-src="/admin/img/user-default.jpg" src="/admin/img/user-default.jpg"
+                      class="d-flex d-justify-content-center"></v-img>
                   </v-col>
                   <v-col cols="12" class="d-flex justify-content-center">
                     <UploadButton />
                   </v-col>
                 </v-col>
-                <v-col cols="12" md="8">
+                <v-col cols="12" md="8" xl="9">
                   <v-row class="ml-1">
                     <v-col cols="12" md="6" class="pl-0">
-                      <v-select
-                        v-model="role"
-                        item-text="name"
-                        item-value="id"
-                        :items="roles"
-                        :menu-props="{ bottom: true, offsetY: true }"
-                        :disabled="action === 'det' ? true : false"
-                        :error-messages="roleErrors"
-                        @blur="$v.role.$touch()"
-                        @input="$v.role.$touch()"
-                        label="Role"
-                        dense
-                      ></v-select>
+                      <v-select v-model="role" item-text="name" item-value="id" :items="roles"
+                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action === 'det' ? true : false"
+                        :error-messages="roleErrors" @blur="$v.role.$touch()" @input="$v.role.$touch()" label="Role"
+                        dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
-                      <v-select
-                        v-model="active"
-                        item-text="name"
-                        item-value="value"
-                        :items="actives"
-                        :menu-props="{ bottom: true, offsetY: true }"
-                        :disabled="action === 'det' ? true : false"
-                        label="Active"
-                        dense
-                      ></v-select>
+                      <v-select v-model="active" item-text="name" item-value="value" :items="actives"
+                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action === 'det' ? true : false"
+                        label="Active" dense></v-select>
                     </v-col>
                     <v-col cols="12" v-if="action != 'upd'" class="py-0 pl-0">
-                      <v-text-field
-                        v-model="email"
-                        :error-messages="emailErrors"
-                        :disabled="action === 'det' ? true : false"
-                        @blur="$v.email.$touch()"
-                        label="Email"
-                        dense
-                      ></v-text-field>
+                      <v-text-field v-model="email" :error-messages="emailErrors"
+                        :disabled="action === 'det' ? true : false" @blur="$v.email.$touch()" label="Email"
+                        dense></v-text-field>
                     </v-col>
                     <v-col cols="12" v-if="action == 'add'" class="pl-0">
-                      <v-text-field
-                        v-model="password"
-                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      <v-text-field v-model="password" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         hint="At least 8 characters, contains 1 numeric, 1 uppercase, 1 lowercase, 1 special character"
-                        :error-messages="passwordErrors"
-                        :disabled="action === 'det' ? true : false"
-                        @click:append="showPassword = !showPassword"
-                        label="Password"
-                        dense
-                      ></v-text-field>
+                        :error-messages="passwordErrors" :disabled="action === 'det' ? true : false"
+                        @click:append="showPassword = !showPassword" label="Password" dense></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
               </v-row>
               <v-row no-gutters>
                 <div class="text-subtitle-2">User Info</div>
-                <v-divider color="yellow"></v-divider>
+                <v-divider color="blue"></v-divider>
               </v-row>
               <v-row no-gutters>
                 <v-col cols="12">
                   <v-row class="ml-1">
                     <v-col cols="12" md="6" v-if="action != 'upd'" class="pl-0">
-                      <v-text-field
-                        v-model="fname"
-                        :error-messages="fnameErrors"
-                        :disabled="action === 'det' ? true : false"
-                        @blur="$v.fname.$touch()"
-                        label="First name"
-                        dense
-                      ></v-text-field>
+                      <v-text-field v-model="fname" :error-messages="fnameErrors"
+                        :disabled="action === 'det' ? true : false" @blur="$v.fname.$touch()" label="First name"
+                        dense></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" v-if="action != 'upd'" class="pl-0">
-                      <v-text-field
-                        v-model="lname"
-                        :error-messages="lnameErrors"
-                        :disabled="action === 'det' ? true : false"
-                        @blur="$v.lname.$touch()"
-                        label="Last name"
-                        dense
-                      ></v-text-field>
+                      <v-text-field v-model="lname" :error-messages="lnameErrors"
+                        :disabled="action === 'det' ? true : false" @blur="$v.lname.$touch()" label="Last name"
+                        dense></v-text-field>
                     </v-col>
                     <v-col cols="12" class="py-0 pl-0">
-                      <v-text-field
-                        v-model="address"
-                        :disabled="action === 'det' ? true : false"
-                        label="Address"
-                        dense
-                      ></v-text-field>
+                      <v-text-field v-model="address" :disabled="action === 'det' ? true : false" label="Address"
+                        dense></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
-                      <v-text-field
-                        v-model="gender"
-                        :error-messages="genderErrors"
-                        :disabled="action === 'det' ? true : false"
-                        @blur="$v.gender.$touch()"
-                        label="Gender"
-                        dense
-                      ></v-text-field>
+                      <v-select v-model="gender" item-text="name" item-value="value" :items="genders"
+                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action === 'det' ? true : false"
+                        :error-messages="genderErrors" @blur="$v.gender.$touch()" @input="$v.gender.$touch()"
+                        label="Gender" dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
-                      <v-text-field
-                        v-model="phone"
-                        :error-messages="phoneErrors"
-                        :disabled="action === 'det' ? true : false"
-                        @blur="$v.phone.$touch()"
-                        label="Phone"
-                        dense
-                      ></v-text-field>
+                      <v-text-field v-model="phone" :error-messages="phoneErrors"
+                        :disabled="action === 'det' ? true : false" @blur="$v.phone.$touch()" label="Phone"
+                        dense></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
               </v-row>
             </v-container>
           </v-card-text>
-          <v-divider class="m-0 p-0"></v-divider>
+          <v-divider color="grey" class="m-0 p-0"></v-divider>
           <v-card-actions class="pb-0">
             <v-spacer></v-spacer>
-            <v-btn
-              type="submit"
-              class="mb-2"
-              elevation="2"
-              small
-              color="primary"
-              v-if="action == 'add' || action == 'upd'"
-              :hidden="action === 'det' ? true : false"
-              @click.prevent="onHandle"
-            >
+            <v-btn type="submit" class="mb-2" elevation="2" small color="primary"
+              v-if="action == 'add' || action == 'upd'" :hidden="action === 'det' ? true : false"
+              @click.prevent="onHandle">
               Save
             </v-btn>
-            <v-btn
-              type="button"
-              class="mr-5 mb-3"
-              elevation="2"
-              small
-              color="warning"
-              @click.stop="closeDialog"
-            >
+            <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click.stop="closeDialog">
               Back
             </v-btn>
           </v-card-actions>
@@ -256,6 +181,16 @@ export default {
           value: 0,
         },
       ],
+      genders: [
+        {
+          name: "Male",
+          value: 1,
+        },
+        {
+          name: "Female",
+          value: 0
+        }
+      ],
 
       role: null,
       active: true,
@@ -277,6 +212,7 @@ export default {
   },
 
   props: {
+    dialog: Boolean,
     action: String,
     userSelected: Object,
   },
@@ -343,22 +279,18 @@ export default {
       return errors;
     },
 
-    ...mapGetters({
-      dialog: "getDialog",
-    }),
   },
 
   methods: {
     ...mapActions([
-      "commitDialog",
       "getUsers",
       "addUser",
       "updateUser",
       "disableUser",
     ]),
 
-    async prepareData() {
-      let url = this.env.apiURL + "/users/preparedata";
+    async prepareData(id) {
+      let url = this.env.apiURL + "users/" + id;
       await axios.get(url).then((response) => {
         this.roles = response.data.roles;
       });
@@ -391,7 +323,7 @@ export default {
     },
 
     closeDialog() {
-      this.commitDialog({ dialog: false });
+      EventBus.$emit("dialog");
     },
 
     resetField() {
@@ -415,7 +347,8 @@ export default {
   created() {
     this.show = this.dialog;
 
-    this.prepareData();
+    this.prepareData(this.userSelected.id);
+
     this.user = Object.assign(this.userSelected);
     this.email = this.user.email;
     this.password = this.user.password;
@@ -428,7 +361,7 @@ export default {
     this.gender = this.user.gender;
     this.phone = this.user.phone;
 
-    EventBus.$on("onFileChange", (file) => {
+    EventBus.$on("file", (file) => {
       this.file = file;
     });
   },

@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -27,33 +32,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            if (isset($request->image) && $request->image != "") {
-                $file = request()->file('image');
-                $fileName = $file->getClientOriginalName();
-                $file->storeAs('images', $fileName);
-            }
-
-            if ($this->validate($request)) {
-                $data = $request->all();
-                $data['password'] = bcrypt($request->password);
-                $data['image'] = $fileName;
-            }
-
-            $this->checkEmailExist($request);
-
-            User::create($data);
-
-            return response()->json([
-                'status' => true,
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+        if ($this->validation($request)) {
+            $data = $request->all();
+            $data['password'] = bcrypt($request->password);
+            $data['image'] = $this->uploadImage($request);
         }
+
+        User::create($data);
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     /**
@@ -61,7 +50,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $roles = DB::table('roles')->select('id', 'name')->get();
+
+        return response()->json([
+            'roles' => $roles
+        ]);
     }
 
     /**
@@ -72,23 +65,8 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function validation(Request $request)
     {
-        //
-    }
-
-    public function prepareData() {
-        $roles = DB::table('roles')->select('id', 'name')->get();
-
-        return response()->json([
-            'roles' => $roles
-        ]);
-    }
-
-    public function validate(Request $request) {
         $passwordValidation = Password::min(8)
             ->letters()
             ->mixedCase()
@@ -111,14 +89,31 @@ class UserController extends Controller
         return $validate;
     }
 
-    public function checkEmailExist(Request $request) {
-        $user = User::where('email', '=', $request->email)->count();
-
-        if ($user > 0) {
-            return response()->json([
-                'status' => false,
-                'message' => 'User already existed'
-            ]);
+    public function uploadImage(Request $request)
+    {
+        if (!empty($request->image)) {
+            $file = request()->file('image');
+            $fileName = $file->getClientOriginalName();
+            $file->storeAs('images', $fileName);
         }
+
+        return $fileName ?? null;
+    }
+
+    public function getImage($filename)
+    {
+        $path = storage_path() . '/app/images/' . $filename;
+
+        if (!File::exists($path)) {
+            return response()->json(['message' => 'Image not found.'], 404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 }

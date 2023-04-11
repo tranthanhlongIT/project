@@ -1,5 +1,4 @@
 import axios from "axios";
-// import Auth from "../../plugins/auth";
 // import router from "../../router";
 
 export const userStore = {
@@ -20,12 +19,12 @@ export const userStore = {
 
   actions: {
     async getUsers({ commit }) {
-      let url = `http://127.0.0.1:8000/api/users`;
-
+      let url = this._vm.env.apiURL + "users";
       await axios.get(url).then((response) => {
         commit("setUsers", response.data.data);
       });
     },
+
     async addUser({ commit }, payload) {
       let config = {
         header: "content-type: form-data/multipart",
@@ -41,10 +40,13 @@ export const userStore = {
       formData.append("address", payload.user.address);
       formData.append("gender", payload.user.gender);
       formData.append("phone", payload.user.phone);
-      formData.append("image", payload.file);
+      formData.append("image", payload.file ?? "");
 
-      url = this.env.apiURL + "/users";
-      await axios.post(url, formData, config).then((response) => {});
+      console.log(payload.user);
+
+      let url = this._vm.env.apiURL + "users";
+
+      await axios.post(url, formData, config).then((response) => { }).catch((e) => { console.log(e) });
     },
   },
 };

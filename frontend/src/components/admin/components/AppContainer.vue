@@ -1,6 +1,6 @@
 <template>
     <v-main style="background: #f5f7fb">
-        <v-container>
+        <v-container style="max-width: inherit">
             <router-view></router-view>
         </v-container>
     </v-main>
