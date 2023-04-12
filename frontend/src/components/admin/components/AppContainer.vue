@@ -8,8 +8,6 @@
 
 <script>
 export default {
-    name: "AppContainer"
+    name: "app-container"
 }
 </script>
-
-<style lang="scss" scoped></style>

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-btn x-small plain rounded elevation="0" :ripple="false" color="primary" @click.prevent="onButtonClick">Upload image
+    <v-btn x-small plain rounded elevation="0" :disabled="disabled" :ripple="false" color="primary"
+      @click.prevent="onButtonClick">Upload image
       <v-icon>mdi-upload</v-icon></v-btn>
     <input ref="uploader" class="d-none" type="file" accept="image/*" @change="onFileChange" />
   </div>
@@ -10,7 +11,12 @@
 import { EventBus } from "@/main";
 
 export default {
-  name: "UploadButton",
+  name: "upload-button",
+
+  props: {
+    disabled: Boolean
+  },
+
   methods: {
     onButtonClick() {
       this.isSelecting = true;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -12,7 +13,13 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        $data = DB::table('rooms')->select('rooms.id', 'rooms.name', 'types.name as type')
+            ->join('types', 'types.id', '=', 'rooms.type_id')
+            ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
     /**
@@ -26,9 +33,17 @@ class RoomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Room $room)
+    public function show($id)
     {
-        //
+        $data = DB::table('types')
+            ->select('rooms.name', 'types.name as type', 'rooms.description', 'rooms.size', 'rooms.size', 'rooms.price', 'images.name as image')
+            ->join('rooms', 'types.id', '=', 'rooms.type_id')
+            ->join('images', 'rooms.id', '=', 'images.room_id')
+            ->where('rooms.id', '=', $id)->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
     /**

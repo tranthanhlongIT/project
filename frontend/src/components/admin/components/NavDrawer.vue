@@ -19,13 +19,13 @@
         <li class="sidebar-item" :class="isActive('user')">
           <router-link class="sidebar-link" to="/admin/user" style="text-decoration: none">
             <i class="align-middle" data-feather="sliders"></i>
-            <span class="align-middle">Users</span>
+            <span class="align-middle">User</span>
           </router-link>
         </li>
         <li class="sidebar-item" :class="isActive('room')">
           <router-link class="sidebar-link" to="/admin/room" style="text-decoration: none">
             <i class="align-middle" data-feather="sliders"></i>
-            <span class="align-middle">Rooms</span>
+            <span class="align-middle">Room</span>
           </router-link>
         </li>
         <li class="sidebar-item" :class="isActive('reservation')">
@@ -49,11 +49,11 @@
 import { EventBus } from "@/main";
 
 export default {
-  name: "NavDrawer",
+  name: "nav-drawer",
 
   data() {
     return {
-      drawer: true,
+      drawer: this.$vuetify.breakpoint.lgAndUp ? true : false,
     };
   },
 
@@ -69,8 +69,6 @@ export default {
     EventBus.$on("drawer", () => {
       this.drawer = !this.drawer;
     })
-  }
+  },
 };
 </script>
-
-<style scoped></style>

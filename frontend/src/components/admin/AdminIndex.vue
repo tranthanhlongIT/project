@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <NavDrawer />
-    <AppBar />
-    <AppContainer />
+    <nav-drawer />
+    <app-bar />
+    <app-container />
   </v-app>
 </template>
 
@@ -14,9 +14,9 @@ import AppContainer from "./components/AppContainer.vue";
 export default {
   name: "AdminIndex",
   components: {
-    NavDrawer,
-    AppBar,
-    AppContainer,
+    "nav-drawer": NavDrawer,
+    "app-bar": AppBar,
+    "app-container": AppContainer,
   },
 };
 </script>

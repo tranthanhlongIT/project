@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoomController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,4 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/storage/app/images/{filename}', [UserController::class, 'getImage']);
 
+Route::patch('/users/disable/{user}', [UserController::class, 'disable']);
+
 Route::apiResource('/users', UserController::class);
+Route::apiResource('/rooms', RoomController::class);

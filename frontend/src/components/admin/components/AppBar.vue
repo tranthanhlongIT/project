@@ -5,7 +5,7 @@
         <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
       </v-col>
       <v-col cols="2" class="d-flex justify-end">
-        <v-menu app rounded="lg" offset-y>
+        <v-menu offset-y rounded="lg" dense>
           <template v-slot:activator="{ on, attrs }">
             <v-btn plain class="my-auto p-0" :ripple="false" v-bind="attrs" v-on="on">
               <v-avatar rounded size="40" class="mr-2">
@@ -17,15 +17,19 @@
               <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
           </template>
-          <v-card>
-            <v-list-item-content class="justify-center">
-              <div class="mx-auto text-center">
-                <v-btn depressed rounded text> Edit Account </v-btn>
-                <v-divider></v-divider>
-                <v-btn depressed rounded text> Disconnect </v-btn>
-              </div>
-            </v-list-item-content>
-          </v-card>
+          <v-list>
+            <v-list-item link>
+              <v-list-item-title>Profile</v-list-item-title>
+            </v-list-item>
+            <v-divider class="m-0 p0"></v-divider>
+            <v-list-item link>
+              <v-list-item-title>Change Password</v-list-item-title>
+            </v-list-item>
+            <v-divider class="m-0 p0"></v-divider>
+            <v-list-item link>
+              <v-list-item-title @click.prevent="logout">Logout</v-list-item-title>
+            </v-list-item>
+          </v-list>
         </v-menu>
       </v-col>
     </v-row>
@@ -33,14 +37,15 @@
 </template>
 
 <script>
-import { EventBus } from '@/main';
+import { EventBus } from "@/main";
 
 export default {
-  name: "AppBar",
+  name: "app-bar",
+
   methods: {
     toggleDrawer() {
       EventBus.$emit("drawer");
-    }
-  }
+    },
+  },
 };
 </script>

@@ -1,27 +1,22 @@
 <template>
   <div class="m-2">
-    <h5>User List</h5>
+    <h5 class="indigo--text">User List</h5>
     <v-card>
       <v-card-title>
         <v-btn color="success" small class="my-0" @click.prevent="openDialog('add', {})">
+          <v-icon left> mdi-plus </v-icon>
           Add
-          <v-icon right> mdi-plus </v-icon>
         </v-btn>
         <v-btn color="info" small class="mx-1 my-0">
+          <v-icon left> mdi-file-excel </v-icon>
           Export
-          <v-icon right> mdi-file-excel </v-icon>
-        </v-btn>
-        <v-btn color="error" small class="my-0">
-          Disable
-          <v-icon right> mdi-block-helper </v-icon>
         </v-btn>
         <v-spacer></v-spacer>
 
         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
         </v-text-field>
       </v-card-title>
-      <v-data-table :headers="headers" :items="objects" :search="search" :loading="loading" show-select
-        v-model="selectedObject" loading-text="Fetching data... Please wait" @current-items="getCurrentObjectList">
+      <v-data-table :headers="headers" :items="users" :search="search">
         <template v-slot:[`item.image`]="{ item }">
           <v-avatar class="my-2" v-if="item.image">
             <v-img lazy-src="/admin/img/user-default.jpg" :src="env.imageURL + item.image"></v-img>
@@ -51,31 +46,31 @@
           <v-icon small class="mr-2" @click="openDialog('upd', item)">
             mdi-pencil
           </v-icon>
-          <v-icon small @click="openDialog('dis', item)">
+          <v-icon small @click="openConfirmation(item)">
             mdi-block-helper
           </v-icon>
         </template>
       </v-data-table>
     </v-card>
 
-    <UserDialog v-if="dialog" :dialog="dialog" :action="action" :userSelected="object">
+    <user-dialog v-if="dialog" :dialog="dialog" :action="action" :userSelected="user">
       <div v-if="action === 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Add User
       </div>
       <div v-if="action === 'upd'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Edit User
       </div>
-      <div v-if="action === 'dis'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
-        <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Disable User
-      </div>
       <div v-if="action === 'det'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Show User
       </div>
-    </UserDialog>
+    </user-dialog>
 
-    <v-overlay v-if="overlay" :value="overlay">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
-    </v-overlay>
+    <confirmation-dialog v-if="confirmation" type="dis" :confirmation="confirmation" :object="user">
+      <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+        <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Disable User
+      </div>
+      <div slot="message" class="text-center text-subtitle-1">Are you sure want to disable user</div>
+    </confirmation-dialog>
   </div>
 </template>
 
@@ -83,26 +78,30 @@
 import { EventBus } from "@/main";
 import { mapGetters, mapActions } from "vuex";
 import UserDialog from "../components/UserDialog.vue";
+import ConfirmationDialog from "../components/ConfirmationDialog.vue";
 
 export default {
-  name: "UserList",
+  name: "user-list",
   components: {
-    UserDialog,
+    "user-dialog": UserDialog,
+    "confirmation-dialog": ConfirmationDialog
   },
 
   data() {
     return {
       search: "",
-      object: {},
+      user: {},
       action: "",
+      dialog: false,
+      confirmation: false,
       headers: [
-        { text: "ID", value: "id", width: "5%" },
+        { text: "ID", value: "id", width: "8%" },
         {
           text: "Image",
           value: "image",
           sortable: false,
           filterable: false,
-          width: "15%",
+          width: "12%",
         },
         { text: "Email", value: "email", width: "30%" },
         { text: "Role", align: "center", value: "role", width: "15%" },
@@ -116,31 +115,28 @@ export default {
           sortable: false,
         },
       ],
-
-      dialog: false,
-      overlay: false,
-      currentObjectList: [],
-      selectedObject: [],
-      loading: false,
     };
   },
 
   computed: {
     ...mapGetters({
-      objects: "getUsers",
+      users: "getUsers",
     }),
   },
 
   methods: {
     ...mapActions(["getUsers"]),
 
-    openDialog(action, object) {
+    openDialog(action, user) {
       this.action = action;
-      this.object = Object.assign(object);
+      this.user = Object.assign(user);
       this.dialog = true;
     },
 
-    getCurrentObjectList() { },
+    openConfirmation(user) {
+      this.confirmation = true;
+      this.user = Object.assign(user);
+    }
   },
 
   created() {
@@ -148,6 +144,10 @@ export default {
 
     EventBus.$on("dialog", () => {
       this.dialog = false
+    });
+
+    EventBus.$on("confirmation", () => {
+      this.confirmation = false
     });
   },
 };

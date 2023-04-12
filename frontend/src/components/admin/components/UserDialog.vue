@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" class="m-0 p-0">
-    <v-dialog v-model="show" persistent width="35%">
+    <v-dialog v-model="show" persistent :width="width">
       <v-card width="100vw">
         <form>
           <v-card-title class="m-0 p-0">
@@ -18,40 +18,41 @@
                 <v-divider color="blue"></v-divider>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="12" md="4" xl="3">
+                <v-col cols="12" md="4" xxl="3">
                   <v-col cols="12" class="py-0">
                     <v-img v-if="file != null" lazy-src="/admin/img/user-default.jpg" :src="fileURL"
-                      class="d-flex d-justify-content-center"></v-img>
-                    <v-img v-else lazy-src="/admin/img/user-default.jpg" src="/admin/img/user-default.jpg"
-                      class="d-flex d-justify-content-center"></v-img>
+                      class="d-flex d-justify-content-center" height="140"></v-img>
+                    <v-img v-else lazy-src="/admin/img/user-default.jpg"
+                      :src="image != null ? (env.imageURL + user.image) : '/admin/img/user-default.jpg'"
+                      class="d-flex d-justify-content-center" height="140"></v-img>
                   </v-col>
                   <v-col cols="12" class="d-flex justify-content-center">
-                    <UploadButton />
+                    <upload-button :disabled="action == 'det' ? true : false" />
                   </v-col>
                 </v-col>
-                <v-col cols="12" md="8" xl="9">
+                <v-col cols="12" md="8" xxl="9">
                   <v-row class="ml-1">
                     <v-col cols="12" md="6" class="pl-0">
                       <v-select v-model="role" item-text="name" item-value="id" :items="roles"
-                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action === 'det' ? true : false"
+                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         :error-messages="roleErrors" @blur="$v.role.$touch()" @input="$v.role.$touch()" label="Role"
                         dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
                       <v-select v-model="active" item-text="name" item-value="value" :items="actives"
-                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action === 'det' ? true : false"
+                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         label="Active" dense></v-select>
                     </v-col>
-                    <v-col cols="12" v-if="action != 'upd'" class="py-0 pl-0">
+                    <v-col cols="12" class="py-0 pl-0">
                       <v-text-field v-model="email" :error-messages="emailErrors"
-                        :disabled="action === 'det' ? true : false" @blur="$v.email.$touch()" label="Email"
-                        dense></v-text-field>
+                        :disabled="(action == 'upd' || action == 'det') ? true : false" @blur="$v.email.$touch()"
+                        label="Email" dense></v-text-field>
                     </v-col>
-                    <v-col cols="12" v-if="action == 'add'" class="pl-0">
+                    <v-col cols="12" class="pl-0">
                       <v-text-field v-model="password" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         hint="At least 8 characters, contains 1 numeric, 1 uppercase, 1 lowercase, 1 special character"
-                        :error-messages="passwordErrors" :disabled="action === 'det' ? true : false"
+                        :error-messages="passwordErrors" :disabled="(action == 'upd' || action == 'det') ? true : false"
                         @click:append="showPassword = !showPassword" label="Password" dense></v-text-field>
                     </v-col>
                   </v-row>
@@ -64,29 +65,29 @@
               <v-row no-gutters>
                 <v-col cols="12">
                   <v-row class="ml-1">
-                    <v-col cols="12" md="6" v-if="action != 'upd'" class="pl-0">
+                    <v-col cols="12" md="6" class="pl-0">
                       <v-text-field v-model="fname" :error-messages="fnameErrors"
-                        :disabled="action === 'det' ? true : false" @blur="$v.fname.$touch()" label="First name"
+                        :disabled="action == 'det' ? true : false" @blur="$v.fname.$touch()" label="First name"
                         dense></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="6" v-if="action != 'upd'" class="pl-0">
+                    <v-col cols="12" md="6" class="pl-0">
                       <v-text-field v-model="lname" :error-messages="lnameErrors"
-                        :disabled="action === 'det' ? true : false" @blur="$v.lname.$touch()" label="Last name"
+                        :disabled="action == 'det' ? true : false" @blur="$v.lname.$touch()" label="Last name"
                         dense></v-text-field>
                     </v-col>
                     <v-col cols="12" class="py-0 pl-0">
-                      <v-text-field v-model="address" :disabled="action === 'det' ? true : false" label="Address"
+                      <v-text-field v-model="address" :disabled="action == 'det' ? true : false" label="Address"
                         dense></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
                       <v-select v-model="gender" item-text="name" item-value="value" :items="genders"
-                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action === 'det' ? true : false"
+                        :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         :error-messages="genderErrors" @blur="$v.gender.$touch()" @input="$v.gender.$touch()"
                         label="Gender" dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
                       <v-text-field v-model="phone" :error-messages="phoneErrors"
-                        :disabled="action === 'det' ? true : false" @blur="$v.phone.$touch()" label="Phone"
+                        :disabled="action == 'det' ? true : false" @blur="$v.phone.$touch()" label="Phone"
                         dense></v-text-field>
                     </v-col>
                   </v-row>
@@ -98,7 +99,7 @@
           <v-card-actions class="pb-0">
             <v-spacer></v-spacer>
             <v-btn type="submit" class="mb-2" elevation="2" small color="primary"
-              v-if="action == 'add' || action == 'upd'" :hidden="action === 'det' ? true : false"
+              v-if="action == 'add' || action == 'upd'" :hidden="action == 'det' ? true : false"
               @click.prevent="onHandle">
               Save
             </v-btn>
@@ -126,7 +127,7 @@ import UploadButton from "./UploadButton.vue";
 import { EventBus } from "@/main";
 
 export default {
-  name: "UserDialog",
+  name: "user-dialog",
 
   mixins: [validationMixin],
 
@@ -157,14 +158,14 @@ export default {
       minLength: minLength(10),
       maxLength: maxLength(10),
       valid: function (value) {
-        const allNumber = /[0-9]/.test(value);
+        const allNumber = /^\d+$/.test(value);
         return allNumber;
       },
     },
   },
 
   components: {
-    UploadButton,
+    "upload-button": UploadButton,
   },
 
   data() {
@@ -273,12 +274,21 @@ export default {
     phoneErrors() {
       const errors = [];
       if (!this.$v.phone.$dirty) return errors;
+      !this.$v.phone.valid && errors.push("Phone must be digit only");
       !this.$v.phone.maxLength && errors.push("Phone must be 10 digits");
       !this.$v.phone.minLength && errors.push("Phone must be 10 digits");
       !this.$v.phone.required && errors.push("Phone is required.");
       return errors;
     },
 
+    width() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'md': return "50%";
+        case 'lg': return "40%";
+        case 'xl': return "30%";
+        default: return "100%";
+      }
+    }
   },
 
   methods: {
@@ -296,6 +306,24 @@ export default {
       });
     },
 
+    onHandle() {
+      if (!this.validation()) return;
+
+      if (this.action == "add") {
+        this.setUser();
+        this.addUser({ user: this.user, file: this.file });
+      }
+
+      if (this.action == "upd") {
+        this.setUser();
+        this.updateUser({ user: this.user, file: this.file });
+      }
+    },
+
+    closeDialog() {
+      EventBus.$emit("dialog");
+    },
+
     setUser() {
       this.user.email = this.email;
       this.user.password = this.password;
@@ -309,21 +337,18 @@ export default {
       this.user.phone = this.phone;
     },
 
-    onHandle() {
-      if (this.action == "add") {
-        this.$v.$touch();
-        if (this.$v.$invalid) return;
-      }
-
-      if (this.action == "add") {
-        this.setUser();
-        this.addUser({ user: this.user, file: this.file });
-        this.resetField();
-      }
-    },
-
-    closeDialog() {
-      EventBus.$emit("dialog");
+    setField() {
+      this.user = Object.assign(this.userSelected);
+      this.email = this.user.email;
+      this.password = this.user.password;
+      this.role = this.user.role_id;
+      this.active = this.action == "add" ? 1 : parseInt(this.user.active);
+      this.image = this.user.image;
+      this.fname = this.user.fname;
+      this.lname = this.user.lname;
+      this.address = this.user.address;
+      this.gender = this.user.gender;
+      this.phone = this.user.phone;
     },
 
     resetField() {
@@ -342,28 +367,43 @@ export default {
       this.phone = null;
       this.$v.$reset();
     },
+
+    validation() {
+      if (this.action == "add") {
+        this.$v.$touch();
+        if (this.$v.$invalid) return false;
+      }
+
+      if (this.action == "upd") {
+        this.$v.role.$touch();
+        this.$v.fname.$touch();
+        this.$v.lname.$touch();
+        this.$v.gender.$touch();
+        this.$v.phone.$touch();
+        if (this.$v.role.$invalid
+          || this.$v.fname.$invalid
+          || this.$v.lname.$invalid
+          || this.$v.gender.$invalid
+          || this.$v.phone.invalid)
+          return false;
+      }
+
+      return true;
+    }
   },
 
   created() {
     this.show = this.dialog;
-
     this.prepareData(this.userSelected.id);
-
-    this.user = Object.assign(this.userSelected);
-    this.email = this.user.email;
-    this.password = this.user.password;
-    this.role = this.user.role_id;
-    this.active = this.action == "add" ? 1 : parseInt(this.user.active);
-    this.image = this.user.image;
-    this.fname = this.user.fname;
-    this.lname = this.user.lname;
-    this.address = this.user.address;
-    this.gender = this.user.gender;
-    this.phone = this.user.phone;
+    this.setField();
 
     EventBus.$on("file", (file) => {
       this.file = file;
     });
+
+    EventBus.$on("reset", () =>
+      this.resetField()
+    );
   },
 
   watch: {

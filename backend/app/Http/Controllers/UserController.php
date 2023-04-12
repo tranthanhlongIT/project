@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\File;
 
@@ -18,7 +19,9 @@ class UserController extends Controller
     public function index()
     {
         $data = DB::table('users')
-            ->select('users.id', 'users.email', 'users.image', 'roles.name as role', 'users.active')
+            ->select('users.id', 'users.email', 'users.image', 'roles.name as role',
+                'users.active', 'users.role_id', 'users.gender', 'users.address',
+                'users.fname', 'users.lname', 'users.phone')
             ->join('roles', 'roles.id', '=', 'users.role_id')
             ->get();
 
@@ -32,11 +35,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if ($this->validation($request)) {
-            $data = $request->all();
-            $data['password'] = bcrypt($request->password);
-            $data['image'] = $this->uploadImage($request);
-        }
+        $this->validation();
+
+        $data = $request->all();
+        $data['password'] = bcrypt($request->password);
+        $data['image'] = $this->uploadImage($request);
 
         User::create($data);
 
@@ -60,12 +63,29 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $this->validation($user);
+
+        $data = $request->all();
+        $data['image'] = $this->uploadImage($request) ?? $user->image;
+
+        $user->update($data);
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
-    public function validation(Request $request)
+    public function disable(User $user) {
+        $user->update(['active' => false]);
+
+        return response()->json([
+            'status' => true,
+        ]);
+    }
+
+    public function validation(?User $user = null)
     {
         $passwordValidation = Password::min(8)
             ->letters()
@@ -74,19 +94,24 @@ class UserController extends Controller
             ->symbols()
             ->uncompromised();
 
-        $validate = Validator::make($request->all(), [
-            'name' => ['bail', 'required', 'max:30'],
-            'email' => ['bail', 'required', 'email', 'unique:users'],
-            'password' => ['bail', 'required', $passwordValidation],
+        $rules = [
+            'fname' => ['bail', 'required', 'max:30'],
+            'lname' => ['bail', 'required', 'max:30'],
+            'email' => ['bail', Rule::excludeIf(isset($user)), 'required', 'email', 'unique:users'],
+            'password' => ['bail', Rule::excludeIf(isset($user)), 'required', $passwordValidation],
             'role_id' => ['bail', 'required'],
             'active' => ['bail', 'required'],
-            'fname' => ['bail', 'required'],
-            'lname' => ['bail', 'required'],
             'gender' => ['bail', 'required'],
-            'phone' => ['required']
-        ]);
+            'phone' => ['bail', 'required', 'min_digits:10', 'max_digits:10', 'numeric']
+        ];
 
-        return $validate;
+        $validator = Validator::make(request()->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->messages()->first()
+            ], 400)->throwResponse();
+        }
     }
 
     public function uploadImage(Request $request)
