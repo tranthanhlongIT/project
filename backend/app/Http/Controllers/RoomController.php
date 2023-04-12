@@ -17,9 +17,7 @@ class RoomController extends Controller
             ->join('types', 'types.id', '=', 'rooms.type_id')
             ->get();
 
-        return response()->json([
-            'data' => $data
-        ]);
+        return response()->json($data);
     }
 
     /**
@@ -33,17 +31,12 @@ class RoomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Room $room)
     {
-        $data = DB::table('types')
-            ->select('rooms.name', 'types.name as type', 'rooms.description', 'rooms.size', 'rooms.size', 'rooms.price', 'images.name as image')
-            ->join('rooms', 'types.id', '=', 'rooms.type_id')
-            ->join('images', 'rooms.id', '=', 'images.room_id')
-            ->where('rooms.id', '=', $id)->get();
+        $room->type;
+        $room->images;
 
-        return response()->json([
-            'data' => $data
-        ]);
+        return response()->json($room);
     }
 
     /**

@@ -3,6 +3,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import Vuelidate from "vuelidate";
 import excel from "vue-excel-export";
+import AsyncComputed from 'vue-async-computed';
 
 const options = {
   position: "bottom-right",
@@ -22,3 +23,4 @@ const options = {
 Vue.use(excel);
 Vue.use(Toast, options);
 Vue.use(Vuelidate);
+Vue.use(AsyncComputed)

@@ -13,4 +13,9 @@ class Type extends Model
     protected $table = 'types';
     protected $primaryKey = 'id';
     protected $guarded = [];
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
 }

@@ -54,7 +54,8 @@ export default {
 
     computed: {
         ...mapGetters({
-            rooms: "getRooms"
+            rooms: "getRooms",
+            room: "getRoom"
         }),
 
         items() {
@@ -65,20 +66,20 @@ export default {
                 },
             ]
         },
+    },
 
-        selected() {
+    asyncComputed: {
+        async selected() {
             if (!this.active.length) return undefined
 
             const id = this.active[0]
 
-            return this.getRoom({ id: id });
+            await this.getRoom({ id: id });
 
-            // return this.rooms.find(room => room.id === id)
+            await pause(500)
+
+            return this.room;
         },
-    },
-
-    watch: {
-        selected: 'randomAvatar',
     },
 
     methods: {

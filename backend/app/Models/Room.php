@@ -14,5 +14,13 @@ class Room extends Model
     protected $primaryKey = 'id';
     protected $guarded = [];
 
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
 }
