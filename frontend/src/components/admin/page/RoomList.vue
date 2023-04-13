@@ -82,7 +82,7 @@
                                         <v-col class="text-right" tag="strong" cols="4">
                                             Size:
                                         </v-col>
-                                        <v-col cols="8" lg="7" xl="6">{{ selected.size }}</v-col>
+                                        <v-col cols="8" lg="7" xl="6">{{ selected.size.name }}</v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col class="text-right" tag="strong" cols="4">

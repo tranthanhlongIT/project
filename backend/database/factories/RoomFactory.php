@@ -21,7 +21,8 @@ class RoomFactory extends Factory
             'floor_id' => rand(1, 3),
             'number' => fake()->numerify(),
             'name' => fake()->words(3, true),
-            'size' => fake()->randomElement(['Single', 'Double', 'Four perons', 'Family']),
+            'description' => fake()->paragraph(10),
+            'size_id' => rand(1, 4),
             'price' => fake()->numberBetween(1500, 6000)
         ];
     }

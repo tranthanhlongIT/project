@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('type_id')->constrained();
             $table->foreignId('floor_id')->constrained();
+            $table->foreignId('size_id')->constrained();
             $table->string('number')->unique();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('size')->nullable();
             $table->float('price')->unsigned();
             $table->timestamps();
             $table->softDeletes();

@@ -299,7 +299,7 @@ export default {
       "disableUser",
     ]),
 
-    async prepareData(id) {
+    async prepareData() {
       let url = this.env.apiURL + "users/preparedata";
       await axios.get(url).then((response) => {
         this.roles = response.data.roles;
@@ -394,7 +394,7 @@ export default {
 
   created() {
     this.show = this.dialog;
-    this.prepareData(this.userSelected.id);
+    this.prepareData();
     this.setField();
 
     EventBus.$on("file", (file) => {

@@ -16,11 +16,11 @@
                             <v-row class="ml-1">
                                 <v-col cols="6" class="pl-0">
                                     <v-select v-model="floor" item-text="name" item-value="id" :items="floors" label="Floor"
-                                        dense></v-select>
+                                        :menu-props="{ bottom: true, offsetY: true }" dense></v-select>
                                 </v-col>
                                 <v-col cols="6" class="pl-0">
                                     <v-select v-model="type" item-text="name" item-value="id" :items="types" label="Type"
-                                        dense></v-select>
+                                        :menu-props="{ bottom: true, offsetY: true }" dense></v-select>
                                 </v-col>
                                 <v-col cols="4" class="pl-0">
                                     <v-text-field v-model="number" label="Room number" dense></v-text-field>
@@ -32,7 +32,17 @@
                                     <v-textarea filled label="Description" hide-details></v-textarea>
                                 </v-col>
                                 <v-col cols="6" class="pl-0">
-                                    <v-select v-model="size" label="Size" dense></v-select>
+                                    <!-- <v-select v-model="size" item-text="name" item-value="id" :items="sizes" label="Size"
+                                        :menu-props="{ bottom: true, offsetY: true }" dense></v-select> -->
+                                    <v-select v-model="size" :items="sizes" label="Size" item-text="name" item-value="id"
+                                        small-chips :menu-props="{ bottom: true, offsetY: true }" dense>
+                                        <template #selection="{ item }">
+                                            <v-chip color="teal" text-color="white" small>
+                                                {{ item.name }}
+                                                <v-icon>mdi-human-capacity-increase</v-icon>
+                                            </v-chip>
+                                        </template>
+                                    </v-select>
                                 </v-col>
                                 <v-col cols="6" class="pl-0">
                                     <v-text-field v-model="number" @blur="$v.number.$touch()" label="First name"
@@ -40,7 +50,8 @@
                                 </v-col>
                                 <v-col cols="12" class="pl-0">
                                     <v-select v-model="service" item-text="name" item-value="id" :items="services"
-                                        label="Services" multiple dense hide-details></v-select>
+                                        :menu-props="{ bottom: true, offsetY: true }" label="Services" multiple dense
+                                        hide-details></v-select>
                                 </v-col>
                                 <v-col cols="12" class="pl-0">
                                     <v-file-input small-chips multiple label="Upload Image"></v-file-input>
@@ -75,6 +86,7 @@ import {
     minLength,
     email,
 } from "vuelidate/lib/validators";
+import axios from "axios";
 
 export default {
     mixins: [validationMixin],
@@ -136,8 +148,22 @@ export default {
         }
     },
 
+    methods: {
+        async prepareData() {
+            let url = this.env.apiURL + "rooms/preparedata";
+            await axios.get(url).then((response) => {
+                this.types = response.data.types;
+                this.floors = response.data.floors;
+                this.sizes = response.data.sizes;
+                this.services = response.data.services;
+            });
+        },
+    },
+
     created() {
         this.show = this.dialog;
+
+        this.prepareData();
     }
 }
 </script>

@@ -23,4 +23,9 @@ class Room extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
+    }
 }
