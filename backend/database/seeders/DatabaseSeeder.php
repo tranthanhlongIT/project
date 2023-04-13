@@ -8,6 +8,7 @@ use App\Models\Guest;
 use App\Models\Room;
 use App\Models\Type;
 use App\Models\User;
+use App\Models\Floor;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
 
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
         Role::factory(10)->create();
         User::factory(10)->create();
         Type::factory(10)->create();
+        Floor::factory(3)->create();
         Guest::factory(10)->create();
         Room::factory(10)->create();
     }

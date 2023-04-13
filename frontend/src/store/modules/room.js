@@ -25,7 +25,7 @@ export const roomStore = {
     },
 
     async getRoom({ commit }, payload) {
-      let url = this._vm.env.apiURL + "rooms/" + payload.id;
+      let url = this._vm.env.apiURL + "rooms/" + payload.number;
       axios.get(url).then((response) => {
         commit("setRoom", response.data);
       });

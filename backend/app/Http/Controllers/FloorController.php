@@ -3,21 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Floor;
-use App\Models\Room;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class RoomController extends Controller
+class FloorController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-        $data = Floor::with('children:number as id,number as name,floor_id')->get();
-
-        return response()->json($data);
+        //
     }
 
     /**
@@ -31,19 +26,15 @@ class RoomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($number)
+    public function show(Floor $floor)
     {
-        $room = Room::with(['type:id,name', 'images:id,name'])
-            ->where('number', '=', $number)
-            ->first();
-
-        return response()->json($room);
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Room $room)
+    public function update(Request $request, Floor $floor)
     {
         //
     }
@@ -51,7 +42,7 @@ class RoomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Room $room)
+    public function destroy(Floor $floor)
     {
         //
     }

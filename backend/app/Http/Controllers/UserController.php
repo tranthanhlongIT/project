@@ -25,9 +25,7 @@ class UserController extends Controller
             ->join('roles', 'roles.id', '=', 'users.role_id')
             ->get();
 
-        return response()->json([
-            'data' => $data
-        ]);
+        return response()->json($data);
     }
 
     /**
@@ -53,11 +51,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $roles = DB::table('roles')->select('id', 'name')->get();
 
-        return response()->json([
-            'roles' => $roles
-        ]);
     }
 
     /**
@@ -140,5 +134,13 @@ class UserController extends Controller
         $response->header("Content-Type", $type);
 
         return $response;
+    }
+
+    public function prepareData() {
+        $roles = DB::table('roles')->select('id', 'name')->get();
+
+        return response()->json([
+            'roles' => $roles
+        ]);
     }
 }

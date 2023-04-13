@@ -1,6 +1,6 @@
 <template>
     <v-main style="background: #f5f7fb">
-        <v-container style="max-width: inherit">
+        <v-container class="py-0" style="max-width: inherit">
             <router-view></router-view>
         </v-container>
     </v-main>

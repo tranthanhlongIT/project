@@ -27,7 +27,7 @@ export const userStore = {
     async getUsers({ commit }) {
       let url = this._vm.env.apiURL + "users";
       await axios.get(url).then((response) => {
-        commit("setUsers", response.data.data);
+        commit("setUsers", response.data);
       });
     },
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="m-2">
+  <div class="m-3">
     <h5 class="indigo--text">User List</h5>
     <v-card>
       <v-card-title>

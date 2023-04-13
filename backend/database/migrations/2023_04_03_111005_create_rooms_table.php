@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('type_id')->constrained();
+            $table->foreignId('floor_id')->constrained();
+            $table->string('number')->unique();
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('size')->nullable();
@@ -21,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('name');
+            $table->index(['name']);
         });
     }
 

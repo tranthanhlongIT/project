@@ -11,10 +11,10 @@
             </v-btn>
           </v-card-title>
           <v-divider color="grey" class="m-0 p-0"></v-divider>
-          <v-card-text v-if="action == 'add' || action == 'upd' || action == 'det'" class="m-0 p-0">
+          <v-card-text class="m-0 p-0">
             <v-container>
               <v-row no-gutters>
-                <div class="text-subtitle-2">Account Info</div>
+                <div class="text-subtitle-2 pl-0">Account Info</div>
                 <v-divider color="blue"></v-divider>
               </v-row>
               <v-row no-gutters>
@@ -59,7 +59,7 @@
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <div class="text-subtitle-2">User Info</div>
+                <div class="text-subtitle-2 pl-0">User Info</div>
                 <v-divider color="blue"></v-divider>
               </v-row>
               <v-row no-gutters>
@@ -300,7 +300,7 @@ export default {
     ]),
 
     async prepareData(id) {
-      let url = this.env.apiURL + "users/" + id;
+      let url = this.env.apiURL + "users/preparedata";
       await axios.get(url).then((response) => {
         this.roles = response.data.roles;
       });

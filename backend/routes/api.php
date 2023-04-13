@@ -23,5 +23,6 @@ Route::get('/storage/app/images/{filename}', [UserController::class, 'getImage']
 
 Route::patch('/users/disable/{user}', [UserController::class, 'disable']);
 
+Route::get('/users/preparedata', [UserController::class, 'prepareData']);
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/rooms', RoomController::class);
