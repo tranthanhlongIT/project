@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/storage/app/images/{filename}', [UserController::class, 'getImage']);
+Route::get('/storage/app/images/{filename}', [ImageController::class, 'index']);
 
 Route::patch('/users/disable/{user}', [UserController::class, 'disable']);
 

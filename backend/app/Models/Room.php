@@ -28,4 +28,14 @@ class Room extends Model
     {
         return $this->belongsTo(Size::class);
     }
+
+    public function floor()
+    {
+        return $this->belongsTo(Floor::class);
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'room_service', 'room_id', 'service_id');
+    }
 }

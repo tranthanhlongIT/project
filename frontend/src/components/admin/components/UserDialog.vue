@@ -86,9 +86,8 @@
                         label="Gender" dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0">
-                      <v-text-field v-model="phone" :error-messages="phoneErrors"
-                        :disabled="action == 'det' ? true : false" @blur="$v.phone.$touch()" label="Phone"
-                        dense></v-text-field>
+                      <v-text-field v-model="phone" :disabled="action == 'det' ? true : false"
+                        :error-messages="phoneErrors" @blur="$v.phone.$touch()" label="Phone" dense></v-text-field>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -103,7 +102,7 @@
               @click.prevent="onHandle">
               Save
             </v-btn>
-            <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click.stop="closeDialog">
+            <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click="closeDialog">
               Back
             </v-btn>
           </v-card-actions>
@@ -283,9 +282,9 @@ export default {
 
     width() {
       switch (this.$vuetify.breakpoint.name) {
-        case 'md': return "50%";
-        case 'lg': return "40%";
-        case 'xl': return "30%";
+        case 'md': return "60%";
+        case 'lg': return "50%";
+        case 'xl': return "40%";
         default: return "100%";
       }
     }
@@ -353,18 +352,18 @@ export default {
 
     resetField() {
       this.user = {};
+      this.fname = null;
+      this.lname = null;
       this.email = null;
       this.password = null;
       this.role = null;
       this.active = true;
-      this.image = null;
-      this.file = null;
-      this.fileURL = null;
-      this.fname = null;
-      this.lname = null;
       this.address = null;
       this.gender = null;
       this.phone = null;
+      this.image = null;
+      this.file = null;
+      this.fileURL = null;
       this.$v.$reset();
     },
 

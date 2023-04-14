@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -71,7 +69,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function disable(User $user) {
+    public function disable(User $user)
+    {
         $user->update(['active' => false]);
 
         return response()->json([
@@ -110,7 +109,7 @@ class UserController extends Controller
 
     public function uploadImage(Request $request)
     {
-        if (!empty($request->image)) {
+        if ($request->hasfile('image')) {
             $file = request()->file('image');
             $fileName = $file->getClientOriginalName();
             $file->storeAs('images', $fileName);
@@ -119,24 +118,8 @@ class UserController extends Controller
         return $fileName ?? null;
     }
 
-    public function getImage($filename)
+    public function prepareData()
     {
-        $path = storage_path() . '/app/images/' . $filename;
-
-        if (!File::exists($path)) {
-            return response()->json(['message' => 'Image not found.'], 404);
-        }
-
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
-        return $response;
-    }
-
-    public function prepareData() {
         $roles = DB::table('roles')->select('id', 'name')->get();
 
         return response()->json([

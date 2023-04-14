@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Guest;
 use App\Models\Room;
+use App\Models\Service;
 use App\Models\Type;
 use App\Models\User;
 use App\Models\Floor;
@@ -24,7 +25,18 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
+        Service::create([
+           'name' => 'bathroom'
+        ]);
+        Service::create([
+            'name' => 'dinner'
+        ]);
+        Service::create([
+            'name' => 'breakfast'
+        ]);
+        Service::create([
+            'name' => 'toilet'
+        ]);
         Size::create([
             'name' => 'Single',
             'icon' => 'mdi-human-male'

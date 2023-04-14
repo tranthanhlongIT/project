@@ -6,6 +6,7 @@ use App\Models\Floor;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class RoomController extends Controller
 {
@@ -14,7 +15,6 @@ class RoomController extends Controller
      */
     public function index()
     {
-
         $data = Floor::with('children:number as id,number as name,floor_id')->get();
 
         return response()->json($data);
@@ -25,7 +25,30 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validation();
+
+        $data = $request->except(['services', 'images']);
+        $services = json_decode($request->services);
+        $images = $request->file('images');
+        $room = Room::create($data);
+
+        if($request->hasfile('images'))
+        {
+            foreach($images as $image)
+            {
+                $fileName = $image->getClientOriginalName();
+                $image->storeAs('images', $fileName);
+                $room->images()->create([
+                    'name' => $fileName
+                ]);
+            }
+        }
+
+        $room->services()->attach($services);
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     /**
@@ -33,7 +56,8 @@ class RoomController extends Controller
      */
     public function show($number)
     {
-        $room = Room::with(['type:id,name', 'images:id,name', 'size:id,name'])
+        $room = Room::with(['type:id,name', 'images:id,name,room_id', 'size:id,name',
+            'floor:id,name', 'services:id,name'])
             ->where('number', '=', $number)
             ->first();
 
@@ -69,5 +93,27 @@ class RoomController extends Controller
             'floors' => $floors,
             'services' => $services
         ]);
+    }
+
+    public function validation()
+    {
+        $rules = [
+            'type_id' => ['bail', 'required'],
+            'floor_id' => ['bail', 'required'],
+            'size_id' => ['bail', 'required'],
+            'number' => ['bail', 'required', 'unique:rooms,number'],
+            'name' => ['bail', 'required', 'max:30'],
+            'price' => ['bail', 'required', 'numeric'],
+            'services' => ['bail', 'required'],
+            'images' => ['bail', 'required']
+        ];
+
+        $validator = Validator::make(request()->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->messages()->first()
+            ], 400)->throwResponse();
+        }
     }
 }

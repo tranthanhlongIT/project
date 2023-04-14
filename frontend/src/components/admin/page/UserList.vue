@@ -3,7 +3,7 @@
     <h5 class="indigo--text">User List</h5>
     <v-card>
       <v-card-title>
-        <v-btn color="success" small class="my-0" @click.prevent="openDialog('add', {})">
+        <v-btn color="success" small class="my-0" @click="openDialog('add', {})">
           <v-icon left> mdi-plus </v-icon>
           Add
         </v-btn>

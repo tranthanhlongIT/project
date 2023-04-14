@@ -16,6 +16,10 @@ class Floor extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     public function children() {
-        return $this->hasMany(Room::class)->select('number as id', 'name');
+        return $this->hasMany(Room::class);
+    }
+
+    public function rooms() {
+        return $this->hasMany(Room::class);
     }
 }

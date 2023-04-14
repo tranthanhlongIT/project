@@ -27,7 +27,7 @@
             </v-list-item>
             <v-divider class="m-0 p0"></v-divider>
             <v-list-item link>
-              <v-list-item-title @click.prevent="logout">Logout</v-list-item-title>
+              <v-list-item-title @click="">Logout</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>

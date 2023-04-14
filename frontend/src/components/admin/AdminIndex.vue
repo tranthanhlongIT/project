@@ -48,6 +48,5 @@ html {
 }
 
 @import "~/public/admin/css/app.css";
-@import "https://use.fontawesome.com/releases/v5.0.13/css/all.css";
 @import "https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css";
 </style>
