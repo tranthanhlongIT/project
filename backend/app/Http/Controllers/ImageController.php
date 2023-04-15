@@ -29,35 +29,14 @@ class ImageController extends Controller
         return $response;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function upload(Request $request)
     {
-        //
-    }
+        if ($request->hasfile('images')) {
+            $file = request()->file('images');
+            $fileName = $file->getClientOriginalName();
+            $file->storeAs('images', $fileName);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Image $image)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Image $image)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Image $image)
-    {
-        //
+        return $fileName ?? null;
     }
 }

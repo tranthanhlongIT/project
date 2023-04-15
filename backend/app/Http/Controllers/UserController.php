@@ -17,9 +17,19 @@ class UserController extends Controller
     public function index()
     {
         $data = DB::table('users')
-            ->select('users.id', 'users.email', 'users.image', 'roles.name as role',
-                'users.active', 'users.role_id', 'users.gender', 'users.address',
-                'users.fname', 'users.lname', 'users.phone')
+            ->select(
+                'users.id',
+                'users.email',
+                'users.image',
+                'roles.name as role',
+                'users.active',
+                'users.role_id',
+                'users.gender',
+                'users.address',
+                'users.fname',
+                'users.lname',
+                'users.phone'
+            )
             ->join('roles', 'roles.id', '=', 'users.role_id')
             ->get();
 
@@ -49,7 +59,6 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-
     }
 
     /**
@@ -107,7 +116,7 @@ class UserController extends Controller
         }
     }
 
-    public function uploadImage(Request $request)
+    public function uploadUserImage(Request $request)
     {
         if ($request->hasfile('image')) {
             $file = request()->file('image');

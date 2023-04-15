@@ -15,9 +15,11 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="6">
-                                    <file-pond name="test" ref="pond" label-idle="Drop files here..."
-                                        v-bind:allow-multiple="true" accepted-file-types="image/jpeg, image/png"
-                                        server="/api" v-bind:files="files" />
+                                    <vue-custom-scrollbar class="scroll-area" :settings="settings">
+                                        <file-pond name="images" :files="files" @init="onFileInit" ref="pond"
+                                            class-name="my-pond" label-idle="Upload Image" allow-multiple
+                                            accepted-file-types="image/jpeg, image/png" credits="" :server="server" />
+                                    </vue-custom-scrollbar>
                                 </v-col>
                                 <v-col cols="6">
                                     <v-row class="ml-1">
@@ -72,19 +74,6 @@
                                                 </template>
                                             </v-select>
                                         </v-col>
-                                        <!-- <v-col cols="6" class="pl-0">
-                                            <v-file-input v-model="file" small-chips multiple label="Upload Image"
-                                                :error-messages="fileErrors" dense>
-                                                <template #selection="{ index, text }">
-                                                    <v-chip v-if="index < 2" x-small>
-                                                        {{ text }}
-                                                    </v-chip>
-                                                    <span v-if="index == 2" class="grey--text text-caption">
-                                                        +{{ file.length - 2 }} others
-                                                    </span>
-                                                </template>
-                                            </v-file-input>
-                                        </v-col> -->
                                     </v-row>
                                 </v-col>
                             </v-row>
@@ -109,33 +98,25 @@
 </template>
 
 <script>
-// Import Vue FilePond
 import vueFilePond from "vue-filepond";
-
-// Import FilePond styles
-import "filepond/dist/filepond.min.css";
-
-// Import FilePond plugins
-// Please note that you need to install these plugins separately
-
-// Import image preview plugin styles
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
-
-// Import image preview and file type validation plugins
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
 
-// Create component
+import vueCustomScrollbar from 'vue-custom-scrollbar'
+import "vue-custom-scrollbar/dist/vueScrollbar.css"
+
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
-    FilePondPluginImagePreview
+    FilePondPluginImagePreview,
+    FilePondPluginFilePoster
 );
 
 import { validationMixin } from "vuelidate";
-import {
-    required,
-    maxLength,
-} from "vuelidate/lib/validators";
+import { required, maxLength, } from "vuelidate/lib/validators";
 import axios from "axios";
 import { EventBus } from "@/main";
 import { mapActions } from "vuex";
@@ -149,7 +130,7 @@ export default {
         size: { required },
         service: { required },
         price: { required },
-        file: { required },
+        files: { required },
         name: { required, maxLength: maxLength(30) },
         number: {
             required,
@@ -166,6 +147,7 @@ export default {
 
     components: {
         FilePond,
+        vueCustomScrollbar
     },
 
     data() {
@@ -187,7 +169,23 @@ export default {
             service: null,
 
             show: false,
-            file: null,
+            files: [],
+            settings: {
+                suppressScrollY: false,
+                suppressScrollX: true,
+                wheelPropagation: false
+            },
+            server: {
+                url: "http://127.0.0.1:8000/api",
+                timeout: 7000,
+                process: {
+                    url: '/upload-image',
+                    method: 'POST',
+                    withCredentials: false,
+                    onload: self.onFileLoad,
+                },
+                load: '/storage/app/images'
+            }
         }
     },
 
@@ -235,8 +233,8 @@ export default {
 
         fileErrors() {
             const errors = [];
-            if (!this.$v.file.$dirty) return errors;
-            !this.$v.file.required && errors.push("File is required");
+            if (!this.$v.files.$dirty) return errors;
+            !this.$v.files.required && errors.push("Image is required");
             return errors;
         },
 
@@ -292,6 +290,7 @@ export default {
             this.description = this.room.description;
             this.price = this.room.price;
             this.service = this.room.service;
+            this.images = this.room.images;
         },
 
         resetField() {
@@ -304,13 +303,13 @@ export default {
             this.description = null;
             this.price = null;
             this.service = null;
-            this.image = null;
-            this.file = null;
+            this.images = null;
+            this.files = [];
             this.$v.$reset();
         },
 
         async prepareData() {
-            let url = this.env.apiURL + "rooms/preparedata";
+            let url = this.env.apiURL + "rooms/prepare-data";
             await axios.get(url).then((response) => {
                 this.types = response.data.types;
                 this.floors = response.data.floors;
@@ -324,7 +323,7 @@ export default {
 
             if (this.action == "add") {
                 this.setRoom();
-                this.addRoom({ room: this.room, file: this.file });
+                this.addRoom({ room: this.room, files: this.files });
             }
         },
 
@@ -339,14 +338,38 @@ export default {
             }
 
             return true;
-        }
+        },
+
+        onFileInit() {
+            if (this.images) {
+                this.images.forEach((image) => {
+                    this.files.push(
+                        {
+                            source: '/' + image.name,
+                            options: {
+                                type: 'local',
+                            }
+                        }
+                    );
+                })
+            } else this.files = [];
+        },
+
+        onFileLoad(response) {
+            this.images = response;
+        },
     },
 
     created() {
         this.show = this.dialog;
-
         this.prepareData();
     },
-
 }
 </script>
+
+<style>
+.scroll-area {
+    width: inherit;
+    max-height: 430px;
+}
+</style>
