@@ -75,7 +75,7 @@
                                         </v-col>
                                     </v-row>
                                 </v-col>
-                                <v-col cols="5">
+                                <v-col cols="5" class="pt-0">
                                     <v-row no-gutters>
                                         <div class="text-subtitle-2 pl-0">Upload Image</div>
                                         <v-divider color="blue"></v-divider>
@@ -294,19 +294,17 @@ export default {
         },
 
         setField() {
-            this.room = Object.assign(this.roomSelected);
-            this.type.id = this.room.type_id;
-            this.type.name = this.room.type;
-            this.floor.id = this.room.floor_id;
-            this.floor.name = this.room.floor;
-            this.size.id = this.room.size_id;
-            this.size.name = this.room.size;
-            this.number = this.room.number;
-            this.name = this.room.name;
-            this.description = this.room.description;
-            this.price = this.room.price;
-            this.service = this.room.services;
-            this.images = this.room.images;
+            const { type_id, type, floor_id, floor, size_id, size, number, name, description, price, services, images } = this.roomSelected;
+            this.room = Object.assign({}, this.roomSelected);
+            this.type = { id: type_id, name: type };
+            this.floor = { id: floor_id, name: floor };
+            this.size = { id: size_id, name: size };
+            this.number = number;
+            this.name = name;
+            this.description = description;
+            this.price = price;
+            this.service = services;
+            this.images = images;
         },
 
         resetField() {
@@ -335,17 +333,11 @@ export default {
         },
 
         onHandle() {
-            if (!this.validation()) return;
+            if (this.validation()) return;
 
-            if (this.action == "add") {
-                this.setRoom();
-                this.addRoom({ room: this.room, files: this.files });
-            }
-
-            if (this.action == "upd") {
-                this.setRoom();
-                this.updateRoom({ room: this.room, files: this.files });
-            }
+            this.setRoom();
+            if (this.action == "add") this.addRoom({ room: this.room, files: this.files });
+            if (this.action == "upd") this.updateRoom({ room: this.room, files: this.files });
         },
 
         closeDialog() {
@@ -353,11 +345,11 @@ export default {
         },
 
         validation() {
-            if (this.action == "add") {
+            if (this.action === "add" && this.$v.$invalid) {
                 this.$v.$touch();
-                if (this.$v.$invalid) return false;
+                return true;
             }
-            return true;
+            return false;
         },
 
         onFileInit() {
@@ -368,7 +360,7 @@ export default {
                             source: '/' + image.name,
                             options: {
                                 type: 'local',
-                            }
+                            },
                         }
                     );
                 })
@@ -383,7 +375,6 @@ export default {
     created() {
         this.show = this.dialog;
         this.prepareData();
-
         if (this.action != "add") this.setField();
     },
 }

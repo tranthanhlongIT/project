@@ -120,7 +120,7 @@ import {
   email,
 } from "vuelidate/lib/validators";
 import axios from "axios";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import UploadButton from "./UploadButton.vue";
 import { EventBus } from "@/main";
 
@@ -140,12 +140,7 @@ export default {
         const containsLowercase = /[a-z]/.test(value);
         const containsNumber = /[0-9]/.test(value);
         const containsSpecial = /[#?!@$%^&*-]/.test(value);
-        return (
-          containsUppercase &&
-          containsLowercase &&
-          containsNumber &&
-          containsSpecial
-        );
+        return (containsUppercase && containsLowercase && containsNumber && containsSpecial);
       },
     },
     fname: { required, maxLength: maxLength(30) },
@@ -190,19 +185,16 @@ export default {
           value: 0
         }
       ],
-
       role: {},
       active: true,
       email: null,
       password: null,
       image: null,
-
       fname: null,
       lname: null,
       address: null,
       gender: null,
       phone: null,
-
       file: null,
       fileURL: null,
       show: false,
@@ -305,17 +297,10 @@ export default {
     },
 
     onHandle() {
-      if (!this.validation()) return;
-
-      if (this.action == "add") {
-        this.setUser();
-        this.addUser({ user: this.user, file: this.file });
-      }
-
-      if (this.action == "upd") {
-        this.setUser();
-        this.updateUser({ user: this.user, file: this.file });
-      }
+      if (this.validation()) return;
+      this.setUser();
+      if (this.action == "add") this.addUser({ user: this.user, file: this.file });
+      if (this.action == "upd") this.updateUser({ user: this.user, file: this.file });
     },
 
     closeDialog() {
@@ -337,27 +322,27 @@ export default {
     },
 
     setField() {
-      this.user = Object.assign(this.userSelected);
-      this.email = this.user.email;
-      this.password = this.user.password;
-      this.role.name = this.user.role;
-      this.role.id = this.user.role_id;
-      this.active = this.action == "add" ? 1 : parseInt(this.user.active);
-      this.image = this.user.image;
-      this.fname = this.user.fname;
-      this.lname = this.user.lname;
-      this.address = this.user.address;
-      this.gender = this.user.gender;
-      this.phone = this.user.phone;
+      const { email, password, role_id, role, active, image, fname, lname, address, gender, phone } = this.userSelected;
+      this.user = Object.assign({}, this.userSelected);
+      this.email = email;
+      this.password = password;
+      this.role = { name: role, id: role_id };
+      this.active = this.action == "add" ? 1 : parseInt(active);
+      this.image = image;
+      this.fname = fname;
+      this.lname = lname;
+      this.address = address;
+      this.gender = gender;
+      this.phone = phone;
     },
 
     resetField() {
-      this.user = {};
+      this.user = null;
       this.fname = null;
       this.lname = null;
       this.email = null;
       this.password = null;
-      this.role = {};
+      this.role = null;
       this.active = true;
       this.address = null;
       this.gender = null;
@@ -369,26 +354,26 @@ export default {
     },
 
     validation() {
-      if (this.action == "add") {
+      if (this.action === "add" && this.$v.$invalid) {
         this.$v.$touch();
-        if (this.$v.$invalid) return false;
+        return true;
       }
 
-      if (this.action == "upd") {
+      if (this.action === "upd" &&
+        (this.$v.role.$invalid ||
+          this.$v.fname.$invalid ||
+          this.$v.lname.$invalid ||
+          this.$v.gender.$invalid ||
+          this.$v.phone.$invalid)
+      ) {
         this.$v.role.$touch();
         this.$v.fname.$touch();
         this.$v.lname.$touch();
         this.$v.gender.$touch();
         this.$v.phone.$touch();
-        if (this.$v.role.$invalid
-          || this.$v.fname.$invalid
-          || this.$v.lname.$invalid
-          || this.$v.gender.$invalid
-          || this.$v.phone.invalid)
-          return false;
+        return true;
       }
-
-      return true;
+      return false;
     }
   },
 
