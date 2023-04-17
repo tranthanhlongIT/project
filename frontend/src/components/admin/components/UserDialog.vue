@@ -32,7 +32,7 @@
                 <v-col cols="12" md="8" xxl="9">
                   <v-row class="ml-1">
                     <v-col cols="12" md="6" class="pl-0">
-                      <v-select v-model="role" item-text="name" item-value="id" :items="roles"
+                      <v-select v-model="role" item-text="name" item-value="id" :items="roles" return-object
                         :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         :error-messages="roleErrors" @blur="$v.role.$touch()" @input="$v.role.$touch()" label="Role"
                         dense></v-select>
@@ -191,7 +191,7 @@ export default {
         }
       ],
 
-      role: null,
+      role: {},
       active: true,
       email: null,
       password: null,
@@ -325,7 +325,8 @@ export default {
     setUser() {
       this.user.email = this.email;
       this.user.password = this.password;
-      this.user.role_id = this.role;
+      this.user.role_id = this.role.id;
+      this.user.role = this.role.name;
       this.user.active = this.active;
       this.user.image = this.image;
       this.user.fname = this.fname;
@@ -339,7 +340,8 @@ export default {
       this.user = Object.assign(this.userSelected);
       this.email = this.user.email;
       this.password = this.user.password;
-      this.role = this.user.role_id;
+      this.role.name = this.user.role;
+      this.role.id = this.user.role_id;
       this.active = this.action == "add" ? 1 : parseInt(this.user.active);
       this.image = this.user.image;
       this.fname = this.user.fname;
@@ -355,7 +357,7 @@ export default {
       this.lname = null;
       this.email = null;
       this.password = null;
-      this.role = null;
+      this.role = {};
       this.active = true;
       this.address = null;
       this.gender = null;

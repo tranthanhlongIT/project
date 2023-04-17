@@ -29,21 +29,8 @@ class RoomController extends Controller
 
         $data = $request->except(['services', 'images']);
         $services = json_decode($request->services);
-        $images = $request->file('images');
         $room = Room::create($data);
-
-        if($request->hasfile('images'))
-        {
-            foreach($images as $image)
-            {
-                $fileName = $image->getClientOriginalName();
-                $image->storeAs('images', $fileName);
-                $room->images()->create([
-                    'name' => $fileName
-                ]);
-            }
-        }
-
+        $this->uploadImage($request, $room);
         $room->services()->attach($services);
 
         return response()->json([
@@ -114,6 +101,25 @@ class RoomController extends Controller
             return response()->json([
                 'message' => $validator->messages()->first()
             ], 400)->throwResponse();
+        }
+    }
+
+    public function uploadImage(Request $request, Room $room)
+    {
+        if($request->hasfile('images'))
+        {
+            $images = $request->file('images');
+            if($request->hasfile('images'))
+            {
+                foreach($images as $image)
+                {
+                    $fileName = $image->getClientOriginalName();
+                    $image->storeAs('images', $fileName);
+                    $room->images()->create([
+                        'name' => $fileName
+                    ]);
+                }
+            }
         }
     }
 }

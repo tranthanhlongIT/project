@@ -46,7 +46,7 @@ export const roomStore = {
       formData.append("description", payload.room.description ?? "");
       formData.append("price", payload.room.price);
       formData.append("services", JSON.stringify(payload.room.service));
-      payload.file.forEach((file) => {
+      payload.files.forEach((file) => {
         formData.append("images[]", file);
       });
 

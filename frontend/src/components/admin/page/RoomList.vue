@@ -54,8 +54,9 @@
                         <v-card v-else :key="selected.id" class="pt-6" flat>
                             <v-row no-gutters class="pl-3 pb-3">
                                 <v-col md="6">
-                                    <v-carousel height="100%" hide-delimiters>
-                                        <v-carousel-item v-for=" (image, i) in images" :key="i" :src="image.src"
+                                    <v-carousel height="200" hide-delimiters>
+                                        <v-carousel-item contain v-for=" (image, i) in selected.images" :key="i"
+                                            :src="env.imageURL + image.name"
                                             reverse-transition="fade-transition"></v-carousel-item>
                                     </v-carousel>
                                 </v-col>
@@ -88,7 +89,7 @@
                                         <v-col class="text-right" tag="strong" cols="4">
                                             Price:
                                         </v-col>
-                                        <v-col cols="8" lg="7" xl="6">{{ selected.price }}</v-col>
+                                        <v-col cols="8" lg="7" xl="6">{{ selected.price | toCurrency }}</v-col>
                                     </v-row>
                                 </v-col>
                                 <v-row class="mt-2">
@@ -151,20 +152,7 @@ export default {
             search: null,
             allOpened: false,
             lastOpen: [],
-            images: [
-                {
-                    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-                },
-                {
-                    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-                },
-                {
-                    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-                },
-                {
-                    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-                },
-            ],
+            images: [],
         }
     },
 

@@ -28,15 +28,4 @@ class ImageController extends Controller
 
         return $response;
     }
-
-    public function upload(Request $request)
-    {
-        if ($request->hasfile('images')) {
-            $file = request()->file('images');
-            $fileName = $file->getClientOriginalName();
-            $file->storeAs('images', $fileName);
-        }
-
-        return $fileName ?? null;
-    }
 }

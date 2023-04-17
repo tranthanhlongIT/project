@@ -3,7 +3,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import Vuelidate from "vuelidate";
 import excel from "vue-excel-export";
-import AsyncComputed from 'vue-async-computed';
+import AsyncComputed from "vue-async-computed";
 
 const options = {
   position: "bottom-right",
@@ -23,4 +23,15 @@ const options = {
 Vue.use(excel);
 Vue.use(Toast, options);
 Vue.use(Vuelidate);
-Vue.use(AsyncComputed)
+Vue.use(AsyncComputed);
+
+Vue.filter("toCurrency", function (value) {
+  if (typeof value !== "number") {
+    return value;
+  }
+  var formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+  return formatter.format(value);
+});

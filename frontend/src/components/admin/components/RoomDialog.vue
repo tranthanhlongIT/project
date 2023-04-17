@@ -14,14 +14,7 @@
                     <v-card-text class="m-0 p-0">
                         <v-container>
                             <v-row>
-                                <v-col cols="6">
-                                    <vue-custom-scrollbar class="scroll-area" :settings="settings">
-                                        <file-pond name="images" :files="files" @init="onFileInit" ref="pond"
-                                            class-name="my-pond" label-idle="Upload Image" allow-multiple
-                                            accepted-file-types="image/jpeg, image/png" credits="" :server="server" />
-                                    </vue-custom-scrollbar>
-                                </v-col>
-                                <v-col cols="6">
+                                <v-col cols="7">
                                     <v-row class="ml-1">
                                         <v-col cols="6" class="pl-0">
                                             <v-select v-model="floor" item-text="name" item-value="id" :items="floors"
@@ -48,7 +41,7 @@
                                         <v-col cols="4" class="pl-0">
                                             <v-select v-model="size" :items="sizes" item-text="name" item-value="id"
                                                 label="Size" :error-messages="sizeErrors" @blur="$v.size.$touch()"
-                                                small-chips :menu-props="{ bottom: true, offsetY: true }" dense>
+                                                small-chips :menu-props="{ auto: true, bottom: true, offsetY: true }" dense>
                                                 <template #selection="{ item }">
                                                     <v-chip color="teal" text-color="white" x-small>
                                                         {{ item.name }}
@@ -61,20 +54,30 @@
                                             <v-text-field v-model="price" prefix="$" :error-messages="priceErrors"
                                                 @blur="$v.price.$touch()" label="Price" type="number" dense></v-text-field>
                                         </v-col>
-                                        <v-col cols="6" class="pl-0">
+                                        <v-col cols="12" class="pl-0 pt-0">
                                             <v-select v-model="service" item-text="name" item-value="id" :items="services"
                                                 :error-messages="serviceErrors" @blur="$v.service.$touch()"
-                                                :menu-props="{ bottom: true, offsetY: true }" label="Services" multiple
-                                                dense hide-details>
-                                                <template #selection="{ item }">
-                                                    <v-chip color="teal" text-color="white" x-small>
+                                                :menu-props="{ auto: true, bottom: true, offsetY: true }" label="Services"
+                                                multiple dense>
+                                                <template #selection="{ item, index, attrs }">
+                                                    <v-chip v-if="index < 3" color="teal" text-color="white" x-small>
                                                         {{ item.name }}
                                                         <v-icon x-small>{{ item.icon }}</v-icon>
                                                     </v-chip>
+                                                    <span v-if="index >= 3" class="grey--text text-caption">
+                                                        +{{ service.length - 3 }} others
+                                                    </span>
                                                 </template>
                                             </v-select>
                                         </v-col>
                                     </v-row>
+                                </v-col>
+                                <v-col cols="5">
+                                    <vue-custom-scrollbar class="scroll-area" :settings="settings">
+                                        <file-pond name="images" :files="files" @init="onFileInit" @addfile="onAddFile"
+                                            ref="pond" class-name="my-pond" label-idle="Upload Image" allow-multiple
+                                            accepted-file-types="image/jpeg, image/png" credits="" :server="server" />
+                                    </vue-custom-scrollbar>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -176,13 +179,10 @@ export default {
             server: {
                 url: "http://127.0.0.1:8000/api",
                 timeout: 7000,
-                process: {
-                    url: '/upload-image',
-                    method: 'POST',
-                    withCredentials: false,
-                    onload: self.onFileLoad,
-                },
-                load: '/storage/app/images'
+                process: null,
+                load: '/storage/app/images',
+                revert: null,
+                remove: null,
             }
         }
     },
@@ -256,9 +256,9 @@ export default {
 
         width() {
             switch (this.$vuetify.breakpoint.name) {
-                case 'md': return "60%";
-                case 'lg': return "50%";
-                case 'xl': return "40%";
+                case 'md': return "70%";
+                case 'lg': return "60%";
+                case 'xl': return "50%";
                 default: return "100%";
             }
         }
@@ -280,7 +280,7 @@ export default {
 
         setField() {
             this.room = Object.assign(this.roomSelected);
-            this.type = this.room.email;
+            this.type = this.room.type_id;
             this.floor = this.room.floor_id;
             this.size = this.room.size_id;
             this.number = this.room.number;
@@ -353,9 +353,9 @@ export default {
             } else this.files = [];
         },
 
-        onFileLoad(response) {
-            this.images = response;
-        },
+        onAddFile(error, file) {
+            this.files.push(file.file);
+        }
     },
 
     created() {
