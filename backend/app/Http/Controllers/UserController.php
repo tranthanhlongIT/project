@@ -116,7 +116,7 @@ class UserController extends Controller
         }
     }
 
-    public function uploadUserImage(Request $request)
+    public function uploadImage(Request $request)
     {
         if ($request->hasfile('image')) {
             $file = request()->file('image');

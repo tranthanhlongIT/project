@@ -2,7 +2,7 @@
   <v-app-bar app color="white" style="box-shadow: 0 0 2rem 0 rgba(33, 37, 41, 0.1)">
     <v-row no-gutters>
       <v-col>
-        <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.prevent="toggleDrawer"></v-app-bar-nav-icon>
       </v-col>
       <v-col cols="2" class="d-flex justify-end">
         <v-menu offset-y rounded="lg" dense>
@@ -27,7 +27,7 @@
             </v-list-item>
             <v-divider class="m-0 p0"></v-divider>
             <v-list-item link>
-              <v-list-item-title @click="">Logout</v-list-item-title>
+              <v-list-item-title @click.prevent="">Logout</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>

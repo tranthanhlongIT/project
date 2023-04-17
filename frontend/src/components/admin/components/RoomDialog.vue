@@ -6,7 +6,7 @@
                     <v-card-title class="m-0 p-0">
                         <slot name="header" class="text-subtitle-1">Default header</slot>
                         <v-spacer></v-spacer>
-                        <v-btn icon @click="closeDialog" :ripple="false" plain>
+                        <v-btn icon @click.prevent="closeDialog" :ripple="false" plain>
                             <v-icon>mdi-close</v-icon>
                         </v-btn>
                     </v-card-title>
@@ -87,7 +87,8 @@
                             @click.prevent="onHandle">
                             Save
                         </v-btn>
-                        <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click="closeDialog">
+                        <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning"
+                            @click.prevent="closeDialog">
                             Back
                         </v-btn>
                     </v-card-actions>
@@ -101,10 +102,8 @@
 import vueFilePond from "vue-filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
-import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
 
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import "vue-custom-scrollbar/dist/vueScrollbar.css"
@@ -112,7 +111,6 @@ import "vue-custom-scrollbar/dist/vueScrollbar.css"
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
     FilePondPluginImagePreview,
-    FilePondPluginFilePoster
 );
 
 import { validationMixin } from "vuelidate";

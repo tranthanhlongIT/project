@@ -24,7 +24,6 @@ Route::get('/storage/app/images/{filename}', [ImageController::class, 'index']);
 Route::post('/upload-image', [ImageController::class, 'upload']);
 
 Route::patch('/users/disable/{user}', [UserController::class, 'disable']);
-
 Route::get('/users/prepare-data', [UserController::class, 'prepareData']);
 Route::get('/rooms/prepare-data', [RoomController::class, 'prepareData']);
 Route::apiResource('/users', UserController::class);

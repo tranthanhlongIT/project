@@ -19,10 +19,10 @@
           <v-divider class="m-0 p-0"></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" class="my-2 mr-1" elevation="2" small v-blur color="error" @click="onHandle">
+            <v-btn type="submit" class="my-2 mr-1" elevation="2" small color="error" @click.prevent="onHandle">
               Confirm
             </v-btn>
-            <v-btn type="button" class="my-2 mr-2" elevation="2" small v-blur color="warning" @click="closeConfirmation">
+            <v-btn type="button" class="my-2 mr-2" elevation="2" small color="warning" @click.prevent="closeConfirmation">
               Back
             </v-btn>
           </v-card-actions>

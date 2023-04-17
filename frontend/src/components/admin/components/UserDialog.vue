@@ -6,7 +6,7 @@
           <v-card-title class="m-0 p-0">
             <slot name="header" class="text-subtitle-1">Default header</slot>
             <v-spacer></v-spacer>
-            <v-btn icon @click="closeDialog" :ripple="false" plain>
+            <v-btn icon @click.prevent="closeDialog" :ripple="false" plain>
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
@@ -20,11 +20,10 @@
               <v-row no-gutters>
                 <v-col cols="12" md="4" xxl="3">
                   <v-col cols="12" class="py-0">
-                    <v-img v-if="file != null" lazy-src="/admin/img/user-default.jpg" :src="fileURL"
-                      class="d-flex d-justify-content-center" height="140"></v-img>
-                    <v-img v-else lazy-src="/admin/img/user-default.jpg"
-                      :src="image != null ? (env.imageURL + user.image) : '/admin/img/user-default.jpg'"
-                      class="d-flex d-justify-content-center" height="140"></v-img>
+                    <v-img v-if="file != null" :src="fileURL" class="d-flex d-justify-content-center" height="145"
+                      contain></v-img>
+                    <v-img v-else :src="image != null ? (env.imageURL + user.image) : '/admin/img/user-default.jpg'"
+                      class="d-flex d-justify-content-center" height="145" contain></v-img>
                   </v-col>
                   <v-col cols="12" class="d-flex justify-content-center">
                     <upload-button :disabled="action == 'det' ? true : false" />
@@ -102,7 +101,7 @@
               @click.prevent="onHandle">
               Save
             </v-btn>
-            <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click="closeDialog">
+            <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click.prevent="closeDialog">
               Back
             </v-btn>
           </v-card-actions>
@@ -299,7 +298,7 @@ export default {
     ]),
 
     async prepareData() {
-      let url = this.env.apiURL + "users/preparedata";
+      let url = this.env.apiURL + "users/prepare-data";
       await axios.get(url).then((response) => {
         this.roles = response.data.roles;
       });

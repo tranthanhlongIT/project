@@ -3,7 +3,7 @@
     <h5 class="indigo--text">User List</h5>
     <v-card>
       <v-card-title>
-        <v-btn color="success" small class="my-0" @click="openDialog('add', {})">
+        <v-btn color="success" small class="my-0" @click.prevent="openDialog('add', {})">
           <v-icon left> mdi-plus </v-icon>
           Add
         </v-btn>
@@ -19,10 +19,10 @@
       <v-data-table :headers="headers" :items="users" :search="search">
         <template v-slot:[`item.image`]="{ item }">
           <v-avatar class="my-2" v-if="item.image">
-            <v-img lazy-src="/admin/img/user-default.jpg" :src="env.imageURL + item.image"></v-img>
+            <v-img :src="env.imageURL + item.image"></v-img>
           </v-avatar>
           <v-avatar class="my-2" v-else>
-            <v-img lazy-src="/admin/img/user-default.jpg" src="/admin/img/user-default.jpg"></v-img>
+            <v-img src="/admin/img/user-default.jpg"></v-img>
           </v-avatar>
         </template>
 
@@ -40,13 +40,13 @@
         </template>
 
         <template v-slot:[`item.operations`]="{ item }">
-          <v-icon small class="mr-2" @click="openDialog('det', item)">
+          <v-icon small class="mr-2" @click.prevent="openDialog('det', item)">
             mdi-eye
           </v-icon>
-          <v-icon small class="mr-2" @click="openDialog('upd', item)">
+          <v-icon small class="mr-2" @click.prevent="openDialog('upd', item)">
             mdi-pencil
           </v-icon>
-          <v-icon small @click="openConfirmation(item)">
+          <v-icon small @click.prevent="openConfirmation(item)">
             mdi-block-helper
           </v-icon>
         </template>

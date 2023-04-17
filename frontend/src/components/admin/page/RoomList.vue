@@ -5,15 +5,15 @@
             <v-sheet class="pa-4" style="border-bottom: 1px solid #E0E0E0;">
                 <v-row no-gutters>
                     <v-col cols="6">
-                        <v-btn color="success" small class="mr-1 my-0" @click="openDialog('add', {})">
+                        <v-btn color="success" small class="mr-1 my-0" @click.prevent="openDialog('add', {})">
                             <v-icon left> mdi-plus </v-icon>
                             Add
                         </v-btn>
-                        <v-btn color="warning" small class="mr-1 my-0" @click="openDialog('upd', room)">
+                        <v-btn color="warning" small class="mr-1 my-0" @click.prevent="openDialog('upd', room)">
                             <v-icon left> mdi-pencil-box </v-icon>
                             Edit
                         </v-btn>
-                        <v-btn color="error" small class="mr-1 my-0" @click="openDialog('del', {})">
+                        <v-btn color="error" small class="mr-1 my-0" @click.prevent="openDialog('del', {})">
                             <v-icon left> mdi-delete </v-icon>
                             Delete
                         </v-btn>
