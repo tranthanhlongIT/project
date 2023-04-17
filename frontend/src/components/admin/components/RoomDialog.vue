@@ -14,34 +14,37 @@
                     <v-card-text class="m-0 p-0">
                         <v-container>
                             <v-row>
-                                <v-col cols="7">
+                                <v-col cols="7" style="border-right: 1px solid #E0E0E0;">
                                     <v-row class="ml-1">
-                                        <v-col cols="6" class="pl-0">
+                                        <v-col cols="6" class="pl-0 pt-0">
                                             <v-select v-model="floor" item-text="name" item-value="id" :items="floors"
                                                 label="Floor" :error-messages="floorErrors" @blur="$v.floor.$touch()"
-                                                :menu-props="{ bottom: true, offsetY: true }" dense></v-select>
+                                                :menu-props="{ bottom: true, offsetY: true }" return-object
+                                                dense></v-select>
                                         </v-col>
-                                        <v-col cols="6" class="pl-0">
+                                        <v-col cols="6" class="pl-0 pt-0">
                                             <v-text-field v-model="number" :error-messages="numberErrors"
                                                 @blur="$v.number.$touch()" label="Room number" dense></v-text-field>
                                         </v-col>
-                                        <v-col cols="12" class="pl-0">
+                                        <v-col cols="12" class="pl-0 pt-0">
                                             <v-text-field v-model="name" :error-messages="nameErrors"
                                                 @blur="$v.name.$touch()" label="Room name" dense></v-text-field>
                                         </v-col>
                                         <v-col cols="12" class="pl-0 mt-0 pt-0">
-                                            <v-textarea v-model="description" filled label="Description (optional)"
+                                            <v-textarea v-model="description" label="Description (optional)"
                                                 hide-details></v-textarea>
                                         </v-col>
                                         <v-col cols="4" class="pl-0">
                                             <v-select v-model="type" item-text="name" item-value="id" :items="types"
                                                 label="Type" :error-messages="typeErrors" @blur="$v.type.$touch()"
-                                                :menu-props="{ bottom: true, offsetY: true }" dense></v-select>
+                                                :menu-props="{ bottom: true, offsetY: true }" return-object
+                                                dense></v-select>
                                         </v-col>
                                         <v-col cols="4" class="pl-0">
                                             <v-select v-model="size" :items="sizes" item-text="name" item-value="id"
                                                 label="Size" :error-messages="sizeErrors" @blur="$v.size.$touch()"
-                                                small-chips :menu-props="{ auto: true, bottom: true, offsetY: true }" dense>
+                                                small-chips :menu-props="{ auto: true, bottom: true, offsetY: true }"
+                                                return-object dense>
                                                 <template #selection="{ item }">
                                                     <v-chip color="teal" text-color="white" x-small>
                                                         {{ item.name }}
@@ -58,14 +61,14 @@
                                             <v-select v-model="service" item-text="name" item-value="id" :items="services"
                                                 :error-messages="serviceErrors" @blur="$v.service.$touch()"
                                                 :menu-props="{ auto: true, bottom: true, offsetY: true }" label="Services"
-                                                multiple dense>
+                                                multiple return-object dense>
                                                 <template #selection="{ item, index, attrs }">
-                                                    <v-chip v-if="index < 3" color="teal" text-color="white" x-small>
+                                                    <v-chip v-if="index < 5" color="teal" text-color="white" x-small>
                                                         {{ item.name }}
                                                         <v-icon x-small>{{ item.icon }}</v-icon>
                                                     </v-chip>
-                                                    <span v-if="index >= 3" class="grey--text text-caption">
-                                                        +{{ service.length - 3 }} others
+                                                    <span v-if="index >= 5" class="grey--text text-caption">
+                                                        +{{ service.length - 5 }} others
                                                     </span>
                                                 </template>
                                             </v-select>
@@ -73,11 +76,21 @@
                                     </v-row>
                                 </v-col>
                                 <v-col cols="5">
-                                    <vue-custom-scrollbar class="scroll-area" :settings="settings">
-                                        <file-pond name="images" :files="files" @init="onFileInit" @addfile="onAddFile"
-                                            ref="pond" class-name="my-pond" label-idle="Upload Image" allow-multiple
-                                            accepted-file-types="image/jpeg, image/png" credits="" :server="server" />
-                                    </vue-custom-scrollbar>
+                                    <v-row no-gutters>
+                                        <div class="text-subtitle-2 pl-0">Upload Image</div>
+                                        <v-divider color="blue"></v-divider>
+                                    </v-row>
+                                    <v-row no-gutters>
+                                        <v-col cols="12">
+                                            <vue-custom-scrollbar class="scroll-area" :settings="settings">
+                                                <file-pond name="images" :files="files" @init="onFileInit"
+                                                    @addfile="onAddFile" v-bind:required="true" ref="pond"
+                                                    class-name="my-pond" allow-multiple
+                                                    accepted-file-types="image/jpeg, image/png" credits=""
+                                                    :server="server" />
+                                            </vue-custom-scrollbar>
+                                        </v-col>
+                                    </v-row>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -160,17 +173,17 @@ export default {
             services: [],
             images: [],
 
-            floor: 1,
-            type: 1,
-            number: "101",
-            name: "test",
-            description: "test",
-            size: 1,
-            price: "20000",
-            service: null,
+            floor: {},
+            type: {},
+            number: null,
+            name: null,
+            description: null,
+            size: {},
+            price: null,
+            service: [],
+            files: [],
 
             show: false,
-            files: [],
             settings: {
                 suppressScrollY: false,
                 suppressScrollX: true,
@@ -256,8 +269,7 @@ export default {
 
         width() {
             switch (this.$vuetify.breakpoint.name) {
-                case 'md': return "70%";
-                case 'lg': return "60%";
+                case 'lg': return "70%";
                 case 'xl': return "50%";
                 default: return "100%";
             }
@@ -268,9 +280,12 @@ export default {
         ...mapActions(["addRoom"]),
 
         setRoom() {
-            this.room.type_id = this.type;
-            this.room.floor_id = this.floor;
-            this.room.size_id = this.size;
+            this.room.type_id = this.type.id;
+            this.room.type = this.type.name;
+            this.room.floor_id = this.floor.id;
+            this.room.floor = this.floor.name;
+            this.room.size_id = this.size.id;
+            this.room.size = this.size.name;
             this.room.number = this.number;
             this.room.name = this.name;
             this.room.description = this.description;
@@ -280,28 +295,31 @@ export default {
 
         setField() {
             this.room = Object.assign(this.roomSelected);
-            this.type = this.room.type_id;
-            this.floor = this.room.floor_id;
-            this.size = this.room.size_id;
+            this.type.id = this.room.type_id;
+            this.type.name = this.room.type;
+            this.floor.id = this.room.floor_id;
+            this.floor.name = this.room.floor;
+            this.size.id = this.room.size_id;
+            this.size.name = this.room.size;
             this.number = this.room.number;
             this.name = this.room.name;
             this.description = this.room.description;
             this.price = this.room.price;
-            this.service = this.room.service;
+            this.service = this.room.services;
             this.images = this.room.images;
         },
 
         resetField() {
             this.room = {};
-            this.type = null;
-            this.floor = null;
-            this.size = null;
+            this.type = {};
+            this.floor = {};
+            this.size = {};
             this.number = null;
             this.name = null;
             this.description = null;
             this.price = null;
-            this.service = null;
-            this.images = null;
+            this.service = [];
+            this.images = [];
             this.files = [];
             this.$v.$reset();
         },
@@ -323,6 +341,11 @@ export default {
                 this.setRoom();
                 this.addRoom({ room: this.room, files: this.files });
             }
+
+            if (this.action == "upd") {
+                this.setRoom();
+                this.updateRoom({ room: this.room, files: this.files });
+            }
         },
 
         closeDialog() {
@@ -334,7 +357,6 @@ export default {
                 this.$v.$touch();
                 if (this.$v.$invalid) return false;
             }
-
             return true;
         },
 
@@ -361,6 +383,8 @@ export default {
     created() {
         this.show = this.dialog;
         this.prepareData();
+
+        if (this.action != "add") this.setField();
     },
 }
 </script>
@@ -368,6 +392,6 @@ export default {
 <style>
 .scroll-area {
     width: inherit;
-    max-height: 430px;
+    max-height: 400px;
 }
 </style>

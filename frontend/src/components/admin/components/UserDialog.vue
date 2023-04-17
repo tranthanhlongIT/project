@@ -31,23 +31,23 @@
                 </v-col>
                 <v-col cols="12" md="8" xxl="9">
                   <v-row class="ml-1">
-                    <v-col cols="12" md="6" class="pl-0">
+                    <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-select v-model="role" item-text="name" item-value="id" :items="roles" return-object
                         :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         :error-messages="roleErrors" @blur="$v.role.$touch()" @input="$v.role.$touch()" label="Role"
                         dense></v-select>
                     </v-col>
-                    <v-col cols="12" md="6" class="pl-0">
+                    <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-select v-model="active" item-text="name" item-value="value" :items="actives"
                         :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         label="Active" dense></v-select>
                     </v-col>
-                    <v-col cols="12" class="py-0 pl-0">
+                    <v-col cols="12" class="pl-0 pt-0">
                       <v-text-field v-model="email" :error-messages="emailErrors"
                         :disabled="(action == 'upd' || action == 'det') ? true : false" @blur="$v.email.$touch()"
                         label="Email" dense></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pl-0">
+                    <v-col cols="12" class="pl-0 pt-0">
                       <v-text-field v-model="password" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         hint="At least 8 characters, contains 1 numeric, 1 uppercase, 1 lowercase, 1 special character"
@@ -74,17 +74,17 @@
                         :disabled="action == 'det' ? true : false" @blur="$v.lname.$touch()" label="Last name"
                         dense></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="py-0 pl-0">
+                    <v-col cols="12" class="pl-0 pt-0">
                       <v-text-field v-model="address" :disabled="action == 'det' ? true : false" label="Address"
                         dense></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="6" class="pl-0">
+                    <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-select v-model="gender" item-text="name" item-value="value" :items="genders"
                         :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
                         :error-messages="genderErrors" @blur="$v.gender.$touch()" @input="$v.gender.$touch()"
                         label="Gender" dense></v-select>
                     </v-col>
-                    <v-col cols="12" md="6" class="pl-0">
+                    <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-text-field v-model="phone" :disabled="action == 'det' ? true : false"
                         :error-messages="phoneErrors" @blur="$v.phone.$touch()" label="Phone" dense></v-text-field>
                     </v-col>
@@ -395,7 +395,8 @@ export default {
   created() {
     this.show = this.dialog;
     this.prepareData();
-    this.setField();
+
+    if (this.action != "add") this.setField();
 
     EventBus.$on("file", (file) => {
       this.file = file;

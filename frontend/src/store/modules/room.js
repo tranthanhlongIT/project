@@ -15,6 +15,10 @@ export const roomStore = {
   mutations: {
     setRooms: (state, rooms) => (state.rooms = rooms),
     setRoom: (state, room) => (state.room = room),
+    updateRoom: (state, room) => {
+      const index = state.rooms.findIndex((r) => r.id === room.id);
+      state.rooms.splice(index, 1, room);
+    },
   },
 
   actions: {
@@ -57,6 +61,38 @@ export const roomStore = {
         .then(() => {
           EventBus.$emit("reset");
           EventBus.$emit("addChild", payload.room);
+          this._vm.$toast.success("Add successful");
+        })
+        .catch((error) => {
+          this._vm.$toast.error(error.response.data.message);
+        });
+    },
+
+    async updateRoom({ commit }, payload) {
+      let config = {
+        header: "content-type: form-data/multipart",
+      };
+
+      let formData = new FormData();
+      formData.append("type_id", payload.room.type_id);
+      formData.append("floor_id", payload.room.floor_id);
+      formData.append("size_id", payload.room.size_id);
+      formData.append("number", payload.room.number);
+      formData.append("name", payload.room.name);
+      formData.append("description", payload.room.description ?? "");
+      formData.append("price", payload.room.price);
+      formData.append("services", JSON.stringify(payload.room.service));
+      payload.files.forEach((file) => {
+        formData.append("images[]", file);
+      });
+      formData.append("_method", "PATCH");
+
+      let url = this._vm.env.apiURL + "rooms";
+
+      await axios
+        .post(url, formData, config)
+        .then(() => {
+          commit("updateRoom", payload.room);
           this._vm.$toast.success("Add successful");
         })
         .catch((error) => {
