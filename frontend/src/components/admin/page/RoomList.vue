@@ -51,63 +51,77 @@
                             class="w-100 h-100 d-flex justify-content-center align-items-center text-h6 grey--text text--lighten-1 font-weight-light">
                             Select a Room
                         </div>
-                        <v-card v-else :key="selected.id" class="pt-6" flat>
-                            <v-row no-gutters class="pl-3 pb-3">
-                                <v-col md="6">
-                                    <v-carousel height="200" hide-delimiters>
-                                        <v-carousel-item contain v-for=" (image, i) in selected.images" :key="i"
-                                            :src="env.imageURL + image.name"
-                                            reverse-transition="fade-transition"></v-carousel-item>
-                                    </v-carousel>
+                        <v-card class="w-100 h-100 pt-5 pb-5" v-else :key="selected.id" flat>
+                            <v-row class="pl-3 pb-3">
+                                <v-col cols="12" lg="6">
+                                    <v-img height="300" v-for="image in selected.images" :key="image.id"
+                                        :src="env.imageURL + image.name" />
                                 </v-col>
-                                <v-col md="6">
+                                <v-col cols="12" lg="6">
                                     <v-row>
-                                        <v-col class="text-right" tag="strong" cols="4">
-                                            Number:
-                                        </v-col>
-                                        <v-col cols="8">{{ selected.number }}</v-col>
+                                        <div class="text-h4 text--secondary">{{ selected.name }}</div>
                                     </v-row>
-                                    <v-row>
-                                        <v-col class="text-right" tag="strong" cols="4">
-                                            Name:
-                                        </v-col>
-                                        <v-col cols="8" lg="7" xl="6">{{ selected.name }}</v-col>
+                                    <v-row class="mt-5">
+                                        <div class="text--secondary font-weight-light">Number {{ selected.number }}</div>
                                     </v-row>
-                                    <v-row>
-                                        <v-col class="text-right" tag="strong" cols="4">
-                                            Type:
-                                        </v-col>
-                                        <v-col cols="8" lg="7" xl="6">{{ selected.type.name }}</v-col>
+                                    <v-row class="mt-5" no-gutters>
+                                        <v-divider color="silver"></v-divider>
                                     </v-row>
-                                    <v-row>
-                                        <v-col class="text-right" tag="strong" cols="4">
-                                            Size:
+                                    <v-row class="mt-0 pt-0">
+                                        <v-col cols="12 pt-0">
+                                            <div class="text-secondary">SERVICES</div>
                                         </v-col>
-                                        <v-col cols="8" lg="7" xl="6">{{ selected.size.name }}</v-col>
+                                        <v-col cols="12" class="my-0 py-0">
+                                            <v-chip v-for="service in selected.services" :key="service.id" class="mr-1 mb-1"
+                                                color="primary" outlined small>
+                                                {{ service.name }}
+                                                <v-icon right small>
+                                                    {{ service.icon }}
+                                                </v-icon>
+                                            </v-chip>
+                                        </v-col>
                                     </v-row>
-                                    <v-row>
-                                        <v-col class="text-right" tag="strong" cols="4">
-                                            Price:
-                                        </v-col>
-                                        <v-col cols="8" lg="7" xl="6">{{ selected.price | toCurrency }}</v-col>
+                                    <v-row class="mt-5" no-gutters>
+                                        <v-divider color="silver"></v-divider>
+                                    </v-row>
+                                    <v-row class="mt-0 pt-0">
+                                        <div>
+                                            <div class="text-secondary d-inline">Type: </div>
+                                            <div class="text-secondary font-weight-light d-inline">
+                                                {{ selected.type.name }}
+                                            </div>
+                                        </div>
+                                    </v-row>
+                                    <v-row class="mt-3 pt-3">
+                                        <div>
+                                            <div class="text-secondary d-inline">Price: </div>
+                                            <div class="text-secondary font-weight-light d-inline">
+                                                {{ selected.price | toCurrency }}
+                                            </div>
+                                        </div>
+                                    </v-row>
+                                    <v-row class="mt-3 pt-3">
+                                        <div>
+                                            <div class="text-secondary d-inline">Size: </div>
+                                            <div class=" d-inline">
+                                                <v-chip class="mr-1 mb-1" color="primary" outlined small>
+                                                    {{ selected.size.name }}
+                                                    <v-icon right small>
+                                                        {{ selected.size.icon }}
+                                                    </v-icon>
+                                                </v-chip>
+                                            </div>
+                                        </div>
+                                    </v-row>
+                                    <v-row class="mt-5" no-gutters>
+                                        <v-divider color="silver"></v-divider>
+                                    </v-row>
+                                    <v-row class="mt-0 pt-0 pr-3">
+                                        <div class="text-justify text-secondary">
+                                            {{ selected.description }}
+                                        </div>
                                     </v-row>
                                 </v-col>
-                                <v-row class="mt-2">
-                                    <v-col class="pl-1" tag="strong" md="3" lg="3" xl="2">
-                                        Description:
-                                    </v-col>
-                                    <v-col cols="8" lg="9" xl="10" style="text-align: justify;">
-                                        {{ selected.description }}
-                                    </v-col>
-                                </v-row>
-                                <v-row class="mt-2">
-                                    <v-col class="pl-1" tag="strong" md="3" lg="3" xl="2">
-                                        Services:
-                                    </v-col>
-                                    <v-col cols="8" lg="9" xl="10" style="text-align: justify;">
-                                        {{ selected.price }}
-                                    </v-col>
-                                </v-row>
                             </v-row>
                         </v-card>
                     </v-fade-transition>

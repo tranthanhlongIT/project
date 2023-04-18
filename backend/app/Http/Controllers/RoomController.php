@@ -44,7 +44,7 @@ class RoomController extends Controller
     public function show($number)
     {
         $room = Room::with(['type:id,name', 'images:id,name,room_id', 'size:id,name',
-            'floor:id,name', 'services:id,name'])
+            'floor:id,name', 'services:id,name,icon'])
             ->where('number', '=', $number)
             ->first();
 

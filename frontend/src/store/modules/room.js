@@ -23,25 +23,25 @@ export const roomStore = {
 
   actions: {
     async getRooms({ commit }) {
-      let url = this._vm.env.apiURL + "rooms";
+      const url = this._vm.env.apiURL + "rooms";
       await axios.get(url).then((response) => {
         commit("setRooms", response.data);
       });
     },
 
     async getRoom({ commit }, payload) {
-      let url = this._vm.env.apiURL + "rooms/" + payload.number;
-      axios.get(url).then((response) => {
+      const url = this._vm.env.apiURL + "rooms/" + payload.number;
+      await axios.get(url).then((response) => {
         commit("setRoom", response.data);
       });
     },
 
     async addRoom({ commit }, payload) {
-      let config = {
+      const config = {
         header: "content-type: form-data/multipart",
       };
 
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("type_id", payload.room.type_id);
       formData.append("floor_id", payload.room.floor_id);
       formData.append("size_id", payload.room.size_id);
@@ -50,30 +50,26 @@ export const roomStore = {
       formData.append("description", payload.room.description ?? "");
       formData.append("price", payload.room.price);
       formData.append("services", JSON.stringify(payload.room.service));
-      payload.files.forEach((file) => {
-        formData.append("images[]", file);
-      });
+      files.forEach((file) => formData.append("images[]", file));
 
-      let url = this._vm.env.apiURL + "rooms";
+      const url = this._vm.env.apiURL + "rooms";
 
-      await axios
-        .post(url, formData, config)
-        .then(() => {
-          EventBus.$emit("reset");
-          EventBus.$emit("addChild", payload.room);
-          this._vm.$toast.success("Add successful");
-        })
-        .catch((error) => {
-          this._vm.$toast.error(error.response.data.message);
-        });
+      try {
+        await axios.post(url, formData, config);
+        EventBus.$emit("reset");
+        EventBus.$emit("addChild", payload.room);
+        this._vm.$toast.success("Add successful");
+      } catch (e) {
+        this._vm.$toast.error(error.response.data.message);
+      }
     },
 
     async updateRoom({ commit }, payload) {
-      let config = {
+      const config = {
         header: "content-type: form-data/multipart",
       };
 
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("type_id", payload.room.type_id);
       formData.append("floor_id", payload.room.floor_id);
       formData.append("size_id", payload.room.size_id);
@@ -82,22 +78,18 @@ export const roomStore = {
       formData.append("description", payload.room.description ?? "");
       formData.append("price", payload.room.price);
       formData.append("services", JSON.stringify(payload.room.service));
-      payload.files.forEach((file) => {
-        formData.append("images[]", file);
-      });
+      files.forEach((file) => formData.append("images[]", file));
       formData.append("_method", "PATCH");
 
-      let url = this._vm.env.apiURL + "rooms";
+      const url = this._vm.env.apiURL + "rooms";
 
-      await axios
-        .post(url, formData, config)
-        .then(() => {
-          commit("updateRoom", payload.room);
-          this._vm.$toast.success("Add successful");
-        })
-        .catch((error) => {
-          this._vm.$toast.error(error.response.data.message);
-        });
+      try {
+        await axios.post(url, formData, config)
+        commit("updateRoom", payload.room);
+        this._vm.$toast.success("Add successful");
+      } catch (e) {
+        this._vm.$toast.error(error.response.data.message);
+      }
     },
   },
 };
