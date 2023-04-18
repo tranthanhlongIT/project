@@ -1,9 +1,9 @@
 <template>
     <v-row justify="center" class="m-0 p-0">
         <v-dialog v-model="show" persistent :width="width">
-            <v-card width="100vw">
+            <v-card width="100vw" height="100%">
                 <form>
-                    <v-card-title class="m-0 p-0">
+                    <v-card-title class=" m-0 p-0">
                         <slot name="header" class="text-subtitle-1">Default header</slot>
                         <v-spacer></v-spacer>
                         <v-btn icon @click.prevent="closeDialog" :ripple="false" plain>
@@ -48,7 +48,7 @@
                                                 <template #selection="{ item }">
                                                     <v-chip color="teal" text-color="white" x-small>
                                                         {{ item.name }}
-                                                        <v-icon x-small>{{ item.icon }}</v-icon>
+                                                        <v-icon x-small class="ml-1">{{ item.icon }}</v-icon>
                                                     </v-chip>
                                                 </template>
                                             </v-select>
@@ -65,7 +65,7 @@
                                                 <template #selection="{ item, index, attrs }">
                                                     <v-chip v-if="index < 5" color="teal" text-color="white" x-small>
                                                         {{ item.name }}
-                                                        <v-icon x-small>{{ item.icon }}</v-icon>
+                                                        <v-icon x-small class="ml-1">{{ item.icon }}</v-icon>
                                                     </v-chip>
                                                     <span v-if="index >= 5" class="grey--text text-caption">
                                                         +{{ service.length - 5 }} others
@@ -84,7 +84,7 @@
                                         <v-col cols="12">
                                             <vue-custom-scrollbar class="scroll-area" :settings="settings">
                                                 <file-pond name="images" :files="files" @init="onFileInit"
-                                                    @addfile="onAddFile" v-bind:required="true" ref="pond"
+                                                    @updatefiles="onFileChange" v-bind:required="true" ref="pond"
                                                     class-name="my-pond" allow-multiple
                                                     accepted-file-types="image/jpeg, image/png" credits=""
                                                     :server="server" />
@@ -187,7 +187,8 @@ export default {
             settings: {
                 suppressScrollY: false,
                 suppressScrollX: true,
-                wheelPropagation: false
+                wheelPropagation: false,
+                wheelSpeed: 0.2
             },
             server: {
                 url: "http://127.0.0.1:8000/api",
@@ -270,14 +271,14 @@ export default {
         width() {
             switch (this.$vuetify.breakpoint.name) {
                 case 'lg': return "70%";
-                case 'xl': return "50%";
+                case 'xl': return "60%";
                 default: return "100%";
             }
         }
     },
 
     methods: {
-        ...mapActions(["addRoom"]),
+        ...mapActions(["addRoom", "updateRoom"]),
 
         setRoom() {
             this.room.type_id = this.type.id;
@@ -290,7 +291,8 @@ export default {
             this.room.name = this.name;
             this.room.description = this.description;
             this.room.price = this.price;
-            this.room.service = this.service;
+            this.room.services = this.service;
+            this.room.images = this.files.filter(file => file.name);
         },
 
         setField() {
@@ -367,8 +369,10 @@ export default {
             } else this.files = [];
         },
 
-        onAddFile(error, file) {
-            this.files.push(file.file);
+        onFileChange(files) {
+            var temp_files = [];
+            files.forEach((file) => temp_files.push(file.file))
+            this.files = temp_files;
         }
     },
 
@@ -383,6 +387,6 @@ export default {
 <style>
 .scroll-area {
     width: inherit;
-    max-height: 400px;
+    max-height: 380px;
 }
 </style>

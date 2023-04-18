@@ -31,28 +31,14 @@ export const userStore = {
       });
     },
 
-    async addUser({ commit }, payload) {
-      const config = {
-        header: "content-type: form-data/multipart",
-      };
-
-      const formData = new FormData();
-      formData.append("email", payload.user.email);
-      formData.append("password", payload.user.password);
-      formData.append("role_id", payload.user.role_id);
-      formData.append("active", payload.user.active);
-      formData.append("fname", payload.user.fname);
-      formData.append("lname", payload.user.lname);
-      formData.append("address", payload.user.address ?? "");
-      formData.append("gender", payload.user.gender);
-      formData.append("phone", payload.user.phone);
-      formData.append("image", payload.file ?? "");
-
+    async addUser({ commit }, { user, file }) {
+      const config = { header: "content-type: form-data/multipart", };
+      const formData = addFormData(user, file);
       const url = this._vm.env.apiURL + "users";
 
       try {
         await axios.post(url, formData, config);
-        commit("addUser", payload.user);
+        commit("addUser", user);
         EventBus.$emit("reset");
         this._vm.$toast.success("Add successful");
       } catch (error) {
@@ -60,38 +46,25 @@ export const userStore = {
       }
     },
 
-    async updateUser({ commit }, payload) {
-      const config = {
-        header: "content-type: form-data/multipart",
-      };
-
-      const formData = new FormData();
-      formData.append("role_id", payload.user.role_id);
-      formData.append("active", payload.user.active);
-      formData.append("fname", payload.user.fname);
-      formData.append("lname", payload.user.lname);
-      formData.append("address", payload.user.address ?? "");
-      formData.append("gender", payload.user.gender);
-      formData.append("phone", payload.user.phone);
-      formData.append("image", payload.file ?? "");
-      formData.append("_method", "PATCH");
-
-      const url = this._vm.env.apiURL + "users/" + payload.user.id;
+    async updateUser({ commit }, { user, file }) {
+      const config = { header: "content-type: form-data/multipart", };
+      const formData = updateFormData(user, file);
+      const url = this._vm.env.apiURL + "users/" + user.id;
 
       try {
         await axios.post(url, formData, config);
-        commit("updateUser", payload.user);
+        commit("updateUser", user);
         this._vm.$toast.success("Update successful");
       } catch (e) {
         this._vm.$toast.error(error.response.data.message);
       }
     },
 
-    async disableUser({ commit }, payload) {
-      const url = this._vm.env.apiURL + "users/disable/" + payload.user.id;
+    async disableUser({ commit }, { user }) {
+      const url = this._vm.env.apiURL + "users/disable/" + user.id;
       try {
         await axios.patch(url);
-        commit("updateUser", payload.user);
+        commit("updateUser", user);
         this._vm.$toast.success("Disable successful");
       } catch (e) {
         this._vm.$toast.error("Disable failed");
@@ -99,3 +72,32 @@ export const userStore = {
     },
   },
 };
+
+
+function addFormData(user, file) {
+  const formData = new FormData();
+  formData.append("email", user.email);
+  formData.append("password", user.password);
+  formData.append("role_id", user.role_id);
+  formData.append("active", user.active);
+  formData.append("fname", user.fname);
+  formData.append("lname", user.lname);
+  formData.append("address", user.address ?? "");
+  formData.append("gender", user.gender);
+  formData.append("phone", user.phone);
+  formData.append("image", file ?? "");
+  return formData;
+}
+
+function updateFormData(user, file) {
+  const formData = new FormData();
+  formData.append("role_id", user.role_id);
+  formData.append("active", user.active);
+  formData.append("fname", user.fname);
+  formData.append("lname", user.lname);
+  formData.append("address", user.address ?? "");
+  formData.append("gender", user.gender);
+  formData.append("phone", user.phone);
+  formData.append("image", file ?? "");
+  formData.append("_method", "PATCH");
+}

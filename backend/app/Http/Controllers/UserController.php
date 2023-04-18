@@ -16,23 +16,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $data = DB::table('users')
-            ->select(
-                'users.id',
-                'users.email',
-                'users.image',
-                'roles.name as role',
-                'users.active',
-                'users.role_id',
-                'users.gender',
-                'users.address',
-                'users.fname',
-                'users.lname',
-                'users.phone'
-            )
-            ->join('roles', 'roles.id', '=', 'users.role_id')
+        $data = User::with('role:id,name as role')
+            ->select('id', 'email', 'image', 'active', 'role_id', 'gender', 'address', 'fname', 'lname', 'phone')
             ->get();
-
         return response()->json($data);
     }
 
@@ -87,27 +73,20 @@ class UserController extends Controller
         ]);
     }
 
-    public function validation(?User $user = null)
+    public function validation(Request $request, User $user = null)
     {
-        $passwordValidation = Password::min(8)
-            ->letters()
-            ->mixedCase()
-            ->numbers()
-            ->symbols()
-            ->uncompromised();
+        $passwordValidation = Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised();
 
-        $rules = [
+        $validator = Validator::make($request->all(), [
             'fname' => ['bail', 'required', 'max:30'],
             'lname' => ['bail', 'required', 'max:30'],
-            'email' => ['bail', Rule::excludeIf(isset($user)), 'required', 'email', 'unique:users'],
-            'password' => ['bail', Rule::excludeIf(isset($user)), 'required', $passwordValidation],
+            'email' => ['bail', 'required', 'email', Rule::unique('users')->ignore($user)],
+            'password' => ['bail', 'required', $passwordValidation],
             'role_id' => ['bail', 'required'],
             'active' => ['bail', 'required'],
             'gender' => ['bail', 'required'],
-            'phone' => ['bail', 'required', 'min_digits:10', 'max_digits:10', 'numeric']
-        ];
-
-        $validator = Validator::make(request()->all(), $rules);
+            'phone' => ['bail', 'required', 'digits:10', 'numeric']
+        ]);
 
         if ($validator->fails()) {
             return response()->json([
@@ -119,9 +98,9 @@ class UserController extends Controller
     public function uploadImage(Request $request)
     {
         if ($request->hasfile('image')) {
-            $file = request()->file('image');
-            $fileName = $file->getClientOriginalName();
-            $file->storeAs('images', $fileName);
+            $image = request()->file('image');
+            $fileName = $image->getClientOriginalName();
+            $image->storeAs('images', $fileName);
         }
 
         return $fileName ?? null;

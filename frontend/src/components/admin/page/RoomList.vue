@@ -51,18 +51,18 @@
                             class="w-100 h-100 d-flex justify-content-center align-items-center text-h6 grey--text text--lighten-1 font-weight-light">
                             Select a Room
                         </div>
-                        <v-card class="w-100 h-100 pt-5 pb-5" v-else :key="selected.id" flat>
+                        <v-card class="w-100 h-100 pt-5 pb-5" v-else :key="room.id" flat>
                             <v-row class="pl-3 pb-3">
                                 <v-col cols="12" lg="6">
-                                    <v-img height="300" v-for="image in selected.images" :key="image.id"
+                                    <v-img height="300" v-for="image in room.images" :key="image.id"
                                         :src="env.imageURL + image.name" />
                                 </v-col>
                                 <v-col cols="12" lg="6">
                                     <v-row>
-                                        <div class="text-h4 text--secondary">{{ selected.name }}</div>
+                                        <div class="text-h4 text--secondary">{{ room.name }}</div>
                                     </v-row>
                                     <v-row class="mt-5">
-                                        <div class="text--secondary font-weight-light">Number {{ selected.number }}</div>
+                                        <div class="text--secondary font-weight-light">Number {{ room.number }}</div>
                                     </v-row>
                                     <v-row class="mt-5" no-gutters>
                                         <v-divider color="silver"></v-divider>
@@ -72,7 +72,7 @@
                                             <div class="text-secondary">SERVICES</div>
                                         </v-col>
                                         <v-col cols="12" class="my-0 py-0">
-                                            <v-chip v-for="service in selected.services" :key="service.id" class="mr-1 mb-1"
+                                            <v-chip v-for="service in room.services" :key="service.id" class="mr-1 mb-1"
                                                 color="primary" outlined small>
                                                 {{ service.name }}
                                                 <v-icon right small>
@@ -88,7 +88,7 @@
                                         <div>
                                             <div class="text-secondary d-inline">Type: </div>
                                             <div class="text-secondary font-weight-light d-inline">
-                                                {{ selected.type.name }}
+                                                {{ room.type.name }}
                                             </div>
                                         </div>
                                     </v-row>
@@ -96,7 +96,7 @@
                                         <div>
                                             <div class="text-secondary d-inline">Price: </div>
                                             <div class="text-secondary font-weight-light d-inline">
-                                                {{ selected.price | toCurrency }}
+                                                {{ room.price | toCurrency }}
                                             </div>
                                         </div>
                                     </v-row>
@@ -105,9 +105,9 @@
                                             <div class="text-secondary d-inline">Size: </div>
                                             <div class=" d-inline">
                                                 <v-chip class="mr-1 mb-1" color="primary" outlined small>
-                                                    {{ selected.size.name }}
+                                                    {{ room.size.name }}
                                                     <v-icon right small>
-                                                        {{ selected.size.icon }}
+                                                        {{ room.size.icon }}
                                                     </v-icon>
                                                 </v-chip>
                                             </div>
@@ -118,7 +118,7 @@
                                     </v-row>
                                     <v-row class="mt-0 pt-0 pr-3">
                                         <div class="text-justify text-secondary">
-                                            {{ selected.description }}
+                                            {{ room.description }}
                                         </div>
                                     </v-row>
                                 </v-col>
@@ -192,9 +192,8 @@ export default {
             if (!this.active.length) return undefined
 
             const number = this.active[0];
-            console.log(this.active);
             await this.getRoom({ number: number });
-            await pause(1000)
+            await pause(500)
 
             return this.room;
         },
@@ -214,7 +213,6 @@ export default {
             this.newRoom = Object.assign(room);
             this.dialog = true;
         },
-
 
         addChild(item, room) {
             if (!item.children) {

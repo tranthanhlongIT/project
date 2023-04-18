@@ -29,67 +29,76 @@ export const roomStore = {
       });
     },
 
-    async getRoom({ commit }, payload) {
-      const url = this._vm.env.apiURL + "rooms/" + payload.number;
+    async getRoom({ commit }, { number }) {
+      const url = this._vm.env.apiURL + "rooms/" + number;
       await axios.get(url).then((response) => {
         commit("setRoom", response.data);
       });
     },
 
-    async addRoom({ commit }, payload) {
-      const config = {
-        header: "content-type: form-data/multipart",
-      };
-
-      const formData = new FormData();
-      formData.append("type_id", payload.room.type_id);
-      formData.append("floor_id", payload.room.floor_id);
-      formData.append("size_id", payload.room.size_id);
-      formData.append("number", payload.room.number);
-      formData.append("name", payload.room.name);
-      formData.append("description", payload.room.description ?? "");
-      formData.append("price", payload.room.price);
-      formData.append("services", JSON.stringify(payload.room.service));
-      files.forEach((file) => formData.append("images[]", file));
-
+    async addRoom({ commit }, { room, files }) {
+      const config = { header: "content-type: form-data/multipart", };
+      const formData = addFormData(room, files);
       const url = this._vm.env.apiURL + "rooms";
 
       try {
         await axios.post(url, formData, config);
         EventBus.$emit("reset");
-        EventBus.$emit("addChild", payload.room);
+        EventBus.$emit("addChild", room);
         this._vm.$toast.success("Add successful");
-      } catch (e) {
+      } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
     },
 
-    async updateRoom({ commit }, payload) {
-      const config = {
-        header: "content-type: form-data/multipart",
-      };
-
-      const formData = new FormData();
-      formData.append("type_id", payload.room.type_id);
-      formData.append("floor_id", payload.room.floor_id);
-      formData.append("size_id", payload.room.size_id);
-      formData.append("number", payload.room.number);
-      formData.append("name", payload.room.name);
-      formData.append("description", payload.room.description ?? "");
-      formData.append("price", payload.room.price);
-      formData.append("services", JSON.stringify(payload.room.service));
-      files.forEach((file) => formData.append("images[]", file));
-      formData.append("_method", "PATCH");
-
-      const url = this._vm.env.apiURL + "rooms";
+    async updateRoom({ commit }, { room, files }) {
+      const config = { header: "content-type: form-data/multipart", };
+      const formData = updateFormData(room, files);
+      const url = this._vm.env.apiURL + "rooms/" + room.id;
 
       try {
         await axios.post(url, formData, config)
-        commit("updateRoom", payload.room);
-        this._vm.$toast.success("Add successful");
-      } catch (e) {
+        commit("setRoom", room);
+        this._vm.$toast.success("Update successful");
+      } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
     },
   },
 };
+
+function addFormData(room, files) {
+  const formData = new FormData();
+  formData.append("type_id", room.type_id);
+  formData.append("floor_id", room.floor_id);
+  formData.append("size_id", room.size_id);
+  formData.append("number", room.number);
+  formData.append("name", room.name);
+  formData.append("description", room.description ?? "");
+  formData.append("price", room.price);
+  formData.append("services", JSON.stringify(room.services));
+  files.forEach((file) => { formData.append("images[]", file) });
+  return formData;
+}
+
+function updateFormData(room, files) {
+  const formData = new FormData();
+  formData.append("type_id", room.type_id);
+  formData.append("floor_id", room.floor_id);
+  formData.append("size_id", room.size_id);
+  formData.append("number", room.number);
+  formData.append("name", room.name);
+  formData.append("description", room.description ?? "");
+  formData.append("price", room.price);
+  formData.append("services", JSON.stringify(room.services));
+  files.forEach((file) => formData.append("images[]", processFile(file)));
+  formData.append("_method", "PATCH");
+  return formData;
+}
+
+function processFile(file) {
+  if (file instanceof File) {
+    return file;
+  }
+  return new File([file.blob], file.name, { type: file.type });
+}

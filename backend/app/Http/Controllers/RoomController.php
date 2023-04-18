@@ -6,7 +6,9 @@ use App\Models\Floor;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class RoomController extends Controller
 {
@@ -25,17 +27,25 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validation();
+        try {
+            $this->validation();
 
-        $data = $request->except(['services', 'images']);
-        $services = json_decode($request->services);
-        $room = Room::create($data);
-        $this->uploadImage($request, $room);
-        $room->services()->attach($services);
+            $data = $request->except(['services', 'images']);
+            $services = collect(json_decode($request->services))->pluck('id');
+            $room = Room::create($data);
+            $this->uploadImage($request, $room);
+            $room->services()->attach($services);
 
-        return response()->json([
-            'status' => true,
-        ]);
+            return response()->json([
+                'status' => true,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => $request->services
+            ]);
+        }
+
     }
 
     /**
@@ -56,7 +66,17 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
-        //
+        $this->validation($room);
+
+        $data = $request->except(['services', 'images']);
+        $services = collect(json_decode($request->services))->pluck('id');
+        $room->update($data);
+        $this->uploadImage($request, $room);
+        $room->services()->sync($services);
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     /**
@@ -72,7 +92,7 @@ class RoomController extends Controller
         $types = DB::table('types')->select('id', 'name')->get();
         $sizes = DB::table('sizes')->select('id', 'name', 'icon')->get();
         $floors = DB::table('floors')->select('id', 'name')->get();
-        $services = DB::table('services')->select('id', 'name')->get();
+        $services = DB::table('services')->select('id', 'name', 'icon')->get();
 
         return response()->json([
             'types' => $types,
@@ -82,21 +102,18 @@ class RoomController extends Controller
         ]);
     }
 
-    public function validation()
+    public function validation(Room $room = null)
     {
         $rules = [
             'type_id' => ['bail', 'required'],
             'floor_id' => ['bail', 'required'],
             'size_id' => ['bail', 'required'],
-            'number' => ['bail', 'required', 'unique:rooms,number'],
+            'number' => ['bail', 'required', Rule::unique('rooms')->ignore($room)],
             'name' => ['bail', 'required', 'max:30'],
             'price' => ['bail', 'required', 'numeric'],
             'services' => ['bail', 'required'],
-            'images' => ['bail', 'required']
         ];
-
         $validator = Validator::make(request()->all(), $rules);
-
         if ($validator->fails()) {
             return response()->json([
                 'message' => $validator->messages()->first()
@@ -106,20 +123,23 @@ class RoomController extends Controller
 
     public function uploadImage(Request $request, Room $room)
     {
-        if($request->hasfile('images'))
-        {
-            $images = $request->file('images');
-            if($request->hasfile('images'))
-            {
-                foreach($images as $image)
-                {
-                    $fileName = $image->getClientOriginalName();
-                    $image->storeAs('images', $fileName);
-                    $room->images()->create([
-                        'name' => $fileName
-                    ]);
-                }
+        if ($request->hasFile('images')) {
+            $room->images()->delete();
+
+            foreach ($request->file('images') as $image) {
+                $fileName = $image->getClientOriginalName();
+                $this->storeImage($image, $fileName);
+                $room->images()->create([
+                    'name' => $fileName
+                ]);
             }
+        }
+    }
+
+    public function storeImage($image, $fileName)
+    {
+        if (!Storage::exists('images/' . $fileName)) {
+            $image->storeAs('images', $fileName);
         }
     }
 }
