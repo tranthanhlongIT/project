@@ -354,12 +354,12 @@ export default {
     },
 
     validation() {
-      if (this.action === "add" && this.$v.$invalid) {
+      if (this.action == "add" && this.$v.$invalid) {
         this.$v.$touch();
         return true;
       }
 
-      if (this.action === "upd" &&
+      if (this.action == "upd" &&
         (this.$v.role.$invalid ||
           this.$v.fname.$invalid ||
           this.$v.lname.$invalid ||

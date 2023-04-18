@@ -347,7 +347,7 @@ export default {
         },
 
         validation() {
-            if (this.action === "add" && this.$v.$invalid) {
+            if (this.action == "add" && this.$v.$invalid) {
                 this.$v.$touch();
                 return true;
             }

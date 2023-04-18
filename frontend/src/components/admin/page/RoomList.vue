@@ -129,13 +129,13 @@
             </v-row>
         </v-card>
         <room-dialog v-if="dialog" :dialog="dialog" :action="action" :roomSelected="newRoom">
-            <div v-if="action === 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+            <div v-if="action == 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Add Room
             </div>
-            <div v-if="action === 'upd'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+            <div v-if="action == 'upd'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Edit Room
             </div>
-            <div v-if="action === 'det'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+            <div v-if="action == 'det'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Show Room
             </div>
         </room-dialog>
@@ -193,7 +193,7 @@ export default {
 
             const number = this.active[0];
             await this.getRoom({ number: number });
-            await pause(500)
+            await pause(1000)
 
             return this.room;
         },
@@ -211,7 +211,8 @@ export default {
         openDialog(action, room) {
             this.action = action;
             this.newRoom = Object.assign(room);
-            this.dialog = true;
+            console.log(room);
+            this.dialog = this.selected ? true : false;
         },
 
         addChild(item, room) {
@@ -227,7 +228,7 @@ export default {
             if (!items) items = this.items;
             return items.reduce((acc, item) => {
                 if (acc) return acc;
-                if (item.id === id) return item;
+                if (item.id == id) return item;
                 if (item.children) return this.findItem(id, item.children);
                 return acc;
             }, null);

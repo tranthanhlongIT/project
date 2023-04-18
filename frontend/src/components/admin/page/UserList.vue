@@ -54,13 +54,13 @@
     </v-card>
 
     <user-dialog v-if="dialog" :dialog="dialog" :action="action" :userSelected="user">
-      <div v-if="action === 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+      <div v-if="action == 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Add User
       </div>
-      <div v-if="action === 'upd'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+      <div v-if="action == 'upd'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Edit User
       </div>
-      <div v-if="action === 'det'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+      <div v-if="action == 'det'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Show User
       </div>
     </user-dialog>

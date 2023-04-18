@@ -59,7 +59,7 @@ export default {
 
   methods: {
     isActive(path) {
-      if (path === this.$route.name) {
+      if (path == this.$route.name) {
         return "active";
       }
     },
