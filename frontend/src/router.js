@@ -34,6 +34,11 @@ const routes = [
         path: "room",
         component: () => import("./components/admin/page/RoomList.vue"),
       },
+      {
+        name: "reservation",
+        path: "reservation",
+        component: () => import("./components/admin/page/ReservationList.vue"),
+      },
     ],
   },
 ];

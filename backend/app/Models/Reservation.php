@@ -12,4 +12,14 @@ class Reservation extends Model
     protected $table = 'reservations';
     protected $primaryKey = 'id';
     protected $guarded = [];
+
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'reservation_id', 'reservation_id', 'room_id')->withPivot('occupied_date')->withTimestamps();;
+    }
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
+    }
 }

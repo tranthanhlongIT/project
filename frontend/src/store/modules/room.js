@@ -5,16 +5,19 @@ export const roomStore = {
   state: {
     room: {},
     rooms: [],
+    reservation_rooms: [],
   },
 
   getters: {
     getRooms: (state) => state.rooms,
     getRoom: (state) => state.room,
+    getReservationRooms: (state) => state.reservation_rooms,
   },
 
   mutations: {
     setRooms: (state, rooms) => (state.rooms = rooms),
     setRoom: (state, room) => (state.room = room),
+    setReservationRooms: (state, rooms) => (state.reservation_rooms = rooms),
     updateRoom: (state, room) => {
       const index = state.rooms.findIndex((r) => r.id === room.id);
       state.rooms.splice(index, 1, room);
@@ -26,6 +29,13 @@ export const roomStore = {
       const url = this._vm.env.apiURL + "rooms";
       await axios.get(url).then((response) => {
         commit("setRooms", response.data);
+      });
+    },
+
+    async getReservationRooms({ commit }, { date }) {
+      const url = this._vm.env.apiURL + "rooms/reservation-rooms?date=" + date;
+      await axios.get(url).then((response) => {
+        commit("setReservationRooms", response.data);
       });
     },
 

@@ -12,4 +12,9 @@ class Guest extends Model
     protected $table = 'guests';
     protected $primaryKey = 'id';
     protected $guarded = [];
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

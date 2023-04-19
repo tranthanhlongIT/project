@@ -15,6 +15,6 @@ class Service extends Model
 
     public function rooms()
     {
-        return $this->belongsToMany(Room::class, 'room_service', 'service_id', 'room_id');
+        return $this->belongsToMany(Room::class, 'room_service', 'service_id', 'room_id')->withTimestamps();;
     }
 }

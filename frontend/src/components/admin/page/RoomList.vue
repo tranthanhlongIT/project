@@ -190,11 +190,9 @@ export default {
     asyncComputed: {
         async selected() {
             if (!this.active.length) return undefined
-
             const number = this.active[0];
             await this.getRoom({ number: number });
             await pause(1000)
-
             return this.room;
         },
     },
@@ -211,14 +209,11 @@ export default {
         openDialog(action, room) {
             this.action = action;
             this.newRoom = Object.assign(room);
-            console.log(room);
             this.dialog = this.selected ? true : false;
         },
 
         addChild(item, room) {
-            if (!item.children) {
-                this.$set(item, "children", []);
-            }
+            if (!item.children) this.$set(item, "children", []);
             const id = room.number;
             const name = room.number;
             item.children.push({ id, name });
