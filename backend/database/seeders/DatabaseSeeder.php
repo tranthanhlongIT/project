@@ -26,35 +26,44 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         Service::create([
-           'name' => 'bathroom'
+            'name' => 'bathroom',
+            'icon' => 'mdi-shower'
         ]);
         Service::create([
-            'name' => 'dinner'
+            'name' => 'dinner',
+            'icon' => 'mdi-silverware-fork-knife'
         ]);
         Service::create([
-            'name' => 'breakfast'
+            'name' => 'breakfast',
+            'icon' => 'mdi-food'
         ]);
         Service::create([
-            'name' => 'toilet'
+            'name' => 'toilet',
+            'icon' => 'mdi-toilet'
         ]);
         Size::create([
             'name' => 'Single',
             'icon' => 'mdi-human-male'
         ]);
         Size::create([
-            'name' => 'Double'
+            'name' => 'Double',
+            'icon' => 'mdi-human-male-male'
         ]);
         Size::create([
-            'name' => 'Three persons'
+            'name' => 'Triple',
+            'icon' => 'mdi-human-queue'
         ]);
         Size::create([
-            'name' => 'Four persons'
+            'name' => 'Four persons',
+            'icon' => 'mdi-account-group',
         ]);
         Size::create([
-            'name' => 'Family'
+            'name' => 'Family',
+            'icon' => 'mdi-home'
         ]);
         Size::create([
-            'name' => 'King room'
+            'name' => 'King room',
+            'icon' => 'mdi-crown'
         ]);
 
         Floor::create([

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->float('total_price')->unsigned()->nullable();
             $table->datetime('check_in')->nullable();
             $table->datetime('check_out')->nullable();
+            $table->boolean('active')->nullable();
             $table->datetime('status')->nullable();
             $table->timestamps();
         });

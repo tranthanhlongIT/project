@@ -80,7 +80,7 @@
                             <template v-for="room in reservation_rooms">
                                 <v-col cols="12" md="6" lg="4" xl="4" xxl="3">
                                     <v-card tile :color="statusColor(room)">
-                                        <v-img :src="env.imageURL + room.images[0].name" class="white--text align-end"
+                                        <v-img :src="roomImage(room)" class="white--text align-end"
                                             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="100px">
                                             <v-card-title>{{ room.number }}</v-card-title>
                                         </v-img>
@@ -164,6 +164,12 @@ export default {
                         return "light-green accent-1";
             }
             return null;
+        },
+
+        roomImage(room) {
+            if (room.images.length > 0)
+                return this.env.imageURL + room.images[0].name;
+            return "/admin/img/room-default.png";
         }
     },
 
