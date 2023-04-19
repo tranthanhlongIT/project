@@ -27,7 +27,7 @@ class RoomController extends Controller
         $data = Room::with(['reservations' => function ($query) use ($request) {
             $query->select('reservations.id', 'reservations.guest_id', 'reservations.total_stay', 'reservations.total_price', 'reservations.check_in', 'reservations.check_out', 'reservations.status', 'reservations.active')
                 ->wherePivot('occupied_date', '=', $request->date);
-        }, 'reservations.guest', 'images:id,room_id,name', 'type:id,name'])->get();
+        }, 'reservations.guest', 'images:id,room_id,name', 'type:id,name', 'floor:id,name'])->get();
 
         return response()->json($data);
     }
@@ -55,7 +55,6 @@ class RoomController extends Controller
                 'data' => $request->services
             ]);
         }
-
     }
 
     /**
@@ -63,8 +62,10 @@ class RoomController extends Controller
      */
     public function show($number)
     {
-        $room = Room::with(['type:id,name', 'images:id,name,room_id', 'size:id,name,icon',
-            'floor:id,name', 'services:id,name,icon'])
+        $room = Room::with([
+            'type:id,name', 'images:id,name,room_id', 'size:id,name,icon',
+            'floor:id,name', 'services:id,name,icon'
+        ])
             ->where('number', '=', $number)
             ->first();
 

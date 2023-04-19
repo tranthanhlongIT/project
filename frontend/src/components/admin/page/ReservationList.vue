@@ -26,15 +26,15 @@
                             Floor
                         </v-subheader>
                         <v-list-item-group multiple v-model="selected">
-                            <template v-for="item in floors">
-                                <v-list-item :value="item" :ripple="false">
+                            <template v-for="floor in floors">
+                                <v-list-item :value="floor" :ripple="false">
                                     <template v-slot:default="{ active }">
                                         <v-list-item-action class="mr-1">
                                             <v-checkbox :ripple="false" :input-value="active"
-                                                :true-value="item"></v-checkbox>
+                                                :true-value="floor.type = 'floor'"></v-checkbox>
                                         </v-list-item-action>
                                         <v-list-item-content>
-                                            <v-list-item-title v-text="item.name"></v-list-item-title>
+                                            <v-list-item-title v-text="floor.name"></v-list-item-title>
                                         </v-list-item-content>
                                     </template>
                                 </v-list-item>
@@ -44,15 +44,15 @@
                             Size
                         </v-subheader>
                         <v-list-item-group multiple v-model="selected">
-                            <template v-for="item in sizes">
-                                <v-list-item :value="item" :ripple="false">
+                            <template v-for="size in sizes">
+                                <v-list-item :value="size" :ripple="false">
                                     <template v-slot:default="{ active }">
                                         <v-list-item-action class="mr-1">
                                             <v-checkbox :ripple="false" :input-value="active"
-                                                :true-value="item"></v-checkbox>
+                                                :true-value="size.type = 'size'"></v-checkbox>
                                         </v-list-item-action>
                                         <v-list-item-content>
-                                            <v-list-item-title v-text="item.name"></v-list-item-title>
+                                            <v-list-item-title v-text="size.name"></v-list-item-title>
                                         </v-list-item-content>
                                     </template>
                                 </v-list-item>
@@ -62,7 +62,7 @@
                             Services
                         </v-subheader>
                         <v-list-item-group multiple v-model="selected" class="pl-2">
-                            <template v-for="item in sizes">
+                            <template v-for="item in services">
                                 <v-chip small class="m-1" outlined color="primary">
                                     {{ item.name }}
                                     <v-icon small right>
@@ -74,25 +74,51 @@
                     </v-list>
                 </v-col>
                 <v-col cols="9">
-                    <v-container fluid>
-                        <div class="text-h6 indigo--text font-weight-medium">Test</div>
-                        <v-row dense class="px-3">
-                            <template v-for="room in reservation_rooms">
-                                <v-col cols="12" md="6" lg="4" xl="4" xxl="3">
-                                    <v-card tile :color="statusColor(room)">
-                                        <v-img :src="roomImage(room)" class="white--text align-end"
-                                            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="100px">
-                                            <v-card-title>{{ room.number }}</v-card-title>
-                                        </v-img>
-                                        <v-card-actions>
-                                            <div class="text-subtitle-2">{{ room.type.name }}</div>
-                                            <v-spacer></v-spacer>
-                                            <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-col>
+                    <v-container fluid class="pt-0">
+                        <template v-if="selected.length == 0">
+                            <div class="text-h6 indigo--text font-weight-medium mt-5">Rooms</div>
+                            <v-row dense class="px-3">
+                                <template v-for="room in reservation_rooms">
+                                    <v-col cols="12" md="6" lg="4" xl="4" xxl="3">
+                                        <v-card tile :color="statusColor(room)">
+                                            <v-img :src="roomImage(room)" class="white--text align-end"
+                                                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="100px">
+                                                <v-card-title>{{ room.number }}</v-card-title>
+                                            </v-img>
+                                            <v-card-actions>
+                                                <div class="text-subtitle-2">{{ room.type.name }}</div>
+                                                <v-spacer></v-spacer>
+                                                <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-col>
+                                </template>
+                            </v-row>
+                        </template>
+                        <template v-if="selected.length > 0">
+                            <template v-for="filter in selected">
+                                <div class="text-h6 indigo--text font-weight-medium mt-5">{{ filter.name }}</div>
+                                <v-row dense class="px-3">
+                                    <template v-for="room in floor_filter">
+                                        <template v-if="filter.name == room.floor.name">
+                                            <v-col cols="12" md="6" lg="4" xl="4" xxl="3">
+                                                <v-card tile :color="statusColor(room)">
+                                                    <v-img :src="roomImage(room)" class="white--text align-end"
+                                                        gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="100px">
+                                                        <v-card-title>{{ room.number }}</v-card-title>
+                                                    </v-img>
+                                                    <v-card-actions>
+                                                        <div class="text-subtitle-2">{{ room.type.name }}</div>
+                                                        <v-spacer></v-spacer>
+                                                        <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
+                                                    </v-card-actions>
+                                                </v-card>
+                                            </v-col>
+                                        </template>
+                                    </template>
+                                </v-row>
                             </template>
-                        </v-row>
+                        </template>
                     </v-container>
                 </v-col>
             </v-row>
@@ -123,6 +149,9 @@ export default {
             services: [],
             search: null,
             selected: [],
+
+            floor_filter: [],
+            size_filter: [],
         }
     },
 
@@ -170,13 +199,27 @@ export default {
             if (room.images.length > 0)
                 return this.env.imageURL + room.images[0].name;
             return "/admin/img/room-default.png";
-        }
+        },
     },
 
     created() {
         this.prepareData();
         this.getReservationRooms({ date: this.date });
     },
+
+    watch: {
+        selected: {
+            handler(filters) {
+                this.floor_filter = [];
+                filters.forEach((filter) => {
+                    let temp = [];
+                    temp = this.reservation_rooms.filter((room) => room.floor.name === filter.name);
+                    this.floor_filter = this.floor_filter.concat(temp);
+                })
+            },
+            deep: true,
+        }
+    }
 }
 </script>
 
