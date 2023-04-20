@@ -62,7 +62,7 @@
                                                 :error-messages="serviceErrors" @blur="$v.service.$touch()"
                                                 :menu-props="{ auto: true, bottom: true, offsetY: true }" label="Services"
                                                 multiple return-object dense>
-                                                <template #selection="{ item, index, attrs }">
+                                                <template #selection="{ item, index }">
                                                     <v-chip v-if="index < 5" color="teal" text-color="white" x-small>
                                                         {{ item.name }}
                                                         <v-icon x-small class="ml-1">{{ item.icon }}</v-icon>
@@ -281,12 +281,9 @@ export default {
         ...mapActions(["addRoom", "updateRoom"]),
 
         setRoom() {
-            this.room.type_id = this.type.id;
-            this.room.type = this.type.name;
-            this.room.floor_id = this.floor.id;
-            this.room.floor = this.floor.name;
-            this.room.size_id = this.size.id;
-            this.room.size = this.size.name;
+            this.room.type = this.type;
+            this.room.floor = this.floor;
+            this.room.size = this.size;
             this.room.number = this.number;
             this.room.name = this.name;
             this.room.description = this.description;
@@ -296,11 +293,11 @@ export default {
         },
 
         setField() {
-            const { type_id, type, floor_id, floor, size_id, size, number, name, description, price, services, images } = this.roomSelected;
+            const { type, floor, size, number, name, description, price, services, images } = this.roomSelected;
             this.room = Object.assign({}, this.roomSelected);
-            this.type = { id: type_id, name: type };
-            this.floor = { id: floor_id, name: floor };
-            this.size = { id: size_id, name: size };
+            this.type = { id: type.id, name: type.name };
+            this.floor = { id: floor.id, name: floor.name };
+            this.size = { id: size.id, name: size.name };
             this.number = number;
             this.name = name;
             this.description = description;
@@ -310,10 +307,10 @@ export default {
         },
 
         resetField() {
-            this.room = {};
-            this.type = {};
-            this.floor = {};
-            this.size = {};
+            this.room = null;
+            this.type = null;
+            this.floor = null;
+            this.size = null;
             this.number = null;
             this.name = null;
             this.description = null;

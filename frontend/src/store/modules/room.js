@@ -19,7 +19,7 @@ export const roomStore = {
     setRoom: (state, room) => (state.room = room),
     setReservationRooms: (state, rooms) => (state.reservation_rooms = rooms),
     updateRoom: (state, room) => {
-      const index = state.rooms.findIndex((r) => r.id === room.id);
+      const index = state.rooms.findIndex((r) => r.id == room.id);
       state.rooms.splice(index, 1, room);
     },
   },
@@ -67,8 +67,10 @@ export const roomStore = {
       const url = this._vm.env.apiURL + "rooms/" + room.id;
 
       try {
-        await axios.post(url, formData, config)
+        await axios.post(url, formData, config);
         commit("setRoom", room);
+        console.log(room);
+        EventBus.$emit("updateChild", room);
         this._vm.$toast.success("Update successful");
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);
@@ -79,9 +81,9 @@ export const roomStore = {
 
 function addFormData(room, files) {
   const formData = new FormData();
-  formData.append("type_id", room.type_id);
-  formData.append("floor_id", room.floor_id);
-  formData.append("size_id", room.size_id);
+  formData.append("type_id", room.type.id);
+  formData.append("floor_id", room.floor.id);
+  formData.append("size_id", room.size.id);
   formData.append("number", room.number);
   formData.append("name", room.name);
   formData.append("description", room.description ?? "");
@@ -93,9 +95,9 @@ function addFormData(room, files) {
 
 function updateFormData(room, files) {
   const formData = new FormData();
-  formData.append("type_id", room.type_id);
-  formData.append("floor_id", room.floor_id);
-  formData.append("size_id", room.size_id);
+  formData.append("type_id", room.type.id);
+  formData.append("floor_id", room.floor.id);
+  formData.append("size_id", room.size.id);
   formData.append("number", room.number);
   formData.append("name", room.name);
   formData.append("description", room.description ?? "");

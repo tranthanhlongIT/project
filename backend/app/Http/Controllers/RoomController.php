@@ -124,7 +124,9 @@ class RoomController extends Controller
             'price' => ['bail', 'required', 'numeric'],
             'services' => ['bail', 'required'],
         ];
+
         $validator = Validator::make(request()->all(), $rules);
+
         if ($validator->fails()) {
             return response()->json([
                 'message' => $validator->messages()->first()

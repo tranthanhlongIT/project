@@ -6,7 +6,7 @@ import excel from "vue-excel-export";
 import AsyncComputed from "vue-async-computed";
 
 const options = {
-  position: "bottom-right",
+  position: "top-right",
   timeout: 5000,
   closeOnClick: true,
   pauseOnFocusLoss: true,

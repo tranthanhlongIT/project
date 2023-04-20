@@ -18,7 +18,7 @@ export const userStore = {
     setUser: (state, user) => (state.user = user),
     addUser: (state, user) => state.users.push(user),
     updateUser: (state, user) => {
-      const index = state.users.findIndex((users) => users.id === user.id);
+      const index = state.users.findIndex((users) => users.id == user.id);
       state.users.splice(index, 1, user);
     },
   },
@@ -55,7 +55,7 @@ export const userStore = {
         await axios.post(url, formData, config);
         commit("updateUser", user);
         this._vm.$toast.success("Update successful");
-      } catch (e) {
+      } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
     },
@@ -78,7 +78,7 @@ function addFormData(user, file) {
   const formData = new FormData();
   formData.append("email", user.email);
   formData.append("password", user.password);
-  formData.append("role_id", user.role_id);
+  formData.append("role_id", user.role.id);
   formData.append("active", user.active);
   formData.append("fname", user.fname);
   formData.append("lname", user.lname);
@@ -91,7 +91,7 @@ function addFormData(user, file) {
 
 function updateFormData(user, file) {
   const formData = new FormData();
-  formData.append("role_id", user.role_id);
+  formData.append("role_id", user.role.id);
   formData.append("active", user.active);
   formData.append("fname", user.fname);
   formData.append("lname", user.lname);
@@ -100,4 +100,5 @@ function updateFormData(user, file) {
   formData.append("phone", user.phone);
   formData.append("image", file ?? "");
   formData.append("_method", "PATCH");
+  return formData;
 }

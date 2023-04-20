@@ -30,8 +30,9 @@
             </v-sheet>
             <v-row no-gutters>
                 <v-col cols="3" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
-                    <v-treeview ref="tree" :active.sync="active" :items="items" :load-children="fetchRooms" :search="search"
-                        :open.sync="open" color="warning" activatable open-all open-on-click transition dense>
+                    <v-treeview ref="tree" return-object :active.sync="active" :items="items" :load-children="fetchRooms"
+                        :search="search" :open.sync="open" color="warning" activatable open-all open-on-click transition
+                        dense>
                         <template v-slot:prepend="{ item }">
                             <v-icon small color="green" class="mb-1" v-if="item.name == 'Room'">
                                 mdi-vuejs
@@ -165,6 +166,7 @@ export default {
             overlay: false,
             search: null,
             allOpened: false,
+            treeViewKey: 0,
             lastOpen: [],
             images: [],
         }
@@ -190,7 +192,7 @@ export default {
     asyncComputed: {
         async selected() {
             if (!this.active.length) return undefined
-            const number = this.active[0];
+            const number = this.active[0].id;
             await this.getRoom({ number: number });
             await pause(1000)
             return this.room;
@@ -209,7 +211,9 @@ export default {
         openDialog(action, room) {
             this.action = action;
             this.newRoom = Object.assign(room);
-            this.dialog = this.selected ? true : false;
+            if (action == "upd" && this.selected)
+                this.dialog = true;
+            else if (action != "upd") this.dialog = true;
         },
 
         addChild(item, room) {
@@ -217,6 +221,36 @@ export default {
             const id = room.number;
             const name = room.number;
             item.children.push({ id, name });
+        },
+
+        updateChild(room) {
+            this.removeChild();
+            this.addChild(this.findItem(room.floor.id), room);
+        },
+
+        removeChild() {
+            this.active[0].status = "Deleted";
+            this.removeDeleted(this, this.items);
+            this.handleSearch(this.active[0].name);
+        },
+
+        removeDeleted(me, currentArray) {
+            const delItems = [];
+            currentArray.forEach(element => {
+                if (element.status == "Deleted") {
+                    delItems.push(element);
+                }
+                if (
+                    element.children != undefined &&
+                    element.children != null &&
+                    element.children.length > 0
+                ) {
+                    me.removeDeleted(me, element.children);
+                }
+            });
+            delItems.forEach(item => {
+                currentArray.splice(currentArray.indexOf(item), 1);
+            });
         },
 
         findItem(id, items = null) {
@@ -251,8 +285,18 @@ export default {
         });
 
         EventBus.$on("addChild", (room) => {
-            this.addChild(this.findItem(room.floor_id), room);
-        })
+            this.addChild(this.findItem(room.floor.id), room);
+        });
+
+        EventBus.$on("updateChild", (room) => {
+            this.updateChild(room);
+        });
+    },
+
+    watch: {
+        active: (v) => {
+            console.log(v);
+        }
     }
 }
 </script>

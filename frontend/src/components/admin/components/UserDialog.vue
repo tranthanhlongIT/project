@@ -310,8 +310,7 @@ export default {
     setUser() {
       this.user.email = this.email;
       this.user.password = this.password;
-      this.user.role_id = this.role.id;
-      this.user.role = this.role.name;
+      this.user.role = this.role;
       this.user.active = this.active;
       this.user.image = this.image;
       this.user.fname = this.fname;
@@ -322,11 +321,11 @@ export default {
     },
 
     setField() {
-      const { email, password, role_id, role, active, image, fname, lname, address, gender, phone } = this.userSelected;
+      const { email, password, role, active, image, fname, lname, address, gender, phone } = this.userSelected;
       this.user = Object.assign({}, this.userSelected);
       this.email = email;
       this.password = password;
-      this.role = { name: role, id: role_id };
+      this.role = { name: role.name, id: role.id };
       this.active = this.action == "add" ? 1 : parseInt(active);
       this.image = image;
       this.fname = fname;

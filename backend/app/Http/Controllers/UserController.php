@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $data = User::with('role:id,name as role')
+        $data = User::with('role:id,name')
             ->select('id', 'email', 'image', 'active', 'role_id', 'gender', 'address', 'fname', 'lname', 'phone')
             ->get();
         return response()->json($data);
@@ -73,20 +73,27 @@ class UserController extends Controller
         ]);
     }
 
-    public function validation(Request $request, User $user = null)
+    public function validation(?User $user = null)
     {
-        $passwordValidation = Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised();
+        $passwordValidation = Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ->symbols()
+            ->uncompromised();
 
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'fname' => ['bail', 'required', 'max:30'],
             'lname' => ['bail', 'required', 'max:30'],
-            'email' => ['bail', 'required', 'email', Rule::unique('users')->ignore($user)],
-            'password' => ['bail', 'required', $passwordValidation],
+            'email' => ['bail', Rule::excludeIf(isset($user)), 'required', 'email', 'unique:users'],
+            'password' => ['bail', Rule::excludeIf(isset($user)), 'required', $passwordValidation],
             'role_id' => ['bail', 'required'],
             'active' => ['bail', 'required'],
             'gender' => ['bail', 'required'],
             'phone' => ['bail', 'required', 'digits:10', 'numeric']
-        ]);
+        ];
+
+        $validator = Validator::make(request()->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([

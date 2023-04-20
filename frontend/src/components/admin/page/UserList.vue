@@ -28,7 +28,7 @@
 
         <template v-slot:[`item.role`]="{ item }">
           <v-chip color="primary" small>
-            {{ item.role }}
+            {{ item.role.name }}
           </v-chip>
         </template>
 
