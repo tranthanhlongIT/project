@@ -175,10 +175,10 @@ export default {
 
             floor: {},
             type: {},
+            size: {},
             number: null,
             name: null,
             description: null,
-            size: {},
             price: null,
             service: [],
             files: [],
@@ -344,10 +344,8 @@ export default {
         },
 
         validation() {
-            if (this.$v.$invalid) {
-                this.$v.$touch();
-                return true;
-            }
+            this.$v.$touch();
+            if (this.$v.$invalid) return true;
             return false;
         },
 

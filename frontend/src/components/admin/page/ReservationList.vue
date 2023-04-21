@@ -25,7 +25,7 @@
                         <v-subheader class="text-h6 indigo--text font-weight-medium">
                             Floor
                         </v-subheader>
-                        <v-list-item-group multiple v-model="selected">
+                        <v-list-item-group multiple v-model="selectedFloor">
                             <template v-for="floor in floors">
                                 <v-list-item :value="floor" :ripple="false">
                                     <template v-slot:default="{ active }">
@@ -43,7 +43,7 @@
                         <v-subheader class="text-h6 indigo--text font-weight-medium">
                             Size
                         </v-subheader>
-                        <v-list-item-group multiple v-model="selected">
+                        <v-list-item-group multiple v-model="selectedSize">
                             <template v-for="size in sizes">
                                 <v-list-item :value="size" :ripple="false">
                                     <template v-slot:default="{ active }">
@@ -61,7 +61,7 @@
                         <v-subheader class="text-h6 indigo--text font-weight-medium">
                             Services
                         </v-subheader>
-                        <v-list-item-group multiple v-model="selected" class="pl-2">
+                        <v-list-item-group multiple class="pl-2">
                             <template v-for="item in services">
                                 <v-chip small class="m-1" outlined color="primary">
                                     {{ item.name }}
@@ -75,7 +75,7 @@
                 </v-col>
                 <v-col cols="9">
                     <v-container fluid class="pt-0">
-                        <template v-if="selected.length == 0">
+                        <template v-if="selectedFloor.length == 0">
                             <div class="text-h6 indigo--text font-weight-medium mt-5">Rooms</div>
                             <v-row dense class="px-3">
                                 <template v-for="room in reservation_rooms">
@@ -98,8 +98,8 @@
                                 </template>
                             </v-row>
                         </template>
-                        <template v-if="selected.length > 0">
-                            <template v-for="filter in filters">
+                        <template v-if="selectedFloor.length > 0">
+                            <template v-for="filter in filteredRooms">
                                 <div class="text-h6 indigo--text font-weight-medium mt-5">{{ filter.name }}</div>
                                 <v-row dense class="px-3">
                                     <template v-for="room in filter.children">
@@ -152,9 +152,9 @@ export default {
             sizes: [],
             services: [],
             search: null,
-            selected: [],
-
-            filters: [],
+            selectedFloor: [],
+            selectedSize: [],
+            filteredRooms: [],
         }
     },
 
@@ -168,12 +168,6 @@ export default {
                 this.sizes = response.data.sizes;
                 this.services = response.data.services;
             });
-        },
-
-        toggleSelect(item) {
-            if (this.selected.includes(item))
-                this.selected.splice(this.selected.indexOf(item), 1);
-            else this.selected.push(item);
         },
 
         roomStatus(room) {
@@ -204,13 +198,18 @@ export default {
             return "/admin/img/room-default.png";
         },
 
-        filterRoom(filter) {
+        filterFloor(filter) {
             let parent = { name: filter.name, type: filter.type, children: [] };
-            if (filter.type == "floor")
-                parent.children = this.reservation_rooms.filter((room) => room.floor.name == filter.name);
-            if (filter.type == "size")
-                parent.children = parent.children.filter((room) => room.size.name == filter.name);
+            parent.children = this.reservation_rooms.filter((room) => room.floor.name == filter.name);
             return parent;
+        },
+
+        filterSize(filter) {
+            this.filteredRooms = this.filteredRooms.map((element) => {
+                console.log(element);
+                return { ...element, children: element.children.filter((child) => child.size.name == filter.name) }
+            })
+            console.log(this.filteredRooms);
         },
 
         sortedArray(array) {
@@ -221,7 +220,6 @@ export default {
                     return 1;
                 return 0;
             }
-
             return array.sort(compare);
         }
     },
@@ -232,11 +230,19 @@ export default {
     },
 
     watch: {
-        selected: {
+        selectedFloor: {
             handler(values) {
-                this.filters = [];
-                values.forEach((value) => this.filters = this.filters.concat(this.filterRoom(value)));
-                this.sortedArray(this.filters);
+                this.filteredRooms = [];
+                values.forEach((value) => this.filteredRooms = this.filteredRooms.concat(this.filterFloor(value)));
+                this.sortedArray(this.filteredRooms);
+            },
+            deep: true,
+        },
+
+        selectedSize: {
+            handler(values) {
+                values.forEach((value) => this.filterSize(value));
+                this.sortedArray(this.filteredRooms);
             },
             deep: true,
         }
