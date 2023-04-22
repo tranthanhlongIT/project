@@ -23,24 +23,6 @@
                 <v-col cols="3" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
                     <v-list flat subheader>
                         <v-subheader class="text-h6 indigo--text font-weight-medium">
-                            Floor
-                        </v-subheader>
-                        <v-list-item-group multiple v-model="selectedFloor">
-                            <template v-for="floor in floors">
-                                <v-list-item :value="floor" :ripple="false">
-                                    <template v-slot:default="{ active }">
-                                        <v-list-item-action class="mr-1">
-                                            <v-checkbox :ripple="false" :input-value="active"
-                                                :true-value="floor.type = 'floor'"></v-checkbox>
-                                        </v-list-item-action>
-                                        <v-list-item-content>
-                                            <v-list-item-title v-text="floor.name"></v-list-item-title>
-                                        </v-list-item-content>
-                                    </template>
-                                </v-list-item>
-                            </template>
-                        </v-list-item-group>
-                        <v-subheader class="text-h6 indigo--text font-weight-medium">
                             Size
                         </v-subheader>
                         <v-list-item-group multiple v-model="selectedSize">
@@ -75,35 +57,12 @@
                 </v-col>
                 <v-col cols="9">
                     <v-container fluid class="pt-0">
-                        <template v-if="selectedFloor.length == 0">
-                            <div class="text-h6 indigo--text font-weight-medium mt-5">Rooms</div>
-                            <v-row dense class="px-3">
-                                <template v-for="room in reservation_rooms">
-                                    <v-col cols="12" md="6" lg="4" xl="4" xxl="3">
-                                        <v-hover v-slot="{ hover }">
-                                            <v-card tile class="hover-card" :elevation="hover ? 12 : 2"
-                                                :class="{ 'on-hover': hover }" :color="statusColor(room)">
-                                                <v-img :src="roomImage(room)" class="white--text align-end"
-                                                    gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="100px">
-                                                    <v-card-title>{{ room.number }}</v-card-title>
-                                                </v-img>
-                                                <v-card-actions>
-                                                    <div class="text-subtitle-2">{{ room.type.name }}</div>
-                                                    <v-spacer></v-spacer>
-                                                    <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
-                                                </v-card-actions>
-                                            </v-card>
-                                        </v-hover>
-                                    </v-col>
-                                </template>
-                            </v-row>
-                        </template>
-                        <template v-if="selectedFloor.length > 0">
-                            <template v-for="filter in filteredRooms">
-                                <div class="text-h6 indigo--text font-weight-medium mt-5">{{ filter.name }}</div>
+                        <template v-if="filteredRooms.length == 0">
+                            <template v-for="floor in reservationRooms">
+                                <div class="text-h6 indigo--text font-weight-medium mt-5">{{ floor.name }}</div>
                                 <v-row dense class="px-3">
-                                    <template v-for="room in filter.children">
-                                        <v-col cols="12" md="6" lg="4" xl="4" xxl="3">
+                                    <template v-for="room in floor.rooms">
+                                        <v-col cols="12" md="6" lg="4" xl="3">
                                             <v-hover v-slot="{ hover }">
                                                 <v-card class="hover-card" :elevation="hover ? 12 : 2"
                                                     :class="{ 'on-hover': hover }" tile :color="statusColor(room)">
@@ -112,13 +71,46 @@
                                                         <v-card-title>{{ room.number }}</v-card-title>
                                                     </v-img>
                                                     <v-card-actions>
-                                                        <div class="text-subtitle-2">{{ room.type.name }}</div>
+                                                        <div class="text-subtitle-2">{{ room.size.name }}</div>
                                                         <v-spacer></v-spacer>
                                                         <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
                                                     </v-card-actions>
                                                 </v-card>
                                             </v-hover>
                                         </v-col>
+                                    </template>
+                                </v-row>
+                            </template>
+                        </template>
+                        <template v-if="filteredRooms.length > 0">
+                            <template v-for="floor in filteredRooms">
+                                <div class="text-h6 indigo--text font-weight-medium mt-5">{{ floor.name }}</div>
+                                <v-row dense class="px-3">
+                                    <template v-if="floor.rooms.length > 0">
+                                        <template v-for="room in floor.rooms">
+                                            <v-col cols="12" md="6" lg="4" xl="3">
+                                                <v-hover v-slot="{ hover }">
+                                                    <v-card class="hover-card" :elevation="hover ? 12 : 2"
+                                                        :class="{ 'on-hover': hover }" tile :color="statusColor(room)">
+                                                        <v-img :src="roomImage(room)" class="white--text align-end"
+                                                            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+                                                            height="100px">
+                                                            <v-card-title>{{ room.number }}</v-card-title>
+                                                        </v-img>
+                                                        <v-card-actions>
+                                                            <div class="text-subtitle-2">{{ room.size.name }}</div>
+                                                            <v-spacer></v-spacer>
+                                                            <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
+                                                        </v-card-actions>
+                                                    </v-card>
+                                                </v-hover>
+                                            </v-col>
+                                        </template>
+                                    </template>
+                                    <template v-else>
+                                        <div class="ml-0 pl-0 text-h6 grey--text text--lighten-1 font-weight-light">
+                                            No room found
+                                        </div>
                                     </template>
                                 </v-row>
                             </template>
@@ -139,7 +131,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            reservation_rooms: "getReservationRooms"
+            reservationRooms: "getReservationRooms"
         }),
     },
 
@@ -152,7 +144,7 @@ export default {
             sizes: [],
             services: [],
             search: null,
-            selectedFloor: [],
+
             selectedSize: [],
             filteredRooms: [],
         }
@@ -198,25 +190,11 @@ export default {
             return "/admin/img/room-default.png";
         },
 
-        filterFloor(filter) {
-            let parent = { name: filter.name, type: filter.type, children: [] };
-            parent.children = this.reservation_rooms.filter((room) => room.floor.name == filter.name);
-            return parent;
-        },
-
-        filterSize(filter) {
-            this.filteredRooms = this.filteredRooms.map((element) => {
-                console.log(element);
-                return { ...element, children: element.children.filter((child) => child.size.name == filter.name) }
-            })
-            console.log(this.filteredRooms);
-        },
-
         sortedArray(array) {
             function compare(a, b) {
-                if (a.name < b.name)
+                if (a.size.id < b.size.id)
                     return -1;
-                if (a.name > b.name)
+                if (a.size.id > b.size.id)
                     return 1;
                 return 0;
             }
@@ -230,19 +208,18 @@ export default {
     },
 
     watch: {
-        selectedFloor: {
-            handler(values) {
-                this.filteredRooms = [];
-                values.forEach((value) => this.filteredRooms = this.filteredRooms.concat(this.filterFloor(value)));
-                this.sortedArray(this.filteredRooms);
-            },
-            deep: true,
-        },
-
         selectedSize: {
             handler(values) {
-                values.forEach((value) => this.filterSize(value));
-                this.sortedArray(this.filteredRooms);
+                this.filteredRooms = this.reservationRooms.map((floor) => {
+                    var roomOnEachFloor = [];
+                    values.forEach(value => {
+                        var rooms = floor.rooms.filter((room) => room.size.name.includes(value.name))
+                        roomOnEachFloor = roomOnEachFloor.concat(rooms);
+                    });
+                    console.log(roomOnEachFloor)
+                    this.sortedArray(roomOnEachFloor)
+                    return { ...floor, rooms: roomOnEachFloor }
+                })
             },
             deep: true,
         }
