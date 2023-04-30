@@ -69,7 +69,6 @@ export const roomStore = {
       try {
         await axios.post(url, formData, config);
         commit("setRoom", room);
-        console.log(room);
         EventBus.$emit("updateChild", room);
         this._vm.$toast.success("Update successful");
       } catch (error) {

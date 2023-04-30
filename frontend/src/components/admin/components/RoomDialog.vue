@@ -14,7 +14,7 @@
                     <v-card-text class="m-0 p-0">
                         <v-container>
                             <v-row>
-                                <v-col cols="7" style="border-right: 1px solid #E0E0E0;">
+                                <v-col cols="12" lg="7" xl="6" style="border-right: 1px solid #E0E0E0;">
                                     <v-row class="ml-1">
                                         <v-col cols="6" class="pl-0 pt-0">
                                             <v-select v-model="floor" item-text="name" item-value="id" :items="floors"
@@ -75,7 +75,7 @@
                                         </v-col>
                                     </v-row>
                                 </v-col>
-                                <v-col cols="5" class="pt-0">
+                                <v-col cols="12" lg="5" xl="6" class="pt-0">
                                     <v-row no-gutters>
                                         <div class="text-subtitle-2 pl-0">Upload Image</div>
                                         <v-divider color="blue"></v-divider>
@@ -204,7 +204,7 @@ export default {
     props: {
         dialog: Boolean,
         action: String,
-        roomSelected: Object,
+        selectedRoom: Object,
     },
 
     computed: {
@@ -271,7 +271,7 @@ export default {
         width() {
             switch (this.$vuetify.breakpoint.name) {
                 case 'lg': return "70%";
-                case 'xl': return "60%";
+                case 'xl': return "50%";
                 default: return "100%";
             }
         }
@@ -293,8 +293,8 @@ export default {
         },
 
         setField() {
-            const { type, floor, size, number, name, description, price, services, images } = this.roomSelected;
-            this.room = Object.assign({}, this.roomSelected);
+            const { type, floor, size, number, name, description, price, services, images } = this.selectedRoom;
+            this.room = Object.assign({}, this.selectedRoom);
             this.type = { id: type.id, name: type.name };
             this.floor = { id: floor.id, name: floor.name };
             this.size = { id: size.id, name: size.name };

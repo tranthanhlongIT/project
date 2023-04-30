@@ -54,11 +54,11 @@
                         </div>
                         <v-card class="w-100 h-100 pt-5 pb-5" v-else :key="room.id" flat>
                             <v-row class="pl-3 pb-3">
-                                <v-col cols="12" lg="6">
+                                <v-col cols="12" lg="7">
                                     <v-img height="300" v-for="image in room.images" :key="image.id"
                                         :src="env.imageURL + image.name" />
                                 </v-col>
-                                <v-col cols="12" lg="6">
+                                <v-col cols="12" lg="5">
                                     <v-row>
                                         <div class="text-h4 text--secondary">{{ room.name }}</div>
                                     </v-row>
@@ -129,7 +129,7 @@
                 </v-col>
             </v-row>
         </v-card>
-        <room-dialog v-if="dialog" :dialog="dialog" :action="action" :roomSelected="newRoom">
+        <room-dialog v-if="dialog" :dialog="dialog" :action="action" :selectedRoom="newRoom">
             <div v-if="action == 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Add Room
             </div>
@@ -158,7 +158,7 @@ export default {
     data() {
         return {
             newRoom: {},
-            action: "",
+            action: null,
             dialog: false,
             active: [],
             avatar: null,
@@ -276,7 +276,6 @@ export default {
                 this.open = this.lastOpen;
             }
         },
-
     },
 
     created() {
@@ -292,11 +291,5 @@ export default {
             this.updateChild(room);
         });
     },
-
-    watch: {
-        active: (v) => {
-            console.log(v);
-        }
-    }
 }
 </script>

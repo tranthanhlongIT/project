@@ -53,7 +53,7 @@
       </v-data-table>
     </v-card>
 
-    <user-dialog v-if="dialog" :dialog="dialog" :action="action" :userSelected="user">
+    <user-dialog v-if="dialog" :dialog="dialog" :action="action" :selectedUser="user">
       <div v-if="action == 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Add User
       </div>
@@ -89,31 +89,18 @@ export default {
 
   data() {
     return {
-      search: "",
       user: {},
-      action: "",
+      search: null,
+      action: null,
       dialog: false,
       confirmation: false,
       headers: [
         { text: "ID", value: "id", width: "8%" },
-        {
-          text: "Image",
-          value: "image",
-          sortable: false,
-          filterable: false,
-          width: "12%",
-        },
+        { text: "Image", value: "image", sortable: false, filterable: false, width: "12%" },
         { text: "Email", value: "email", width: "30%" },
         { text: "Role", align: "center", value: "role", width: "15%" },
         { text: "Active", align: "center", width: "15%", value: "active" },
-        {
-          text: "Operation",
-          align: "center",
-          width: "15%",
-          value: "operations",
-          filterable: false,
-          sortable: false,
-        },
+        { text: "Operation", align: "center", width: "15%", value: "operations", filterable: false, sortable: false },
       ],
     };
   },

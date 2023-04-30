@@ -205,7 +205,7 @@ export default {
   props: {
     dialog: Boolean,
     action: String,
-    userSelected: Object,
+    selectedUser: Object,
   },
 
   computed: {
@@ -273,7 +273,7 @@ export default {
 
     width() {
       switch (this.$vuetify.breakpoint.name) {
-        case 'md': return "60%";
+        case 'md': return "70%";
         case 'lg': return "50%";
         case 'xl': return "40%";
         default: return "100%";
@@ -321,8 +321,8 @@ export default {
     },
 
     setField() {
-      const { email, password, role, active, image, fname, lname, address, gender, phone } = this.userSelected;
-      this.user = Object.assign({}, this.userSelected);
+      const { email, password, role, active, image, fname, lname, address, gender, phone } = this.selectedUser;
+      this.user = Object.assign({}, this.selectedUser);
       this.email = email;
       this.password = password;
       this.role = { name: role.name, id: role.id };
