@@ -12,28 +12,15 @@
                     </v-card-title>
                     <v-divider color="grey" class="m-0 p-0"></v-divider>
                     <v-card-text class="m-0 p-0">
-                        <v-container>
-                            <v-row>
-                                <v-col cols="12" lg="7" xl="6" style="border-right: 1px solid #E0E0E0;">
-
-                                </v-col>
-                                <v-col cols="12" lg="5" xl="6" class="pt-0">
-
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <v-tabs v-model="tab">
+                            <v-tab>
+                                Reservations
+                            </v-tab>
+                            <v-tab>
+                                Add Guest
+                            </v-tab>
+                        </v-tabs>
                     </v-card-text>
-                    <v-divider color="grey" class="m-0 p-0"></v-divider>
-                    <v-card-actions class="pb-0">
-                        <v-spacer></v-spacer>
-                        <v-btn type="submit" class="mb-2" elevation="2" small color="primary" @click.prevent="onHandle">
-                            Save
-                        </v-btn>
-                        <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning"
-                            @click.prevent="closeDialog">
-                            Back
-                        </v-btn>
-                    </v-card-actions>
                 </form>
             </v-card>
         </v-dialog>
@@ -45,6 +32,8 @@ export default {
     data() {
         return {
             show: false,
+            tab: null,
+
         }
     },
 

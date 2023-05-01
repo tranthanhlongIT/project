@@ -12,7 +12,7 @@
                     </v-card-title>
                     <v-divider color="grey" class="m-0 p-0"></v-divider>
                     <v-card-text class="m-0 p-0">
-                        <v-container>
+                        <v-container fluid>
                             <v-row>
                                 <v-col cols="12" lg="7" xl="6" style="border-right: 1px solid #E0E0E0;">
                                     <v-row class="ml-1">
@@ -84,9 +84,8 @@
                                         <v-col cols="12">
                                             <vue-custom-scrollbar class="scroll-area" :settings="settings">
                                                 <file-pond name="images" :files="files" @init="onFileInit"
-                                                    @updatefiles="onFileChange" v-bind:required="true" ref="pond"
-                                                    class-name="my-pond" allow-multiple
-                                                    accepted-file-types="image/jpeg, image/png" credits=""
+                                                    @updatefiles="onFileChange" ref="pond" class-name="my-pond"
+                                                    allow-multiple accepted-file-types="image/jpeg, image/png" credits=""
                                                     :server="server" />
                                             </vue-custom-scrollbar>
                                         </v-col>

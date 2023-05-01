@@ -32,12 +32,13 @@ export const userStore = {
     },
 
     async addUser({ commit }, { user, file }) {
-      const config = { header: "content-type: form-data/multipart", };
+      const config = { header: "content-type: form-data/multipart" };
       const formData = addFormData(user, file);
       const url = this._vm.env.apiURL + "users";
 
       try {
-        await axios.post(url, formData, config);
+        const response = await axios.post(url, formData, config);
+        user.id = response.data.id;
         commit("addUser", user);
         EventBus.$emit("reset");
         this._vm.$toast.success("Add successful");

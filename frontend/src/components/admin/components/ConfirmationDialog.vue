@@ -8,7 +8,7 @@
           </v-card-title>
           <v-divider class="m-0 p-0"></v-divider>
           <v-card-text>
-            <v-container>
+            <v-container fluid>
               <v-row>
                 <v-col cols="12">
                   <slot name="message" class="text-center text-subtitle-1">Message</slot>
@@ -41,6 +41,8 @@ export default {
 
   props: {
     object: Object,
+    objectName: String,
+    action: String,
     confirmation: Boolean,
     type: String
   },
@@ -52,12 +54,16 @@ export default {
   },
 
   methods: {
-    ...mapActions(["disableUser"]),
+    ...mapActions([this.action]),
 
     onHandle() {
       if (this.type == 'dis') {
         this.object.active = false;
         this.disableUser({ user: this.object });
+        this[this.action]({ user: this.object });
+      }
+      if (this.type == 'del') {
+        this['delete' + this.objectName]({ id: this.object.id });
       }
     },
 

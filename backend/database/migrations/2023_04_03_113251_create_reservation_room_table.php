@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('reservation_id')->constrained();
             $table->foreignId('room_id')->constrained();
             $table->date('occupied_date');
-            $table->timestamps();
         });
     }
 

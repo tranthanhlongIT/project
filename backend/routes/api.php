@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,3 +35,4 @@ Route::get('/rooms/reservation-rooms', [RoomController::class, 'getReservationRo
 Route::apiResource('/reservations', ReservationController::class);
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/rooms', RoomController::class);
+Route::apiResource('/guests', GuestController::class);

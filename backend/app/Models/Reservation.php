@@ -15,7 +15,7 @@ class Reservation extends Model
 
     public function rooms()
     {
-        return $this->belongsToMany(Room::class, 'reservation_id', 'reservation_id', 'room_id')->withPivot('occupied_date')->withTimestamps();;
+        return $this->belongsToMany(Room::class, 'reservation_id', 'reservation_id', 'room_id')->withPivot('occupied_date');
     }
 
     public function guest()

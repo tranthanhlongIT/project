@@ -12,7 +12,7 @@
           </v-card-title>
           <v-divider color="grey" class="m-0 p-0"></v-divider>
           <v-card-text class="m-0 p-0">
-            <v-container>
+            <v-container fluid>
               <v-row no-gutters>
                 <div class="text-subtitle-2 pl-0">Account Info</div>
                 <v-divider color="blue"></v-divider>
@@ -34,8 +34,7 @@
                     <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-select v-model="role" item-text="name" item-value="id" :items="roles" return-object
                         :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
-                        :error-messages="roleErrors" @blur="$v.role.$touch()" @input="$v.role.$touch()" label="Role"
-                        dense></v-select>
+                        :error-messages="roleErrors" @blur="$v.role.$touch()" label="Role" dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-select v-model="active" item-text="name" item-value="value" :items="actives"
@@ -81,8 +80,7 @@
                     <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-select v-model="gender" item-text="name" item-value="value" :items="genders"
                         :menu-props="{ bottom: true, offsetY: true }" :disabled="action == 'det' ? true : false"
-                        :error-messages="genderErrors" @blur="$v.gender.$touch()" @input="$v.gender.$touch()"
-                        label="Gender" dense></v-select>
+                        :error-messages="genderErrors" @blur="$v.gender.$touch()" label="Gender" dense></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pl-0 pt-0">
                       <v-text-field v-model="phone" :disabled="action == 'det' ? true : false"
@@ -131,7 +129,7 @@ export default {
 
   validations: {
     role: { required },
-    email: { required, email, maxLength: maxLength(30) },
+    email: { required, email },
     password: {
       required,
       minLength: minLength(8),
@@ -219,8 +217,6 @@ export default {
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.maxLength &&
-        errors.push("Email must be at most 30 characters long");
       !this.$v.email.required && errors.push("Email is required.");
       !this.$v.email.email && errors.push("Invalid email");
       return errors;
@@ -298,6 +294,7 @@ export default {
 
     onHandle() {
       if (this.validation()) return;
+
       this.setUser();
       if (this.action == "add") this.addUser({ user: this.user, file: this.file });
       if (this.action == "upd") this.updateUser({ user: this.user, file: this.file });

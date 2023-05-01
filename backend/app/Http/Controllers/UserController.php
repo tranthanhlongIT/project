@@ -33,18 +33,12 @@ class UserController extends Controller
         $data['password'] = bcrypt($request->password);
         $data['image'] = $this->uploadImage($request);
 
-        User::create($data);
+        $user = User::create($data);
 
         return response()->json([
+            'id' => $user->id,
             'status' => true,
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
     }
 
     /**

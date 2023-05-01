@@ -25,9 +25,9 @@ const routes = [
         component: () => import("./components/admin/page/Dashboard.vue"),
       },
       {
-        name: "user",
-        path: "user",
-        component: () => import("./components/admin/page/UserList.vue"),
+        name: "guest",
+        path: "guest",
+        component: () => import("./components/admin/page/GuestList.vue")
       },
       {
         name: "room",
@@ -38,6 +38,16 @@ const routes = [
         name: "reservation",
         path: "reservation",
         component: () => import("./components/admin/page/ReservationList.vue"),
+      },
+      {
+        name: "history",
+        path: "history",
+        component: () => import("./components/admin/page/HistoryList.vue")
+      },
+      {
+        name: "user",
+        path: "user",
+        component: () => import("./components/admin/page/UserList.vue"),
       },
     ],
   },

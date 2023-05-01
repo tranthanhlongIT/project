@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('guest_id')->constrained();
-            $table->float('total_stay')->unsigned()->nullable();
+            $table->float('room_price')->unsigned()->nullable();
+            $table->integer('total_stay')->unsigned()->nullable();
             $table->float('total_price')->unsigned()->nullable();
             $table->datetime('check_in')->nullable();
             $table->datetime('check_out')->nullable();
             $table->boolean('active')->nullable();
-            $table->datetime('status')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

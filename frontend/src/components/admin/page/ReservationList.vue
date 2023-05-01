@@ -1,6 +1,6 @@
 <template>
     <div class="m-3">
-        <h5 class="indigo--text">User List</h5>
+        <h5 class="indigo--text">Reservation</h5>
         <v-card>
             <v-sheet class="px-4 py-2" style="border-bottom: 1px solid #E0E0E0;">
                 <v-row no-gutters>
@@ -9,9 +9,18 @@
                             transition="scale-transition" offset-y min-width="auto">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field v-model="date" solo flat prepend-icon="mdi-calendar" readonly v-bind="attrs"
-                                    v-on="on" dense hide-details class="p-0"></v-text-field>
+                                    v-on="on" dense hide-details class="p-0 m-0 d-inline-flex" width="50px">
+                                    <template v-slot:append>
+                                        <v-btn icon @click.prevent="onChangeDateLeft">
+                                            <v-icon>mdi-chevron-left</v-icon>
+                                        </v-btn>
+                                        <v-btn icon @click.prevent="onChangeDateRight">
+                                            <v-icon>mdi-chevron-right</v-icon>
+                                        </v-btn>
+                                    </template>
+                                </v-text-field>
                             </template>
-                            <v-date-picker v-model="date" @input="datepicker = false" :min="minDate"></v-date-picker>
+                            <v-date-picker v-model="date" @input="datepicker = false"></v-date-picker>
                         </v-menu>
                     </v-col>
                     <v-col cols="6">
@@ -24,6 +33,23 @@
                 <v-col cols="3" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
                     <v-list flat subheader>
                         <v-subheader class="text-h6 indigo--text font-weight-medium">
+                            Status
+                        </v-subheader>
+                        <v-list-item-group multiple v-model="selectedStatus">
+                            <template v-for="status in statuses">
+                                <v-list-item :value="status" :ripple="false">
+                                    <template v-slot:default="{ active }">
+                                        <v-list-item-action class="mr-1">
+                                            <v-checkbox :ripple="false" :input-value="active"></v-checkbox>
+                                        </v-list-item-action>
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="status.name"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </template>
+                                </v-list-item>
+                            </template>
+                        </v-list-item-group>
+                        <v-subheader class="text-h6 indigo--text font-weight-medium">
                             Size
                         </v-subheader>
                         <v-list-item-group multiple v-model="selectedSize">
@@ -31,27 +57,13 @@
                                 <v-list-item :value="size" :ripple="false">
                                     <template v-slot:default="{ active }">
                                         <v-list-item-action class="mr-1">
-                                            <v-checkbox :ripple="false" :input-value="active"
-                                                :true-value="size.type = 'size'"></v-checkbox>
+                                            <v-checkbox :ripple="false" :input-value="active"></v-checkbox>
                                         </v-list-item-action>
                                         <v-list-item-content>
                                             <v-list-item-title v-text="size.name"></v-list-item-title>
                                         </v-list-item-content>
                                     </template>
                                 </v-list-item>
-                            </template>
-                        </v-list-item-group>
-                        <v-subheader class="text-h6 indigo--text font-weight-medium">
-                            Services
-                        </v-subheader>
-                        <v-list-item-group multiple class="pl-2">
-                            <template v-for="item in services">
-                                <v-chip small class="m-1" outlined color="primary">
-                                    {{ item.name }}
-                                    <v-icon small right>
-                                        {{ item.icon }}
-                                    </v-icon>
-                                </v-chip>
                             </template>
                         </v-list-item-group>
                     </v-list>
@@ -93,6 +105,7 @@
                 </v-col>
             </v-row>
         </v-card>
+
         <reservation-dialog v-if="dialog" :dialog="dialog" :status="status" :selectedRoom="room">
             <div v-if="status == 'Available'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Make Reservation
@@ -115,18 +128,31 @@ export default {
 
     data() {
         return {
-            minDate: new Date().toISOString().substr(0, 10),
             date: new Date().toISOString().substr(0, 10),
             datepicker: false,
             settings: [],
             floors: [],
             sizes: [],
-            services: [],
             search: null,
+            selectedStatus: [],
             selectedSize: [],
             dialog: false,
             room: null,
             status: null,
+            statuses: [
+                {
+                    id: 1,
+                    name: "Reserved"
+                },
+                {
+                    id: 2,
+                    name: "Pending"
+                },
+                {
+                    id: 3,
+                    name: "Available"
+                }
+            ]
         }
     },
 
@@ -137,11 +163,14 @@ export default {
 
         filteredRooms() {
             let rooms = this.reservationRooms;
+            if (this.selectedStatus.length > 0) {
+                rooms = this.filterRoomsByStatus(rooms, this.selectedStatus);
+            }
             if (this.selectedSize.length > 0) {
                 rooms = this.filterRoomsBySize(rooms, this.selectedSize);
             }
             if (this.search) {
-                rooms = this.filterRoomsBySearchQuery(rooms, this.search);
+                rooms = this.filterRoomsBySearch(rooms, this.search);
             }
             return rooms;
         }
@@ -159,6 +188,18 @@ export default {
             });
         },
 
+        filterRoomsByStatus(rooms, selectedStatus) {
+            return rooms.map(floor => {
+                const roomOnEachFloor = floor.rooms.filter(room => {
+                    if (selectedStatus.some(value => value.name == "Available"))
+                        return room.reservations.length === 0;
+                    else return room.reservations.length > 0 && selectedStatus.some(value => room.reservations[0].status.includes(value.name));
+                });
+                this.sortedArray(roomOnEachFloor);
+                return { ...floor, rooms: roomOnEachFloor };
+            });
+        },
+
         filterRoomsBySize(rooms, selectedSize) {
             return rooms.map(floor => {
                 const roomOnEachFloor = selectedSize.flatMap(value => floor.rooms.filter(room => room.size.name.includes(value.name)));
@@ -167,7 +208,7 @@ export default {
             });
         },
 
-        filterRoomsBySearchQuery(rooms, search) {
+        filterRoomsBySearch(rooms, search) {
             return rooms.map(floor => {
                 const roomOnEachFloor = floor.rooms.filter(room => room.number.includes(search));
                 return { ...floor, rooms: roomOnEachFloor };
@@ -175,7 +216,7 @@ export default {
         },
 
         roomStatus(room) {
-            if (room.reservations.length > 0 && room.reservations[0].active == 1) {
+            if (room.reservations.length > 0) {
                 if (room.reservations[0].status == "Pending") return "Pending";
                 else if (room.reservations[0].status == "Reserved") return "Reserved";
             }
@@ -183,7 +224,7 @@ export default {
         },
 
         statusColor(room) {
-            if (room.reservations.length > 0 && room.reservations[0].active == 1) {
+            if (room.reservations.length > 0) {
                 if (room.reservations[0].status == "Pending") return "lime accent-1";
                 else if (room.reservations[0].status == "Reserved") return "#94c494";
             }
@@ -205,6 +246,17 @@ export default {
             return array.sort(compare);
         },
 
+        onChangeDateLeft() {
+            let currentDate = new Date(this.date);
+            currentDate.setDate(currentDate.getDate() - 1);
+            this.date = currentDate.toISOString().substr(0, 10);
+        },
+        onChangeDateRight() {
+            let currentDate = new Date(this.date);
+            currentDate.setDate(currentDate.getDate() + 1);
+            this.date = currentDate.toISOString().substr(0, 10);
+        },
+
         openDialog(status, room) {
             this.status = status;
             this.room = Object.assign(room);
@@ -221,11 +273,10 @@ export default {
         date: {
             handler(value) {
                 this.selectedSize = [];
-                this.filteredRooms = [];
                 this.getReservationRooms({ date: value });
             },
             deep: true,
-        }
+        },
     }
 }
 </script>

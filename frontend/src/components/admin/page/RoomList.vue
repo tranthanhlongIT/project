@@ -129,6 +129,7 @@
                 </v-col>
             </v-row>
         </v-card>
+
         <room-dialog v-if="dialog" :dialog="dialog" :action="action" :selectedRoom="newRoom">
             <div v-if="action == 'add'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Add Room
@@ -169,6 +170,7 @@ export default {
             treeViewKey: 0,
             lastOpen: [],
             images: [],
+            oldRoomNumber: null
         }
     },
 
@@ -211,6 +213,7 @@ export default {
         openDialog(action, room) {
             this.action = action;
             this.newRoom = Object.assign(room);
+            this.oldRoomNumber = room.number;
             if (action == "upd" && this.selected)
                 this.dialog = true;
             else if (action != "upd") this.dialog = true;
@@ -226,6 +229,7 @@ export default {
         updateChild(room) {
             this.removeChild();
             this.addChild(this.findItem(room.floor.id), room);
+            this.active = [];
         },
 
         removeChild() {
@@ -288,7 +292,8 @@ export default {
         });
 
         EventBus.$on("updateChild", (room) => {
-            this.updateChild(room);
+            if (this.oldRoomNumber != room.number)
+                this.updateChild(room);
         });
     },
 }

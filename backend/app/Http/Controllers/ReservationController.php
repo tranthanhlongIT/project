@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Room;
+use App\Models\Guest;
+use Illuminate\Database\Query\JoinClause;
 
 class ReservationController extends Controller
 {
@@ -14,7 +15,15 @@ class ReservationController extends Controller
      */
     public function index()
     {
-
+        $data = Guest::join('reservations', 'guests.id', '=', 'reservations.guest_id')
+            ->where('reservations.active', '=', 0)
+            ->join('reservation_room', 'reservations.id', '=', 'reservation_room.reservation_id')
+            ->join('rooms', 'rooms.id', '=', 'reservation_room.room_id')
+            ->select('reservations.id', 'guests.phone', 'rooms.number', 'reservations.room_price', 'reservations.check_in', 'reservations.check_out', 'reservations.total_stay', 'reservations.total_price')
+            ->addSelect(DB::raw('CONCAT(guests.title, " ", guests.fname, " ", guests.lname) AS name'))
+            ->orderByDesc('reservations.id')
+            ->get();
+        return response()->json($data);
     }
 
     /**
