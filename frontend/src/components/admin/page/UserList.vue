@@ -2,20 +2,24 @@
   <div class="m-3">
     <h5 class="indigo--text">User List</h5>
     <v-card>
-      <v-card-title>
-        <v-btn color="success" small class="my-0" @click.prevent="openDialog('add', {})">
-          <v-icon left> mdi-plus </v-icon>
-          Add
-        </v-btn>
-        <v-btn color="info" small class="mx-1 my-0">
-          <v-icon left> mdi-file-excel </v-icon>
-          Export
-        </v-btn>
-        <v-spacer></v-spacer>
-
-        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details>
-        </v-text-field>
-      </v-card-title>
+      <v-sheet class="pa-4" style="border-bottom: 1px solid #E0E0E0;">
+        <v-row no-gutters>
+          <v-col cols="6">
+            <v-btn color="success" small class="my-0" @click.prevent="openDialog('add', {})">
+              <v-icon left> mdi-plus </v-icon>
+              Add
+            </v-btn>
+            <v-btn color="info" small class="mx-1 my-0">
+              <v-icon left> mdi-file-excel </v-icon>
+              Export
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" dense single-line hide-details>
+            </v-text-field>
+          </v-col>
+        </v-row>
+      </v-sheet>
       <v-data-table :headers="headers" :items="users" :search="search">
         <template v-slot:[`item.image`]="{ item }">
           <v-avatar class="my-2" v-if="item.image">
@@ -65,7 +69,8 @@
       </div>
     </user-dialog>
 
-    <confirmation-dialog v-if="confirmation" type="dis" :confirmation="confirmation" :object="user">
+    <confirmation-dialog v-if="confirmation" :object="user" objectName="user" action="userDisable"
+      :confirmation="confirmation" type="dis">
       <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Disable User
       </div>
@@ -96,11 +101,11 @@ export default {
       confirmation: false,
       headers: [
         { text: "ID", value: "id", width: "8%" },
-        { text: "Image", value: "image", sortable: false, filterable: false, width: "12%" },
+        { text: "Image", value: "image", width: "12%", sortable: false, filterable: false },
         { text: "Email", value: "email", width: "30%" },
-        { text: "Role", align: "center", value: "role", width: "15%" },
-        { text: "Active", align: "center", width: "15%", value: "active" },
-        { text: "Operation", align: "center", width: "15%", value: "operations", filterable: false, sortable: false },
+        { text: "Role", value: "role", width: "15%", align: "center" },
+        { text: "Active", value: "active", width: "15%", align: "center" },
+        { text: "Operation", value: "operations", width: "15%", align: "center", sortable: false, filterable: false },
       ],
     };
   },
