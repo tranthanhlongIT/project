@@ -4,6 +4,7 @@ import "vue-toastification/dist/index.css";
 import Vuelidate from "vuelidate";
 import excel from "vue-excel-export";
 import AsyncComputed from "vue-async-computed";
+import VCalendar from 'v-calendar';
 
 const options = {
   position: "top-right",
@@ -25,6 +26,10 @@ Vue.use(Toast, options);
 Vue.use(Vuelidate);
 Vue.use(AsyncComputed);
 
+Vue.use(VCalendar, {
+  componentPrefix: 'vc',
+});
+
 Vue.filter("toCurrency", function (value) {
   if (typeof value !== "number") {
     return value;
@@ -35,7 +40,3 @@ Vue.filter("toCurrency", function (value) {
   });
   return formatter.format(value);
 });
-
-Vue.filter("capitalize", function (value) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-})

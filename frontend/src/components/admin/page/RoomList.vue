@@ -17,10 +17,6 @@
                             <v-icon left> mdi-delete </v-icon>
                             Delete
                         </v-btn>
-                        <v-btn color="info" small class="my-0">
-                            <v-icon left> mdi-file-excel </v-icon>
-                            Export
-                        </v-btn>
                     </v-col>
                     <v-col cols="6">
                         <v-text-field v-model="search" @input="handleSearch" dense label="Search" single-line hide-details
@@ -29,7 +25,7 @@
                 </v-row>
             </v-sheet>
             <v-row no-gutters>
-                <v-col cols="3" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
+                <v-col cols="3" xl="2" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
                     <v-treeview ref="tree" return-object :active.sync="active" :items="items" :load-children="fetchRooms"
                         :search="search" :open.sync="open" color="warning" activatable open-all open-on-click transition
                         dense>
@@ -46,13 +42,13 @@
                         </template>
                     </v-treeview>
                 </v-col>
-                <v-col cols="9">
+                <v-col cols="9" xl="10">
                     <v-fade-transition mode="out-in">
                         <div v-if="!selected"
                             class="w-100 h-100 d-flex justify-content-center align-items-center text-h6 grey--text text--lighten-1 font-weight-light">
                             Select a Room
                         </div>
-                        <v-card class="w-100 h-100 pt-5 pb-5" v-else :key="room.id" flat>
+                        <v-card class="w-100 h-100 pb-5" v-else :key="room.id" flat>
                             <v-row class="pl-3 pb-3">
                                 <v-col cols="12" lg="7">
                                     <v-img height="300" v-for="image in room.images" :key="image.id"

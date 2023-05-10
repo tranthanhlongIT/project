@@ -21,6 +21,11 @@ export const userStore = {
       const index = state.users.findIndex((users) => users.id == user.id);
       state.users.splice(index, 1, user);
     },
+    disableUser: (state, user) => {
+      user.active = 0;
+      const index = state.users.findIndex((users) => users.id == user.id);
+      state.users.splice(index, 1, user);
+    },
   },
 
   actions: {
@@ -65,7 +70,8 @@ export const userStore = {
       const url = this._vm.env.apiURL + "users/disable/" + user.id;
       try {
         await axios.patch(url);
-        commit("updateUser", user);
+        commit("disableUser", user);
+        EventBus.$emit("confirmation");
         this._vm.$toast.success("Disable successful");
       } catch (e) {
         this._vm.$toast.error("Disable failed");

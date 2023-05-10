@@ -3,6 +3,7 @@
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="text-h5 text-white m-2">
+          <v-icon x-large color="green" left top>mdi-vuejs</v-icon>
           Vue Hotel
         </v-list-item-title>
       </v-list-item-content>
@@ -13,7 +14,7 @@
           <li class="sidebar-item" :class="isActive(item.name)">
             <router-link class="sidebar-link" :to="item.path" style="text-decoration: none">
               <v-icon>{{ item.icon }}</v-icon>
-              <span class="align-middle">{{ item.name | capitalize }}</span>
+              <span class="align-middle text-capitalize">{{ item.name }}</span>
             </router-link>
           </li>
         </template>

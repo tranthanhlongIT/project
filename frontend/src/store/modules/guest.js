@@ -63,9 +63,10 @@ export const guestStore = {
         },
 
         async deleteGuest({ commit }, { id }) {
-            const url = this._vm.env.apiURL + "guests" + id;
+            const url = this._vm.env.apiURL + "guests/" + id;
             try {
                 await axios.delete(url);
+                EventBus.$emit("confirmation");
                 commit("deleteGuest", id);
                 this._vm.$toast.success("Delete successful");
             } catch (e) {

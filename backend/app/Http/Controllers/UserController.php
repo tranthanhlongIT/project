@@ -11,9 +11,6 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = User::with('role:id,name')
@@ -22,9 +19,6 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $this->validation();
@@ -41,9 +35,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, User $user)
     {
         $this->validation($user);
@@ -67,7 +58,16 @@ class UserController extends Controller
         ]);
     }
 
-    public function validation(?User $user = null)
+    public function prepareData()
+    {
+        $roles = DB::table('roles')->select('id', 'name')->get();
+
+        return response()->json([
+            'roles' => $roles
+        ]);
+    }
+
+    private function validation(?User $user = null)
     {
         $passwordValidation = Password::min(8)
             ->letters()
@@ -96,7 +96,9 @@ class UserController extends Controller
         }
     }
 
-    public function uploadImage(Request $request)
+    // Private function //
+
+    private function uploadImage(Request $request)
     {
         if ($request->hasfile('image')) {
             $image = request()->file('image');
@@ -105,14 +107,5 @@ class UserController extends Controller
         }
 
         return $fileName ?? null;
-    }
-
-    public function prepareData()
-    {
-        $roles = DB::table('roles')->select('id', 'name')->get();
-
-        return response()->json([
-            'roles' => $roles
-        ]);
     }
 }

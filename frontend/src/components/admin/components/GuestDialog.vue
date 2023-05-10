@@ -57,8 +57,7 @@
                     <v-card-actions class="pb-0">
                         <v-spacer></v-spacer>
                         <v-btn type="submit" class="mb-2" elevation="2" small color="primary"
-                            v-if="action == 'add' || action == 'upd'" :hidden="action == 'det' ? true : false"
-                            @click.prevent="onHandle">
+                            v-if="action == 'add' || action == 'upd'" @click.prevent="onHandle">
                             Save
                         </v-btn>
                         <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning"
@@ -74,12 +73,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import {
-    required,
-    maxLength,
-    minLength,
-    email
-} from "vuelidate/lib/validators";
+import { required, maxLength, minLength, email } from "vuelidate/lib/validators";
 import { mapActions } from "vuex";
 import { EventBus } from "@/main";
 
@@ -170,22 +164,13 @@ export default {
     },
 
     methods: {
-        ...mapActions([
-            "getGuests",
-            "addGuest",
-            "updateGuest",
-            "disableGuest",
-        ]),
+        ...mapActions(["getGuests", "addGuest", "updateGuest", "disableGuest"]),
 
         onHandle() {
             if (this.validation()) return;
             this.setGuest();
             if (this.action == "add") this.addGuest({ guest: this.guest });
             if (this.action == "upd") this.updateGuest({ guest: this.guest });
-        },
-
-        closeDialog() {
-            EventBus.$emit("dialog");
         },
 
         setGuest() {
@@ -228,7 +213,11 @@ export default {
                 this.$v.$touch();
                 return true;
             }
-        }
+        },
+
+        closeDialog() {
+            EventBus.$emit("dialog");
+        },
     },
 
     created() {

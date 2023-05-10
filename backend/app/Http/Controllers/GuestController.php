@@ -3,16 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guest;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class GuestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = Guest::select('id', 'title', 'fname', 'lname', 'phone', 'email', 'address', 'description')
@@ -22,9 +19,6 @@ class GuestController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $this->validation();
@@ -39,9 +33,6 @@ class GuestController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Guest $guest)
     {
         $this->validation();
@@ -55,9 +46,6 @@ class GuestController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Guest $guest)
     {
         $guest->delete();
@@ -73,7 +61,7 @@ class GuestController extends Controller
             'fname' => ['bail', 'required', 'max:30'],
             'lname' => ['bail', 'required', 'max:30'],
             'phone' => ['bail', 'required', 'digits:10', 'numeric'],
-            'email' => ['bail', Rule::excludeIf(isset($guest)), 'email', 'unique:users'],
+            'email' => ['bail', Rule::excludeIf(isset($guest)), 'email', 'unique:guests'],
         ];
 
         $validator = Validator::make(request()->all(), $rules);

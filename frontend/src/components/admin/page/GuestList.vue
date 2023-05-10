@@ -9,10 +9,6 @@
                             <v-icon left> mdi-plus </v-icon>
                             Add
                         </v-btn>
-                        <v-btn color="info" small class="mx-1 my-0">
-                            <v-icon left> mdi-file-excel </v-icon>
-                            Export
-                        </v-btn>
                     </v-col>
                     <v-col cols="6">
                         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" dense single-line
@@ -30,7 +26,7 @@
                         mdi-pencil
                     </v-icon>
                     <v-icon small @click.prevent="openConfirmation(item)">
-                        mdi-block-helper
+                        mdi-delete
                     </v-icon>
                 </template>
             </v-data-table>
@@ -47,7 +43,8 @@
             </div>
         </guest-dialog>
 
-        <confirmation-dialog v-if="confirmation" type="del" :confirmation="confirmation" :object="guest">
+        <confirmation-dialog v-if="confirmation" :object="guest" action="deleteGuest" :confirmation="confirmation"
+            type="del">
             <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Delete Guest
             </div>

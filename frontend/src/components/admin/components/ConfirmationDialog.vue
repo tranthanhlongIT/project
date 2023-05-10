@@ -41,7 +41,6 @@ export default {
 
   props: {
     object: Object,
-    objectName: String,
     action: String,
     confirmation: Boolean,
     type: String
@@ -54,16 +53,15 @@ export default {
   },
 
   methods: {
-    ...mapActions([this.action]),
+    ...mapActions(["disableUser", "deleteGuest"]),
 
     onHandle() {
       if (this.type == 'dis') {
         this.object.active = false;
-        this.disableUser({ user: this.object });
         this[this.action]({ user: this.object });
       }
       if (this.type == 'del') {
-        this['delete' + this.objectName]({ id: this.object.id });
+        this[this.action]({ id: this.object.id });
       }
     },
 

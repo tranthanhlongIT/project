@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guest;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Models\Guest;
-use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Validator;
 
 class ReservationController extends Controller
 {
@@ -21,6 +22,7 @@ class ReservationController extends Controller
             ->join('rooms', 'rooms.id', '=', 'reservation_room.room_id')
             ->select('reservations.id', 'guests.phone', 'rooms.number', 'reservations.room_price', 'reservations.check_in', 'reservations.check_out', 'reservations.total_stay', 'reservations.total_price')
             ->addSelect(DB::raw('CONCAT(guests.title, " ", guests.fname, " ", guests.lname) AS name'))
+            ->groupBy('reservations.id')
             ->orderByDesc('reservations.id')
             ->get();
         return response()->json($data);
@@ -31,23 +33,44 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $this->validation();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reservation $reservation)
-    {
-        //
-    }
+        $data = $request->except(['room_id', 'start_date', 'end_date']);
 
+        $reservation = Reservation::create($data);
+
+        $date = Carbon::createFromFormat('d/m/Y', $request->start_date);
+
+        for ($i = 0; $i < $request->total_stay; $i++) {
+            $date = $date->addDays($i)->format('Y-m-d');
+            $reservation->rooms()->attach($request->room_id, ['occupied_date' => $date]);
+        }
+
+        return response()->json([
+            'status' => true,
+        ]);
+    }
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Reservation $reservation)
     {
-        //
+        $this->validation();
+
+        $data = $request->except(['room_id']);
+
+        $reservation->update($data);
+
+        $date = Carbon::createFromFormat('d/m/Y', $request->start_date);
+
+        for ($i = 0; $i < $request->total_stay; $i++) {
+            $date = $date->addDays($i)->format('Y-m-d');
+            $reservation->rooms()->attach($request->room_id, ['occupied_date' => $date]);
+        }
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     /**
@@ -71,5 +94,44 @@ class ReservationController extends Controller
             'floors' => $floors,
             'services' => $services
         ]);
+    }
+
+    public function prepareDataForNewReservation($id)
+    {
+        $reservations = DB::table('reservations')
+            ->where('active', '=', '1')
+            ->join('reservation_room', 'reservations.id', '=', 'reservation_room.reservation_id')
+            ->select('occupied_date')
+            ->where('room_id', '=', $id)->get();
+
+        return response()->json($reservations);
+    }
+
+    public function prepareDataForUpdateReservation($id)
+    {
+    }
+
+
+    // Private function //
+
+    private function validation()
+    {
+        $rules = [
+            'guest_id' => ['bail', 'required'],
+            'room_id' => ['bail', 'required'],
+            'room_price' => ['bail', 'required'],
+            'total_stay' => ['bail', 'required'],
+            'total_price' => ['bail', 'required'],
+            'status' => ['bail', 'required'],
+            'active' => ['bail', 'required'],
+        ];
+
+        $validator = Validator::make(request()->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->messages()->first()
+            ], 400)->throwResponse();
+        }
     }
 }

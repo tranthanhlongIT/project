@@ -9,10 +9,6 @@
               <v-icon left> mdi-plus </v-icon>
               Add
             </v-btn>
-            <v-btn color="info" small class="mx-1 my-0">
-              <v-icon left> mdi-file-excel </v-icon>
-              Export
-            </v-btn>
           </v-col>
           <v-col cols="6">
             <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" dense single-line hide-details>
@@ -69,8 +65,7 @@
       </div>
     </user-dialog>
 
-    <confirmation-dialog v-if="confirmation" :object="user" objectName="user" action="userDisable"
-      :confirmation="confirmation" type="dis">
+    <confirmation-dialog v-if="confirmation" :object="user" action="disableUser" :confirmation="confirmation" type="dis">
       <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
         <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Disable User
       </div>

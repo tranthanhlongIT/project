@@ -62,20 +62,16 @@ export default {
 
     computed: {
         ...mapGetters({
-            histories: "getHistories",
+            reservations: "getReservations",
         }),
     },
 
     methods: {
-        ...mapActions(["getHistories"]),
+        ...mapActions(["getReservations"]),
     },
 
     created() {
-        this.getHistories();
+        this.getReservations();
     },
-
-    beforeUpdate() {
-        console.log(this.histories);
-    }
 };
 </script>

@@ -14,7 +14,11 @@
                     <v-card-text class="m-0 p-0">
                         <v-container fluid>
                             <v-row>
-                                <v-col cols="12" lg="7" xl="6" style="border-right: 1px solid #E0E0E0;">
+                                <v-col cols="12" lg="7" xl="6" class="pt-0" style="border-right: 1px solid #E0E0E0;">
+                                    <v-row no-gutters>
+                                        <div class="text-subtitle-2 pl-0">Room Info</div>
+                                        <v-divider color="blue"></v-divider>
+                                    </v-row>
                                     <v-row class="ml-1">
                                         <v-col cols="6" class="pl-0 pt-0">
                                             <v-select v-model="floor" item-text="name" item-value="id" :items="floors"
@@ -98,8 +102,7 @@
                     <v-card-actions class="pb-0">
                         <v-spacer></v-spacer>
                         <v-btn type="submit" class="mb-2" elevation="2" small color="primary"
-                            v-if="action == 'add' || action == 'upd'" :hidden="action == 'det' ? true : false"
-                            @click.prevent="onHandle">
+                            v-if="action == 'add' || action == 'upd'" @click.prevent="onHandle">
                             Save
                         </v-btn>
                         <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning"
@@ -269,8 +272,8 @@ export default {
 
         width() {
             switch (this.$vuetify.breakpoint.name) {
-                case 'lg': return "70%";
-                case 'xl': return "50%";
+                case 'lg': return "80%";
+                case 'xl': return "60%";
                 default: return "100%";
             }
         }
@@ -381,6 +384,6 @@ export default {
 <style>
 .scroll-area {
     width: inherit;
-    max-height: 380px;
+    height: 400px;
 }
 </style>

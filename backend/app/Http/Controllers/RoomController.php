@@ -6,15 +6,12 @@ use App\Models\Floor;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = Floor::with('children:number as id,number as name,floor_id')->get();
@@ -25,41 +22,38 @@ class RoomController extends Controller
     public function getReservationRooms(Request $request)
     {
         $data = Floor::with(['rooms.reservations' => function ($query) use ($request) {
-            $query->select('reservations.id', 'reservations.guest_id', 'reservations.total_stay', 'reservations.total_price', 'reservations.check_in', 'reservations.check_out', 'reservations.status', 'reservations.active')
-                ->wherePivot('occupied_date', '=', $request->date);
-        }, 'rooms.reservations.guest', 'rooms.images:id,room_id,name', 'rooms.type:id,name', 'rooms.size:id,name'])->get();
+            $query->select(
+                'reservations.id',
+                'reservations.guest_id',
+                'reservations.total_stay',
+                'reservations.total_price',
+                'reservations.check_in',
+                'reservations.check_out',
+                'reservations.start_date',
+                'reservations.end_date',
+                'reservations.status',
+                'reservations.active'
+            )->wherePivot('occupied_date', '=', $request->date);
+        }, 'rooms.reservations.guest', 'rooms.images:id,room_id,name', 'rooms.type:id,name', 'rooms.size:id,name', 'rooms.floor:id,name'])->get();
 
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        try {
-            $this->validation();
+        $this->validation();
 
-            $data = $request->except(['services', 'images']);
-            $services = collect(json_decode($request->services))->pluck('id');
-            $room = Room::create($data);
-            $this->uploadImage($request, $room);
-            $room->services()->attach($services);
+        $data = $request->except(['services', 'images']);
+        $services = collect(json_decode($request->services))->pluck('id');
+        $room = Room::create($data);
+        $this->uploadImage($request, $room);
+        $room->services()->attach($services);
 
-            return response()->json([
-                'status' => true,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'data' => $request->services
-            ]);
-        }
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($number)
     {
         $room = Room::with([
@@ -72,9 +66,6 @@ class RoomController extends Controller
         return response()->json($room);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Room $room)
     {
         $this->validation($room);
@@ -90,9 +81,6 @@ class RoomController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Room $room)
     {
         //
@@ -113,7 +101,9 @@ class RoomController extends Controller
         ]);
     }
 
-    public function validation(Room $room = null)
+    // Private function //
+
+    private function validation(Room $room = null)
     {
         $rules = [
             'type_id' => ['bail', 'required'],
@@ -134,7 +124,7 @@ class RoomController extends Controller
         }
     }
 
-    public function uploadImage(Request $request, Room $room)
+    private function uploadImage(Request $request, Room $room)
     {
         if ($request->hasFile('images')) {
             $room->images()->delete();
@@ -149,7 +139,7 @@ class RoomController extends Controller
         }
     }
 
-    public function storeImage($image, $fileName)
+    private function storeImage($image, $fileName)
     {
         if (!Storage::exists('images/' . $fileName)) {
             $image->storeAs('images', $fileName);

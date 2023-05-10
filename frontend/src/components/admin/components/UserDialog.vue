@@ -95,8 +95,7 @@
           <v-card-actions class="pb-0">
             <v-spacer></v-spacer>
             <v-btn type="submit" class="mb-2" elevation="2" small color="primary"
-              v-if="action == 'add' || action == 'upd'" :hidden="action == 'det' ? true : false"
-              @click.prevent="onHandle">
+              v-if="action == 'add' || action == 'upd'" @click.prevent="onHandle">
               Save
             </v-btn>
             <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning" @click.prevent="closeDialog">
@@ -111,12 +110,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import {
-  required,
-  maxLength,
-  minLength,
-  email,
-} from "vuelidate/lib/validators";
+import { required, maxLength, minLength, email } from "vuelidate/lib/validators";
 import axios from "axios";
 import { mapActions } from "vuex";
 import UploadButton from "./UploadButton.vue";

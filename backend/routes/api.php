@@ -30,6 +30,7 @@ Route::patch('/users/disable/{user}', [UserController::class, 'disable']);
 Route::get('/users/prepare-data', [UserController::class, 'prepareData']);
 Route::get('/rooms/prepare-data', [RoomController::class, 'prepareData']);
 Route::get('/reservations/prepare-data', [ReservationController::class, 'prepareData']);
+Route::get('/reservations/prepare-data-for-reservation/{id}', [ReservationController::class, 'prepareDataForReservation']);
 
 Route::get('/rooms/reservation-rooms', [RoomController::class, 'getReservationRooms']);
 Route::apiResource('/reservations', ReservationController::class);
