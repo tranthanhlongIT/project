@@ -26,11 +26,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/storage/app/images/{filename}', [ImageController::class, 'index']);
 Route::post('/upload-image', [ImageController::class, 'upload']);
 
+Route::patch('/reservations/checkout/{reservation}', [ReservationController::class, 'checkOut']);
+Route::patch('/reservations/disable/{reservation}', [ReservationController::class, 'disable']);
 Route::patch('/users/disable/{user}', [UserController::class, 'disable']);
 Route::get('/users/prepare-data', [UserController::class, 'prepareData']);
 Route::get('/rooms/prepare-data', [RoomController::class, 'prepareData']);
 Route::get('/reservations/prepare-data', [ReservationController::class, 'prepareData']);
-Route::get('/reservations/prepare-data-for-reservation/{id}', [ReservationController::class, 'prepareDataForReservation']);
+Route::get('/reservations/get-disabled-dates/{id}', [ReservationController::class, 'getDisabledDate']);
 
 Route::get('/rooms/reservation-rooms', [RoomController::class, 'getReservationRooms']);
 Route::apiResource('/reservations', ReservationController::class);

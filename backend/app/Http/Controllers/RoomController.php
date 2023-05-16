@@ -33,7 +33,7 @@ class RoomController extends Controller
                 'reservations.end_date',
                 'reservations.status',
                 'reservations.active'
-            )->wherePivot('occupied_date', '=', $request->date);
+            )->where('reservations.active', '=', 1)->wherePivot('occupied_date', '=', $request->date);
         }, 'rooms.reservations.guest', 'rooms.images:id,room_id,name', 'rooms.type:id,name', 'rooms.size:id,name', 'rooms.floor:id,name'])->get();
 
         return response()->json($data);
@@ -101,7 +101,9 @@ class RoomController extends Controller
         ]);
     }
 
-    // Private function //
+    // =====================================================================
+    // Private function area 
+    // ======================================================================
 
     private function validation(Room $room = null)
     {

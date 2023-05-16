@@ -34,6 +34,13 @@ export const guestStore = {
             });
         },
 
+        async setGuests({ commit }, { guest }) {
+            let guests = [];
+            guest.name = guest.fname + " " + guest.lname;
+            guests.push(guest);
+            commit("setGuests", guests);
+        },
+
         async addGuest({ commit }, { guest }) {
             const formData = addFormData(guest);
             const url = this._vm.env.apiURL + "guests";

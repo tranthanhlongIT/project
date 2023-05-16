@@ -67,6 +67,10 @@ class UserController extends Controller
         ]);
     }
 
+    // =====================================================================
+    // Private function area 
+    // ======================================================================
+
     private function validation(?User $user = null)
     {
         $passwordValidation = Password::min(8)
@@ -95,8 +99,6 @@ class UserController extends Controller
             ], 400)->throwResponse();
         }
     }
-
-    // Private function //
 
     private function uploadImage(Request $request)
     {

@@ -13,11 +13,13 @@
                     <v-divider color="grey" class="m-0 p-0"></v-divider>
 
                     <v-tabs v-model="tab" style="border-bottom: 1px solid #E0E0E0;">
-                        <v-tab v-for="tab in tabs" :key="tab" :ripple="false">
-                            {{ tab }}
+                        <v-tab key="Room reservation" :ripple="false">
+                            Room reservation
+                        </v-tab>
+                        <v-tab v-if="status == 'Available'" key="Add guest" :ripple="false">
+                            Add guest
                         </v-tab>
                     </v-tabs>
-
                     <v-tabs-items v-model="tab">
                         <v-tab-item>
                             <v-card-text class="m-0 p-0">
@@ -47,24 +49,29 @@
                                                                         </div>
                                                                     </th>
                                                                     <td colspan="3">
-                                                                        <v-chip v-if="currentStatus == 'Available'"
-                                                                            color="info" outlined
-                                                                            class="mx-1 d-flex justify-content-center"
-                                                                            style="width:100px" @click="onChangeChip">
-                                                                            {{ currentStatus }}
-                                                                        </v-chip>
-                                                                        <v-chip v-else-if="currentStatus == 'Pending'"
-                                                                            color="orange" outlined
-                                                                            class="mx-1 d-flex justify-content-center"
-                                                                            style="width:100px" @click="onChangeChip">
-                                                                            {{ currentStatus }}
-                                                                        </v-chip>
-                                                                        <v-chip v-else-if="currentStatus == 'Reserved'"
-                                                                            color="green" outlined
-                                                                            class="mx-1 d-flex justify-content-center"
-                                                                            style="width:100px" @click="onChangeChip">
-                                                                            {{ currentStatus }}
-                                                                        </v-chip>
+                                                                        <div class="d-flex">
+                                                                            <v-chip v-if="status == 'Available'" outlined
+                                                                                color="info"
+                                                                                class="mx-1 d-flex justify-content-center"
+                                                                                style="width:100px">
+                                                                                {{ status }}
+                                                                            </v-chip>
+                                                                            <v-chip v-else-if="status == 'Pending'"
+                                                                                color="orange" outlined
+                                                                                class="mx-1 d-flex justify-content-center"
+                                                                                style="width:100px" @click="onChangeChip">
+                                                                                <div class="text-subtitle-2">{{ status }}
+                                                                                </div>
+                                                                            </v-chip>
+                                                                            <v-chip v-else-if="status == 'Reserved'"
+                                                                                color="green" outlined
+                                                                                class="mx-1 d-flex justify-content-center"
+                                                                                style="width:100px" @click="onChangeChip">
+                                                                                <div class="text-subtitle-2">{{ status }}
+                                                                                </div>
+                                                                            </v-chip>
+                                                                            <v-spacer></v-spacer>
+                                                                        </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -110,35 +117,26 @@
                                                                         </div>
                                                                     </th>
                                                                     <td>
-                                                                        <template v-if="roomCheckIn(room)">
+                                                                        <template v-if="roomCheckIn()">
                                                                             <vc-date-picker v-model="checkIn" is-required
                                                                                 mode="dateTime"
                                                                                 :model-config="{ type: 'string', mask: 'MM/DD/YYYY HH:mm', }">
                                                                                 <template v-slot="{ togglePopover }">
-                                                                                    <v-text-field :value="checkIn"
-                                                                                        @click="togglePopover" solo flat
+                                                                                    <v-text-field :value="checkIn" solo flat
+                                                                                        @click="togglePopover" clearable
+                                                                                        @click:clear="clearCheckIn"
                                                                                         prepend-inner-icon="mdi-calendar"
                                                                                         single-line readonly hide-details
                                                                                         class="text-subtitle-2"
-                                                                                        style="width:190px" />
+                                                                                        style="width:240px" />
                                                                                 </template>
                                                                             </vc-date-picker>
                                                                         </template>
                                                                         <template v-else>
-                                                                            <v-menu bottom right offset-y dense
-                                                                                transition="scale-transition"
-                                                                                :nudge-bottom="5">
-                                                                                <template v-slot:activator="{ on }">
-                                                                                    <v-chip text-color="black" class="mx-1"
-                                                                                        v-on="on">
-                                                                                        Not checked-in
-                                                                                    </v-chip>
-                                                                                </template>
-                                                                                <vc-date-picker v-model="checkIn"
-                                                                                    mode="dateTime" is-required
-                                                                                    :model-config="{ type: 'string', mask: 'MM/DD/YYYY HH:mm', }">
-                                                                                </vc-date-picker>
-                                                                            </v-menu>
+                                                                            <v-chip text-color="black" class="mx-1"
+                                                                                @click="setCheckIn">
+                                                                                Not checked-in
+                                                                            </v-chip>
                                                                         </template>
                                                                     </td>
                                                                     <th scope="col">
@@ -148,17 +146,19 @@
                                                                         </div>
                                                                     </th>
                                                                     <td>
-                                                                        <template v-if="roomCheckOut(room)">
+                                                                        <template v-if="roomCheckOut()">
                                                                             <vc-date-picker v-model="checkOut"
                                                                                 mode="dateTime" is-required
                                                                                 :model-config="{ type: 'string', mask: 'MM/DD/YYYY HH:mm', }">
                                                                                 <template v-slot="{ togglePopover }">
-                                                                                    <v-text-field :value="checkOut"
-                                                                                        @click="togglePopover" solo flat
+                                                                                    <v-text-field :value="checkOut" solo
+                                                                                        clearable flat
+                                                                                        @click="togglePopover"
+                                                                                        @click:clear="clearCheckOut"
                                                                                         prepend-inner-icon="mdi-calendar"
                                                                                         single-line readonly hide-details
                                                                                         class="text-subtitle-2 p-0 m-0"
-                                                                                        style="width:190px" />
+                                                                                        style="width:240px" />
                                                                                 </template>
                                                                             </vc-date-picker>
                                                                         </template>
@@ -168,15 +168,10 @@
                                                                                 :nudge-bottom="5">
                                                                                 <template v-slot:activator="{ on }">
                                                                                     <v-chip text-color="black" class="mx-1"
-                                                                                        v-on="on">
+                                                                                        @click="setCheckOut">
                                                                                         Not checked-out
                                                                                     </v-chip>
                                                                                 </template>
-                                                                                <vc-date-picker v-if="checkIn != null"
-                                                                                    is-required v-model="checkOut"
-                                                                                    mode="dateTime"
-                                                                                    :model-config="{ type: 'string', mask: 'MM/DD/YYYY HH:mm', }">
-                                                                                </vc-date-picker>
                                                                             </v-menu>
                                                                         </template>
                                                                     </td>
@@ -195,7 +190,8 @@
                                                                                     Guest
                                                                                 </div>
                                                                             </v-col>
-                                                                            <v-col cols="6">
+                                                                            <v-col cols="6"
+                                                                                v-if="this.status == 'Available'">
                                                                                 <v-text-field v-model="search"
                                                                                     append-icon="mdi-magnify" label="Search"
                                                                                     dense single-line hide-details>
@@ -224,16 +220,16 @@
                                                     <v-img :src="image" class="d-flex d-justify-content-center" height="300"
                                                         max-height="400"></v-img>
                                                 </v-col>
-                                                <v-col cols="12" md="3"
+                                                <v-col cols="12" md="2"
                                                     class="text-subtitle-1 font-weight-bold my-2">Number</v-col>
-                                                <v-col cols="12" md="3"
+                                                <v-col cols="12" md="4"
                                                     class="text-subtitle-1 font-weight-bold my-2">Name</v-col>
                                                 <v-col cols="12" md="3"
                                                     class="text-subtitle-1 font-weight-bold my-2">Type</v-col>
                                                 <v-col cols="12" md="3"
                                                     class="text-subtitle-1 font-weight-bold my-2">Floor</v-col>
-                                                <v-col cols="12" md="3" class="text-subtitle-1">{{ room.number }}</v-col>
-                                                <v-col cols="12" md="3" class="text-subtitle-1">{{ room.name }}</v-col>
+                                                <v-col cols="12" md="2" class="text-subtitle-1">{{ room.number }}</v-col>
+                                                <v-col cols="12" md="4" class="text-subtitle-1">{{ room.name }}</v-col>
                                                 <v-col cols="12" md="3" class="text-subtitle-1">{{ room.type.name }}</v-col>
                                                 <v-col cols="12" md="3" class="text-subtitle-1">
                                                     {{ room.floor.name }}
@@ -267,9 +263,17 @@
                             <v-divider color="grey" class="m-0 p-0"></v-divider>
                             <v-card-actions class="pb-0">
                                 <v-spacer></v-spacer>
+                                <v-btn type="submit" class="mb-2" elevation="2" small color="info" v-if="active == 1"
+                                    @click.prevent="onCheckOut" :hidden="status == 'Available'">
+                                    Checkout
+                                </v-btn>
                                 <v-btn type="submit" class="mb-2" elevation="2" small color="primary" v-if="active == 1"
-                                    @click.prevent="onHandle" :disabled="selectedGuest == null">
-                                    Save
+                                    @click.prevent="onConfirm" :disabled="selectedGuest == null && status == 'Available'">
+                                    Confirm Booking
+                                </v-btn>
+                                <v-btn type="submit" class="mb-2" elevation="2" small color="error" v-if="active == 1"
+                                    @click.prevent="onCancellation" :hidden="status == 'Available'">
+                                    Cancel Booking
                                 </v-btn>
                                 <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning"
                                     @click.prevent="closeDialog">
@@ -341,11 +345,21 @@
                                 </v-btn>
                             </v-card-actions>
                         </v-tab-item>
-
                     </v-tabs-items>
                 </form>
             </v-card>
         </v-dialog>
+
+        <confirmation-dialog v-if="confirmation" :object="reservation" action="disableReservation"
+            :confirmation="confirmation" type="dis">
+            <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+                <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Cancel Reservation
+            </div>
+            <div slot="message" class="text-center text-subtitle-1">Are you sure want to cancel</div>
+        </confirmation-dialog>
+
+        <checkout-dialog v-if="checkOutConfirmation" :id="reservation.id" :checkOut="checkOut"
+            :checkOutConfirmation="checkOutConfirmation" />
     </v-row>
 </template>
 
@@ -356,6 +370,8 @@ import { required, maxLength, minLength, email } from "vuelidate/lib/validators"
 import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
 import moment from "moment";
+import ConfirmationDialog from "./ConfirmationDialog.vue";
+import CheckOutDialog from "./CheckOutDialog.vue";
 
 export default {
     mixins: [validationMixin],
@@ -375,16 +391,22 @@ export default {
         },
     },
 
+    components: {
+        "confirmation-dialog": ConfirmationDialog,
+        "checkout-dialog": CheckOutDialog
+    },
+
     data() {
         return {
+            confirmation: false,
+            checkOutConfirmation: false,
             show: false,
             tab: null,
-            tabs: ['Room reservation', 'Add guest'],
-            reservation: {},
             room: {},
+            reservation: {},
             guest: {},
             selectedGuest: null,
-            currentStatus: null,
+
             title: null,
             fname: null,
             lname: null,
@@ -408,19 +430,21 @@ export default {
             minDate: new Date(),
             disabledDates: [],
             range: {
-                start: moment(new Date()).format('MM/DD/YYYY'),
-                end: moment(new Date()).format('MM/DD/YYYY'),
+                start: null,
+                end: null,
             },
             totalStay: 1,
+            status: "Available",
+            active: 1
         }
     },
 
     props: {
         dialog: Boolean,
-        active: Number,
-        status: String,
-        image: String,
         selectedRoom: Object,
+        image: String,
+        currentReservation: Object,
+        selectedDate: String,
     },
 
     computed: {
@@ -477,34 +501,17 @@ export default {
     },
 
     methods: {
-        ...mapActions(["addReservation", "updateReservation", "getGuests", "addGuest"]),
+        ...mapActions(["addReservation", "updateReservation", "getGuests", "setGuests", "addGuest"]),
 
-        async prepareData(id) {
-            let url = this.env.apiURL + "reservations/prepare-data-for-reservation/" + id;
+        async getDisabledDate(action, roomId, reservationId) {
+            let url = this.env.apiURL + "reservations/get-disabled-dates/" + roomId + "?action=" + action + "&reservation=" + reservationId;
+
             await axios.get(url).then((response) => {
                 response.data.forEach(data => {
                     let date = new Date(data.occupied_date);
                     this.disabledDates.push(date);
                 })
             });
-        },
-
-        onHandle() {
-            this.setReservation();
-            if (this.status == "Available") this.performAddReservation();
-            if (this.status == "Pending" || this.status == "Reserved") this.updateReservation({ reservation: this.user });
-        },
-
-        performAddReservation() {
-            this.addReservation({ reservation: this.reservation });
-            this.currentStatus = this.reservation.status;
-            this.prepareData(this.room.id);
-        },
-
-        onHandleGuestForm() {
-            if (this.guestValidation()) return;
-            this.setGuest();
-            this.addGuest({ guest: this.guest })
         },
 
         setGuest() {
@@ -518,26 +525,36 @@ export default {
             this.guest.description = this.description;
         },
 
+        setCheckIn() {
+            this.checkIn = moment(new Date()).format('MM/DD/YYYY HH:mm');
+        },
+
+        setCheckOut() {
+            if (this.status != "Available" && this.checkIn != null) this.checkOut = moment(new Date()).format('MM/DD/YYYY HH:mm');
+        },
+
         setReservation() {
             this.reservation.room_id = this.room.id;
-            this.reservation.guest_id = this.selectedGuest.id;
+            this.reservation.guest_id = this.status == "Available" ? this.selectedGuest.id : null;
             this.reservation.room_price = this.room.price;
             this.reservation.total_stay = this.totalStay;
             this.reservation.total_price = this.totalPrice;
-            this.reservation.check_in = this.checkIn != null ? new Date(this.checkIn).toLocaleDateString() : null;
-            this.reservation.check_out = this.checkOut != null ? new Date(this.checkOut).toLocaleDateString() : null;
-            this.reservation.start_date = new Date(this.range.start).toLocaleDateString();
-            this.reservation.end_date = new Date(this.range.end).toLocaleDateString();
-            this.reservation.status = this.currentStatus == "Available" ? "Pending" : this.currentStatus;
-            this.reservation.active = (this.checkOut == null && this.status != "Canceled") ? 1 : 0;
+            this.reservation.check_in = this.checkIn ? moment(new Date(this.checkIn)).format('YYYY-MM-DD HH:mm') : null;
+            this.reservation.check_out = this.checkOut ? moment(new Date(this.checkOut)).format('YYYY-MM-DD HH:mm') : null;
+            this.reservation.start_date = moment(new Date(this.range.start)).format('YYYY-MM-DD');
+            this.reservation.end_date = moment(new Date(this.range.end)).format('YYYY-MM-DD');
+            this.reservation.status = this.status == "Available" ? "Pending" : this.status;
+            this.reservation.active = 1;
         },
 
         setField() {
-            this.checkIn = moment(new Date(this.selectedRoom.reservations[0].check_in)).format("MM/DD/YYYY HH:mm");
-            this.checkOut = moment(new Date(this.selectedRoom.reservations[0].check_out)).format("MM/DD/YYYY HH:mm")
-            this.range.start = moment(new Date(this.selectedRoom.reservations[0].start_date)).format("MM/DD/YYYY")
-            this.range.end = moment(new Date(this.selectedRoom.reservations[0].end_date)).format("MM/DD/YYYY")
-            this.totalStay = this.selectedRoom.reservations[0].total_stay;
+            this.status = this.reservation.status;
+            this.active = this.reservation.active;
+            this.totalStay = this.reservation.total_stay;
+            this.checkIn = this.reservation.check_in ? moment(new Date(this.reservation.check_in)).format("MM/DD/YYYY HH:mm") : null;
+            this.checkOut = this.reservation.check_out ? moment(new Date(this.reservation.check_out)).format("MM/DD/YYYY HH:mm") : null;
+            this.range.start = moment(new Date(this.reservation.start_date)).format("MM/DD/YYYY")
+            this.range.end = moment(new Date(this.reservation.end_date)).format("MM/DD/YYYY")
         },
 
         resetField() {
@@ -560,16 +577,39 @@ export default {
             return false;
         },
 
-        roomCheckIn(room) {
-            if (room.reservations.length > 0 && room.reservations[0].check_in != null || this.checkIn != null)
+        roomCheckIn() {
+            if (this.reservation.check_in != null || this.checkIn != null)
                 return true;
             return false;
         },
 
-        roomCheckOut(room) {
-            if (room.reservations.length > 0 && room.reservations[0].check_out != null || this.checkOut != null)
+        roomCheckOut() {
+            if (this.reservation.check_out != null || this.checkOut != null)
                 return true;
             return false;
+        },
+
+        onConfirm() {
+            this.setReservation();
+            if (this.status == "Available") this.addReservation({ reservation: this.reservation });
+            else if (this.status == "Pending" || this.status == "Reserved") this.updateReservation({ reservation: this.reservation });
+
+            this.status = this.reservation.status;
+            this.getDisabledDate("update", this.room.id);
+        },
+
+        onHandleGuestForm() {
+            if (this.guestValidation()) return;
+            this.setGuest();
+            this.addGuest({ guest: this.guest })
+        },
+
+        onCheckOut() {
+            this.checkOutConfirmation = true;
+        },
+
+        onCancellation() {
+            this.confirmation = true;
         },
 
         onChangeTab() {
@@ -577,19 +617,27 @@ export default {
         },
 
         onRowClick(item, row) {
-            row.select(true)
-            this.selectedGuest = item;
+            if (this.status == 'Available') {
+                row.select(true)
+                this.selectedGuest = item;
+            }
+        },
+
+        clearCheckIn() {
+            this.checkIn = null;
+            this.checkOut = null;
+        },
+
+        clearCheckOut() {
+            this.checkOut = null;
         },
 
         onChangeChip() {
-            if (this.currentStatus == "Available") {
-                this.currentStatus = "Pending";
+            if (this.status == "Pending") {
+                this.status = "Reserved";
                 return;
-            } else if (this.currentStatus == "Pending") {
-                this.currentStatus = "Reserved";
-                return;
-            } else if (this.currentStatus == "Reserved") {
-                this.currentStatus = "Available";
+            } else if (this.status == "Reserved") {
+                this.status = "Pending";
                 return;
             }
         },
@@ -613,15 +661,35 @@ export default {
     created() {
         this.show = this.dialog;
         this.room = this.selectedRoom;
-        this.currentStatus = this.status;
+        this.reservation = this.currentReservation;
 
-        this.prepareData(this.room.id);
-
-        if (this.currentStatus != "Available") this.setField();
+        if (this.reservation.status == null) {
+            this.getGuests();
+            this.range.start = moment(new Date(this.selectedDate)).format("MM/DD/YYYY");
+            this.range.end = moment(new Date(this.selectedDate)).format("MM/DD/YYYY");
+            this.getDisabledDate("add", this.room.id, -99);
+        } else {
+            this.setGuests({ guest: this.reservation.guest });
+            this.setField();
+            this.getDisabledDate("update", this.room.id, this.reservation.id);
+        }
 
         EventBus.$on("reset", () =>
             this.resetField()
         );
+
+        EventBus.$on("closeConfirmation", () => {
+            this.confirmation = false;
+        });
+
+        EventBus.$on("closeCheckOut", () => {
+            this.checkOutConfirmation = false;
+        });
+
+        EventBus.$on("addId", (id) => {
+            this.reservation.id = id;
+            this.setGuests({ guest: this.selectedGuest });
+        });
     },
 
     watch: {
@@ -671,6 +739,6 @@ export default {
 }
 
 /deep/ tr.v-data-table__selected {
-    background: #c0bcf4 !important;
+    background: #eeeeee !important;
 }
 </style>

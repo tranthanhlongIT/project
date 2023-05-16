@@ -2,10 +2,10 @@
   <div class="m-3">
     <h5 class="indigo--text">User List</h5>
     <v-card>
-      <v-sheet class="pa-4" style="border-bottom: 1px solid #E0E0E0;">
+      <v-sheet class="px-4 py-2" style="border-bottom: 1px solid #E0E0E0;">
         <v-row no-gutters>
-          <v-col cols="6">
-            <v-btn color="success" small class="my-0" @click.prevent="openDialog('add', {})">
+          <v-col cols="6" class="my-1 mb-2">
+            <v-btn color="success" small class="mr-1" @click.prevent="openDialog('add', {})">
               <v-icon left> mdi-plus </v-icon>
               Add
             </v-btn>

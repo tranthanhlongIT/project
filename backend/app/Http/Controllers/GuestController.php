@@ -55,7 +55,11 @@ class GuestController extends Controller
         ]);
     }
 
-    public function validation(?Guest $guest = null)
+    // =====================================================================
+    // Private function area 
+    // ======================================================================
+
+    private function validation(?Guest $guest = null)
     {
         $rules = [
             'fname' => ['bail', 'required', 'max:30'],

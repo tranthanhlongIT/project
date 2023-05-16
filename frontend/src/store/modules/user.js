@@ -66,11 +66,12 @@ export const userStore = {
       }
     },
 
-    async disableUser({ commit }, { user }) {
-      const url = this._vm.env.apiURL + "users/disable/" + user.id;
+    async disableUser({ commit }, { object }) {
+      const url = this._vm.env.apiURL + "users/disable/" + object.id;
+
       try {
         await axios.patch(url);
-        commit("disableUser", user);
+        commit("disableUser", object);
         EventBus.$emit("confirmation");
         this._vm.$toast.success("Disable successful");
       } catch (e) {

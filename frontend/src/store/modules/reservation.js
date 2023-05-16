@@ -17,7 +17,8 @@ export const reservationStore = {
         setReservation: (state, reservation) => (state.reservation = reservation),
         addReservation: (state, reservation) => { },
         updateReservation: (state, reservation) => { },
-        deleteReservation: (state, id) => { }
+        disableReservation: (state, reservation) => { },
+        checkOutReservation: (state, reservation) => { }
     },
 
     actions: {
@@ -33,9 +34,10 @@ export const reservationStore = {
             const url = this._vm.env.apiURL + "reservations";
 
             try {
-                await axios.post(url, formData);
+                let response = await axios.post(url, formData);
                 commit("addReservation");
                 EventBus.$emit("updateList");
+                EventBus.$emit("addId", response.data.id);
                 this._vm.$toast.success("Book successful");
             } catch (error) {
                 this._vm.$toast.error(error.response.data.message);
@@ -55,15 +57,34 @@ export const reservationStore = {
             }
         },
 
-        async deleteReservation({ commit }, { id }) {
-            const url = this._vm.env.apiURL + "reservations/" + id;
+        async disableReservation({ commit }, { object }) {
+            const url = this._vm.env.apiURL + "reservations/disable/" + object.id;
+
             try {
-                await axios.delete(url);
+                await axios.patch(url);
+                commit("disableReservation");
+                EventBus.$emit("updateList");
                 EventBus.$emit("confirmation");
-                commit("deleteReservation", id);
-                this._vm.$toast.success("Delete successful");
+                EventBus.$emit("dialog");
+                this._vm.$toast.success("Cancel successful");
             } catch (e) {
-                this._vm.$toast.error("Delete failed");
+                this._vm.$toast.error("Cancel failed");
+            }
+        },
+
+        async checkOutReservation({ commit }, { id, checkOut }) {
+            const formData = checkOutFormData(checkOut);
+            const url = this._vm.env.apiURL + "reservations/checkout/" + id;
+
+            try {
+                await axios.post(url, formData);
+                commit("checkOutReservation");
+                EventBus.$emit("updateList");
+                EventBus.$emit("confirmation");
+                EventBus.$emit("dialog");
+                this._vm.$toast.success("Check out successful");
+            } catch (e) {
+                this._vm.$toast.error("Check out failed");
             }
         },
     },
@@ -82,18 +103,30 @@ function addFormData(reservation) {
     formData.append("end_date", reservation.end_date);
     formData.append("status", reservation.status);
     formData.append("active", reservation.active);
+
     return formData;
 }
 
 function updateFormData(reservation) {
     const formData = new FormData();
-    formData.append("title", reservation.title);
-    formData.append("fname", reservation.fname);
-    formData.append("lname", reservation.lname);
-    formData.append("phone", reservation.phone);
-    formData.append("email", reservation.email ?? "");
-    formData.append("address", reservation.address ?? "");
-    formData.append("description", reservation.description ?? "")
+    formData.append("room_id", reservation.room_id);
+    formData.append("total_stay", reservation.total_stay);
+    formData.append("total_price", reservation.total_price);
+    formData.append("check_in", reservation.check_in ?? "");
+    formData.append("check_out", reservation.check_out ?? "");
+    formData.append("start_date", reservation.start_date);
+    formData.append("end_date", reservation.end_date);
+    formData.append("status", reservation.status);
+    formData.append("active", reservation.active);
     formData.append("_method", "PATCH");
+
+    return formData;
+}
+
+function checkOutFormData(checkOut) {
+    const formData = new FormData();
+    formData.append("check_out", checkOut);
+    formData.append("_method", "PATCH");
+
     return formData;
 }

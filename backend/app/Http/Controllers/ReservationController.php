@@ -7,65 +7,71 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
 class ReservationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $data = Guest::join('reservations', 'guests.id', '=', 'reservations.guest_id')
             ->where('reservations.active', '=', 0)
             ->join('reservation_room', 'reservations.id', '=', 'reservation_room.reservation_id')
             ->join('rooms', 'rooms.id', '=', 'reservation_room.room_id')
-            ->select('reservations.id', 'guests.phone', 'rooms.number', 'reservations.room_price', 'reservations.check_in', 'reservations.check_out', 'reservations.total_stay', 'reservations.total_price')
+            ->select(
+                'reservations.id',
+                'guests.phone',
+                'rooms.number',
+                'reservations.room_price',
+                'reservations.check_in',
+                'reservations.check_out',
+                'reservations.total_stay',
+                'reservations.total_price'
+            )
             ->addSelect(DB::raw('CONCAT(guests.title, " ", guests.fname, " ", guests.lname) AS name'))
+            ->where('reservations.status', '!=', 'Cancel')
             ->groupBy('reservations.id')
             ->orderByDesc('reservations.id')
             ->get();
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
-    {
-        $this->validation();
-
-        $data = $request->except(['room_id', 'start_date', 'end_date']);
-
-        $reservation = Reservation::create($data);
-
-        $date = Carbon::createFromFormat('d/m/Y', $request->start_date);
-
-        for ($i = 0; $i < $request->total_stay; $i++) {
-            $date = $date->addDays($i)->format('Y-m-d');
-            $reservation->rooms()->attach($request->room_id, ['occupied_date' => $date]);
-        }
-
-        return response()->json([
-            'status' => true,
-        ]);
-    }
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Reservation $reservation)
     {
         $this->validation();
 
         $data = $request->except(['room_id']);
 
-        $reservation->update($data);
-
-        $date = Carbon::createFromFormat('d/m/Y', $request->start_date);
+        $reservation = Reservation::create($data);
 
         for ($i = 0; $i < $request->total_stay; $i++) {
-            $date = $date->addDays($i)->format('Y-m-d');
-            $reservation->rooms()->attach($request->room_id, ['occupied_date' => $date]);
+            $date = Carbon::createFromFormat('Y-m-d', $request->start_date);
+            $occupiedDate = $date->addDays($i)->format('Y-m-d');
+            $reservation->rooms()->attach($request->room_id, ['occupied_date' => $occupiedDate]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'id' => $reservation->id
+        ]);
+    }
+
+    public function update(Request $request, Reservation $reservation)
+    {
+        $this->validation($reservation);
+
+        $data = $request->except(['room_id']);
+
+        $endDate = $reservation->end_date;
+
+        $reservation->update($data);
+
+        if ($request->end_date != $endDate) {
+            for ($i = 0; $i < $request->total_stay; $i++) {
+                $date = Carbon::createFromFormat('Y-m-d', $request->start_date);
+                $occupiedDate = $date->addDays($i)->format('Y-m-d');
+                $reservation->rooms()->sync($request->room_id, ['occupied_date' => $occupiedDate]);
+            }
         }
 
         return response()->json([
@@ -73,12 +79,28 @@ class ReservationController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Reservation $reservation)
+    public function disable(Reservation $reservation)
     {
-        //
+        $reservation->update([
+            'status' => 'Cancel',
+            'active' => false
+        ]);
+
+        return response()->json([
+            'status' => true,
+        ]);
+    }
+
+    public function checkOut(Request $request, Reservation $reservation)
+    {
+        $reservation->update([
+            'check_out' => $request->check_out,
+            'active' => false
+        ]);
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function prepareData()
@@ -96,30 +118,48 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function prepareDataForNewReservation($id)
+    public function getDisabledDate(Request $request, $id)
     {
-        $reservations = DB::table('reservations')
+        if ($request->action == 'add')
+            $dates = $this->disableDateForNewReservation($id);
+        else $dates = $this->disableDateForUpdateReservation($id, $request->reservation);
+
+        return response()->json($dates);
+    }
+
+    // =====================================================================
+    // Private function area 
+    // ======================================================================
+
+    private function disableDateForNewReservation($id)
+    {
+        $dates = DB::table('reservations')
             ->where('active', '=', '1')
             ->join('reservation_room', 'reservations.id', '=', 'reservation_room.reservation_id')
             ->select('occupied_date')
             ->where('room_id', '=', $id)->get();
 
-        return response()->json($reservations);
+        return $dates;
     }
 
-    public function prepareDataForUpdateReservation($id)
+    private function disableDateForUpdateReservation($id, $reservationId)
     {
+        $dates = DB::table('reservations')
+            ->where('active', '=', '1')
+            ->join('reservation_room', 'reservations.id', '=', 'reservation_room.reservation_id')
+            ->where('reservations.id', '!=', $reservationId)
+            ->select('occupied_date')
+            ->where('room_id', '=', $id)->get();
+
+        return $dates;
     }
 
-
-    // Private function //
-
-    private function validation()
+    private function validation(?Reservation $reservation = null)
     {
         $rules = [
-            'guest_id' => ['bail', 'required'],
+            'guest_id' => ['bail', Rule::excludeIf(isset($reservation)), 'required'],
             'room_id' => ['bail', 'required'],
-            'room_price' => ['bail', 'required'],
+            'room_price' => ['bail', Rule::excludeIf(isset($reservation)), 'required'],
             'total_stay' => ['bail', 'required'],
             'total_price' => ['bail', 'required'],
             'status' => ['bail', 'required'],

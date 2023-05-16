@@ -7,7 +7,7 @@
             <slot name="header" class="text-h5">Default header</slot>
           </v-card-title>
           <v-divider class="m-0 p-0"></v-divider>
-          <v-card-text>
+          <v-card-text style="border-bottom: 1px solid #E0E0E0;">
             <v-container fluid>
               <v-row>
                 <v-col cols="12">
@@ -19,10 +19,10 @@
           <v-divider class="m-0 p-0"></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" class="my-2 mr-1" elevation="2" small color="error" @click.prevent="onHandle">
+            <v-btn type="submit" class="my-1 mr-1" elevation="2" small color="error" @click.prevent="onHandle">
               Confirm
             </v-btn>
-            <v-btn type="button" class="my-2 mr-2" elevation="2" small color="warning" @click.prevent="closeConfirmation">
+            <v-btn type="button" class="my-1 mr-2" elevation="2" small color="warning" @click.prevent="closeConfirmation">
               Back
             </v-btn>
           </v-card-actions>
@@ -53,12 +53,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(["disableUser", "deleteGuest"]),
+    ...mapActions(["disableUser", "deleteGuest", "disableReservation"]),
 
     onHandle() {
       if (this.type == 'dis') {
         this.object.active = false;
-        this[this.action]({ user: this.object });
+        this[this.action]({ object: this.object });
       }
       if (this.type == 'del') {
         this[this.action]({ id: this.object.id });

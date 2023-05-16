@@ -81,7 +81,7 @@
                                         <v-col cols="12" md="6" lg="4" xl="3">
                                             <v-hover v-slot="{ hover }">
                                                 <v-card
-                                                    @click.prevent="openDialog(roomActive(room), roomStatus(room), roomImage(room), room)"
+                                                    @click.prevent="openDialog(room, roomImage(room), room.reservations[0] ?? {})"
                                                     class="hover-card" :elevation="hover ? 12 : 2"
                                                     :class="{ 'on-hover': hover }" tile :color="statusColor(room)">
                                                     <v-img :src="roomImage(room)" class="white--text align-end"
@@ -110,9 +110,9 @@
             </v-row>
         </v-card>
 
-        <reservation-dialog v-if="dialog" :dialog="dialog" :active="active" :status="status" :image="image"
-            :selectedRoom="room">
-            <div v-if="status == 'Available'" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+        <reservation-dialog v-if="dialog" :dialog="dialog" :image="image" :currentReservation="reservation"
+            :selectedRoom="room" :selectedDate="date">
+            <div v-if="reservation.status == null" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                 <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Make Reservation
             </div>
             <div v-else slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
@@ -144,11 +144,12 @@ export default {
             search: null,
             selectedStatus: [],
             selectedSize: [],
+
             dialog: false,
             room: null,
-            active: null,
-            status: null,
             image: null,
+            reservation: null,
+
             statuses: [
                 {
                     id: 1,
@@ -282,11 +283,10 @@ export default {
             return `${month}/${day}/${year}`
         },
 
-        openDialog(active, status, image, room) {
-            this.active = active;
-            this.image = image;
-            this.status = status;
+        openDialog(room, image, reservation) {
             this.room = Object.assign(room);
+            this.reservation = Object.assign(reservation);
+            this.image = image;
             this.dialog = true;
         }
     },

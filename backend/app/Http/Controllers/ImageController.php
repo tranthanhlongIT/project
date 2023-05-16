@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Response;
 
 class ImageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index($filename)
     {
         $path = storage_path() . '/app/images/' . $filename;
