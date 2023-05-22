@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
@@ -22,6 +23,9 @@ use App\Http\Controllers\ReservationController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/bar-chart-data', [DashboardController::class, 'barChartData']);
+Route::get('/pie-chart-data', [DashboardController::class, 'pieChartData']);
 
 Route::get('/storage/app/images/{filename}', [ImageController::class, 'index']);
 Route::post('/upload-image', [ImageController::class, 'upload']);

@@ -123,10 +123,10 @@
 </template>
 
 <script>
-import ReservationDialog from '../components/ReservationDialog.vue';
-import axios from 'axios';
-import { mapActions, mapGetters } from 'vuex';
-import { EventBus } from "@/main";
+import ReservationDialog from '../components/dialogs/ReservationDialog.vue'
+import axios from 'axios'
+import { mapActions, mapGetters } from 'vuex'
+import { EventBus } from "@/main"
 
 export default {
     components: {
@@ -173,17 +173,17 @@ export default {
         }),
 
         filteredRooms() {
-            let rooms = this.reservationRooms;
+            let rooms = this.reservationRooms
             if (this.selectedStatus.length > 0) {
-                rooms = this.filterRoomsByStatus(rooms, this.selectedStatus);
+                rooms = this.filterRoomsByStatus(rooms, this.selectedStatus)
             }
             if (this.selectedSize.length > 0) {
-                rooms = this.filterRoomsBySize(rooms, this.selectedSize);
+                rooms = this.filterRoomsBySize(rooms, this.selectedSize)
             }
             if (this.search) {
-                rooms = this.filterRoomsBySearch(rooms, this.search);
+                rooms = this.filterRoomsBySearch(rooms, this.search)
             }
-            return rooms;
+            return rooms
         }
     },
 
@@ -191,89 +191,89 @@ export default {
         ...mapActions(["getReservationRooms"]),
 
         async prepareData() {
-            let url = this.env.apiURL + "reservations/prepare-data";
+            let url = this.env.apiURL + "reservations/prepare-data"
             await axios.get(url).then((response) => {
-                this.floors = response.data.floors;
-                this.sizes = response.data.sizes;
-                this.services = response.data.services;
-            });
+                this.floors = response.data.floors
+                this.sizes = response.data.sizes
+                this.services = response.data.services
+            })
         },
 
         filterRoomsByStatus(rooms, selectedStatus) {
             return rooms.map(floor => {
                 const roomOnEachFloor = floor.rooms.filter(room => {
                     if (selectedStatus.some(value => value.name == "Available"))
-                        return room.reservations.length === 0;
-                    else return room.reservations.length > 0 && selectedStatus.some(value => room.reservations[0].status.includes(value.name));
-                });
-                return { ...floor, rooms: roomOnEachFloor };
-            });
+                        return room.reservations.length === 0
+                    else return room.reservations.length > 0 && selectedStatus.some(value => room.reservations[0].status.includes(value.name))
+                })
+                return { ...floor, rooms: roomOnEachFloor }
+            })
         },
 
         filterRoomsBySize(rooms, selectedSize) {
             return rooms.map(floor => {
-                const roomOnEachFloor = selectedSize.flatMap(value => floor.rooms.filter(room => room.size.name.includes(value.name)));
-                this.sortedArray(roomOnEachFloor);
-                return { ...floor, rooms: roomOnEachFloor };
-            });
+                const roomOnEachFloor = selectedSize.flatMap(value => floor.rooms.filter(room => room.size.name.includes(value.name)))
+                this.sortedArray(roomOnEachFloor)
+                return { ...floor, rooms: roomOnEachFloor }
+            })
         },
 
         filterRoomsBySearch(rooms, search) {
             return rooms.map(floor => {
-                const roomOnEachFloor = floor.rooms.filter(room => room.number.includes(search));
-                return { ...floor, rooms: roomOnEachFloor };
-            });
+                const roomOnEachFloor = floor.rooms.filter(room => room.number.includes(search))
+                return { ...floor, rooms: roomOnEachFloor }
+            })
         },
 
         roomActive(room) {
             if (room.reservations.length > 0) {
-                if (room.reservations[0].active == 1) return 1;
-                else if (room.reservations[0].active == 0) return 0;
+                if (room.reservations[0].active == 1) return 1
+                else if (room.reservations[0].active == 0) return 0
             }
-            return 1;
+            return 1
         },
 
         roomStatus(room) {
             if (room.reservations.length > 0) {
-                if (room.reservations[0].status == "Pending") return "Pending";
-                else if (room.reservations[0].status == "Reserved") return "Reserved";
+                if (room.reservations[0].status == "Pending") return "Pending"
+                else if (room.reservations[0].status == "Reserved") return "Reserved"
             }
-            return "Available";
+            return "Available"
         },
 
         statusColor(room) {
             if (room.reservations.length > 0) {
-                if (room.reservations[0].status == "Pending") return "lime accent-1";
-                else if (room.reservations[0].status == "Reserved") return "#94c494";
+                if (room.reservations[0].status == "Pending") return "lime accent-1"
+                else if (room.reservations[0].status == "Reserved") return "#94c494"
             }
-            return null;
+            return null
         },
 
         roomImage(room) {
             if (room.images.length > 0)
-                return this.env.imageURL + room.images[0].name;
-            return "/admin/img/room-default.png";
+                return this.env.imageURL + room.images[0].name
+            return "/admin/img/room-default.png"
         },
 
         sortedArray(array) {
             function compare(a, b) {
-                if (a.size.id < b.size.id) return -1;
-                if (a.size.id > b.size.id) return 1;
-                return 0;
+                if (a.size.id < b.size.id) return -1
+                if (a.size.id > b.size.id) return 1
+                return 0
             }
-            return array.sort(compare);
+            return array.sort(compare)
         },
 
         onChangeDateLeft() {
-            let currentDate = new Date(this.date);
-            currentDate.setDate(currentDate.getDate() - 1);
-            this.date = currentDate.toISOString().substr(0, 10);
+            let currentDate = new Date(this.date)
+            currentDate.setDate(currentDate.getDate() - 1)
+            this.date = currentDate.toISOString().substr(0, 10)
         },
 
         onChangeDateRight() {
-            let currentDate = new Date(this.date);
-            currentDate.setDate(currentDate.getDate() + 1);
-            this.date = currentDate.toISOString().substr(0, 10);
+            let currentDate = new Date(this.date)
+            currentDate.setDate(currentDate.getDate() + 1)
+            this.date = currentDate.toISOString().substr(0, 10)
         },
 
         formatDate(date) {
@@ -284,23 +284,23 @@ export default {
         },
 
         openDialog(room, image, reservation) {
-            this.room = Object.assign(room);
-            this.reservation = Object.assign(reservation);
-            this.image = image;
-            this.dialog = true;
+            this.room = Object.assign(room)
+            this.reservation = Object.assign(reservation)
+            this.image = image
+            this.dialog = true
         }
     },
 
     created() {
-        this.prepareData();
-        this.getReservationRooms({ date: this.date });
+        this.prepareData()
+        this.getReservationRooms({ date: this.date })
 
-        EventBus.$on("dialog", () => {
+        EventBus.$on("closeDialog", () => {
             this.dialog = false
-        });
+        })
 
         EventBus.$on("updateList", () => {
-            this.getReservationRooms({ date: this.date });
+            this.getReservationRooms({ date: this.date })
         })
     },
 
@@ -308,8 +308,8 @@ export default {
         date: {
             handler(value) {
                 this.dateFormatted = this.formatDate(this.date)
-                this.selectedSize = [];
-                this.getReservationRooms({ date: value });
+                this.selectedSize = []
+                this.getReservationRooms({ date: value })
             },
             deep: true,
         },
@@ -319,10 +319,10 @@ export default {
 
 <style scoped>
 .hover-card {
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out
 }
 
 .hover-card:not(.on-hover) {
-    opacity: 0.7;
+    opacity: 0.7
 }
 </style>

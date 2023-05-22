@@ -371,7 +371,6 @@ import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
 import moment from "moment";
 import ConfirmationDialog from "./ConfirmationDialog.vue";
-import CheckOutDialog from "./CheckOutDialog.vue";
 
 export default {
     mixins: [validationMixin],

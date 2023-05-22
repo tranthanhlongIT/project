@@ -77,8 +77,8 @@
 <script>
 import { EventBus } from "@/main";
 import { mapGetters, mapActions } from "vuex";
-import UserDialog from "../components/UserDialog.vue";
-import ConfirmationDialog from "../components/ConfirmationDialog.vue";
+import UserDialog from "../components/dialogs/UserDialog.vue";
+import ConfirmationDialog from "../components/dialogs/ConfirmationDialog.vue";
 
 export default {
   name: "user-list",

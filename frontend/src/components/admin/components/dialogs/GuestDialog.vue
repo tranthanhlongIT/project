@@ -72,14 +72,12 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength, minLength, email } from "vuelidate/lib/validators";
-import { mapActions } from "vuex";
-import { EventBus } from "@/main";
+import { validationMixin } from "vuelidate"
+import { required, maxLength, minLength, email } from "vuelidate/lib/validators"
+import { mapActions } from "vuex"
+import { EventBus } from "@/main"
 
 export default {
-    name: "guest-dialog",
-
     mixins: [validationMixin],
 
     validations: {
@@ -91,8 +89,8 @@ export default {
             minLength: minLength(10),
             maxLength: maxLength(10),
             valid: function (value) {
-                const allNumber = /^\d+$/.test(value);
-                return allNumber;
+                const allNumber = /^\d+$/.test(value)
+                return allNumber
             },
         },
     },
@@ -108,7 +106,7 @@ export default {
             address: null,
             description: null,
             show: false,
-        };
+        }
     },
 
     props: {
@@ -119,46 +117,46 @@ export default {
 
     computed: {
         fnameErrors() {
-            const errors = [];
-            if (!this.$v.fname.$dirty) return errors;
+            const errors = []
+            if (!this.$v.fname.$dirty) return errors
             !this.$v.fname.maxLength &&
-                errors.push("Fist name must be at most 30 characters long");
-            !this.$v.fname.required && errors.push("Fist name is required.");
-            return errors;
+                errors.push("Fist name must be at most 30 characters long")
+            !this.$v.fname.required && errors.push("Fist name is required.")
+            return errors
         },
 
         lnameErrors() {
-            const errors = [];
-            if (!this.$v.lname.$dirty) return errors;
+            const errors = []
+            if (!this.$v.lname.$dirty) return errors
             !this.$v.lname.maxLength &&
-                errors.push("Last name must be at most 30 characters long");
-            !this.$v.lname.required && errors.push("Last name is required.");
-            return errors;
+                errors.push("Last name must be at most 30 characters long")
+            !this.$v.lname.required && errors.push("Last name is required.")
+            return errors
         },
 
         emailErrors() {
-            const errors = [];
-            if (!this.$v.email.$dirty) return errors;
-            !this.$v.email.email && errors.push("Invalid email");
-            return errors;
+            const errors = []
+            if (!this.$v.email.$dirty) return errors
+            !this.$v.email.email && errors.push("Invalid email")
+            return errors
         },
 
         phoneErrors() {
-            const errors = [];
-            if (!this.$v.phone.$dirty) return errors;
-            !this.$v.phone.valid && errors.push("Phone must be digit only");
-            !this.$v.phone.maxLength && errors.push("Phone must be 10 digits");
-            !this.$v.phone.minLength && errors.push("Phone must be 10 digits");
-            !this.$v.phone.required && errors.push("Phone is required.");
-            return errors;
+            const errors = []
+            if (!this.$v.phone.$dirty) return errors
+            !this.$v.phone.valid && errors.push("Phone must be digit only")
+            !this.$v.phone.maxLength && errors.push("Phone must be 10 digits")
+            !this.$v.phone.minLength && errors.push("Phone must be 10 digits")
+            !this.$v.phone.required && errors.push("Phone is required.")
+            return errors
         },
 
         width() {
             switch (this.$vuetify.breakpoint.name) {
-                case 'md': return "70%";
-                case 'lg': return "50%";
-                case 'xl': return "40%";
-                default: return "100%";
+                case 'md': return "70%"
+                case 'lg': return "50%"
+                case 'xl': return "40%"
+                default: return "100%"
             }
         }
     },
@@ -167,67 +165,67 @@ export default {
         ...mapActions(["getGuests", "addGuest", "updateGuest", "disableGuest"]),
 
         onHandle() {
-            if (this.validation()) return;
-            this.setGuest();
-            if (this.action == "add") this.addGuest({ guest: this.guest });
-            if (this.action == "upd") this.updateGuest({ guest: this.guest });
+            if (this.validation()) return
+            this.setGuest()
+            if (this.action == "add") this.addGuest({ guest: this.guest })
+            if (this.action == "upd") this.updateGuest({ guest: this.guest })
         },
 
         setGuest() {
-            this.guest.title = this.title;
-            this.guest.name = this.fname + " " + this.lname;
-            this.guest.fname = this.fname;
-            this.guest.lname = this.lname;
-            this.guest.phone = this.phone;
-            this.guest.email = this.email;
-            this.guest.address = this.address;
-            this.guest.description = this.description;
+            this.guest.title = this.title
+            this.guest.name = this.fname + " " + this.lname
+            this.guest.fname = this.fname
+            this.guest.lname = this.lname
+            this.guest.phone = this.phone
+            this.guest.email = this.email
+            this.guest.address = this.address
+            this.guest.description = this.description
         },
 
         setField() {
-            const { title, fname, lname, phone, email, address, description } = this.selectedGuest;
-            this.guest = Object.assign({}, this.selectedGuest);
-            this.title = title;
-            this.fname = fname;
-            this.lname = lname;
-            this.phone = phone;
-            this.email = email;
-            this.address = address;
-            this.description = description;
+            const { title, fname, lname, phone, email, address, description } = this.selectedGuest
+            this.guest = Object.assign({}, this.selectedGuest)
+            this.title = title
+            this.fname = fname
+            this.lname = lname
+            this.phone = phone
+            this.email = email
+            this.address = address
+            this.description = description
         },
 
         resetField() {
-            this.guest = null;
-            this.title = null;
-            this.fname = null;
-            this.lname = null;
-            this.phone = null;
-            this.email = null;
-            this.address = null;
-            this.description = null;
-            this.$v.$reset();
+            this.guest = null
+            this.title = null
+            this.fname = null
+            this.lname = null
+            this.phone = null
+            this.email = null
+            this.address = null
+            this.description = null
+            this.$v.$reset()
         },
 
         validation() {
             if (this.action == "add" && this.$v.$invalid) {
-                this.$v.$touch();
-                return true;
+                this.$v.$touch()
+                return true
             }
         },
 
         closeDialog() {
-            EventBus.$emit("dialog");
+            EventBus.$emit("closeDialog")
         },
     },
 
     created() {
-        this.show = this.dialog;
+        this.show = this.dialog
 
-        if (this.action != "add") this.setField();
+        if (this.action != "add") this.setField()
 
-        EventBus.$on("reset", () =>
+        EventBus.$on("resetField", () =>
             this.resetField()
-        );
+        )
     },
-};
+}
 </script>

@@ -7,7 +7,7 @@
             <slot name="header" class="text-h5">Default header</slot>
           </v-card-title>
           <v-divider class="m-0 p-0"></v-divider>
-          <v-card-text style="border-bottom: 1px solid #E0E0E0;">
+          <v-card-text style="border-bottom: 1px solid #E0E0E0">
             <v-container fluid>
               <v-row>
                 <v-col cols="12">
@@ -33,12 +33,10 @@
 </template>
 
 <script>
-import { EventBus } from '@/main';
-import { mapActions } from 'vuex';
+import { EventBus } from '@/main'
+import { mapActions } from 'vuex'
 
 export default {
-  name: "confirmation-dialog",
-
   props: {
     object: Object,
     action: String,
@@ -57,21 +55,21 @@ export default {
 
     onHandle() {
       if (this.type == 'dis') {
-        this.object.active = false;
-        this[this.action]({ object: this.object });
+        this.object.active = false
+        this[this.action]({ object: this.object })
       }
       if (this.type == 'del') {
-        this[this.action]({ id: this.object.id });
+        this[this.action]({ id: this.object.id })
       }
     },
 
     closeConfirmation() {
-      EventBus.$emit("confirmation");
+      EventBus.$emit("closeConfirmation")
     }
   },
 
   created() {
-    this.show = this.confirmation;
+    this.show = this.confirmation
   }
-};
+}
 </script>

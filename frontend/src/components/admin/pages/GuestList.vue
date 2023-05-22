@@ -54,13 +54,12 @@
 </template>
 
 <script>
-import { EventBus } from "@/main";
-import { mapGetters, mapActions } from "vuex";
-import GuestDialog from "../components/GuestDialog.vue";
-import ConfirmationDialog from "../components/ConfirmationDialog.vue";
+import { EventBus } from "@/main"
+import { mapGetters, mapActions } from "vuex"
+import GuestDialog from "../components/dialogs/GuestDialog.vue"
+import ConfirmationDialog from "../components/dialogs/ConfirmationDialog.vue"
 
 export default {
-    name: "guest-list",
     components: {
         "guest-dialog": GuestDialog,
         "confirmation-dialog": ConfirmationDialog
@@ -81,7 +80,7 @@ export default {
                 { text: "Email", value: "email", width: "15%", sortable: false, },
                 { text: "Operation", value: "operations", width: "15%", align: "center", sortable: false, filterable: false },
             ],
-        };
+        }
     },
 
     computed: {
@@ -94,27 +93,27 @@ export default {
         ...mapActions(["getGuests"]),
 
         openDialog(action, guest) {
-            this.action = action;
-            this.guest = Object.assign(guest);
-            this.dialog = true;
+            this.action = action
+            this.guest = Object.assign(guest)
+            this.dialog = true
         },
 
         openConfirmation(guest) {
-            this.confirmation = true;
-            this.guest = Object.assign(guest);
+            this.confirmation = true
+            this.guest = Object.assign(guest)
         }
     },
 
     created() {
-        this.getGuests();
+        this.getGuests()
 
-        EventBus.$on("dialog", () => {
+        EventBus.$on("closeDialog", () => {
             this.dialog = false
-        });
+        })
 
-        EventBus.$on("confirmation", () => {
+        EventBus.$on("closeConfirmation", () => {
             this.confirmation = false
-        });
+        })
     },
-};
+}
 </script>

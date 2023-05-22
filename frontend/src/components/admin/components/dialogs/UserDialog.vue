@@ -109,16 +109,14 @@
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength, minLength, email } from "vuelidate/lib/validators";
-import axios from "axios";
-import { mapActions } from "vuex";
-import UploadButton from "./UploadButton.vue";
-import { EventBus } from "@/main";
+import { validationMixin } from "vuelidate"
+import { required, maxLength, minLength, email } from "vuelidate/lib/validators"
+import axios from "axios"
+import { mapActions } from "vuex"
+import UploadButton from "../layouts/UploadButton.vue"
+import { EventBus } from "@/main"
 
 export default {
-  name: "user-dialog",
-
   mixins: [validationMixin],
 
   validations: {
@@ -128,11 +126,11 @@ export default {
       required,
       minLength: minLength(8),
       valid: function (value) {
-        const containsUppercase = /[A-Z]/.test(value);
-        const containsLowercase = /[a-z]/.test(value);
-        const containsNumber = /[0-9]/.test(value);
-        const containsSpecial = /[#?!@$%^&*-]/.test(value);
-        return (containsUppercase && containsLowercase && containsNumber && containsSpecial);
+        const containsUppercase = /[A-Z]/.test(value)
+        const containsLowercase = /[a-z]/.test(value)
+        const containsNumber = /[0-9]/.test(value)
+        const containsSpecial = /[#?!@$%^&*-]/.test(value)
+        return (containsUppercase && containsLowercase && containsNumber && containsSpecial)
       },
     },
     fname: { required, maxLength: maxLength(30) },
@@ -143,14 +141,20 @@ export default {
       minLength: minLength(10),
       maxLength: maxLength(10),
       valid: function (value) {
-        const allNumber = /^\d+$/.test(value);
-        return allNumber;
+        const allNumber = /^\d+$/.test(value)
+        return allNumber
       },
     },
   },
 
   components: {
     "upload-button": UploadButton,
+  },
+
+  props: {
+    dialog: Boolean,
+    action: String,
+    selectedUser: Object,
   },
 
   data() {
@@ -191,82 +195,76 @@ export default {
       fileURL: null,
       show: false,
       showPassword: false,
-    };
-  },
-
-  props: {
-    dialog: Boolean,
-    action: String,
-    selectedUser: Object,
+    }
   },
 
   computed: {
     roleErrors() {
-      const errors = [];
-      if (!this.$v.role.$dirty) return errors;
-      !this.$v.role.required && errors.push("Role is required");
-      return errors;
+      const errors = []
+      if (!this.$v.role.$dirty) return errors
+      !this.$v.role.required && errors.push("Role is required")
+      return errors
     },
 
     emailErrors() {
-      const errors = [];
-      if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.required && errors.push("Email is required.");
-      !this.$v.email.email && errors.push("Invalid email");
-      return errors;
+      const errors = []
+      if (!this.$v.email.$dirty) return errors
+      !this.$v.email.required && errors.push("Email is required.")
+      !this.$v.email.email && errors.push("Invalid email")
+      return errors
     },
 
     passwordErrors() {
-      const errors = [];
-      if (!this.$v.password.$dirty) return errors;
-      (!this.$v.password.minLength ||
-        !this.$v.password.required ||
-        !this.$v.password.valid) &&
-        errors.push("Invalid Password");
-      return errors;
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+        (!this.$v.password.minLength ||
+          !this.$v.password.required ||
+          !this.$v.password.valid) &&
+        errors.push("Invalid Password")
+      return errors
     },
 
     fnameErrors() {
-      const errors = [];
-      if (!this.$v.fname.$dirty) return errors;
+      const errors = []
+      if (!this.$v.fname.$dirty) return errors
       !this.$v.fname.maxLength &&
-        errors.push("Fist name must be at most 30 characters long");
-      !this.$v.fname.required && errors.push("Fist name is required.");
-      return errors;
+        errors.push("Fist name must be at most 30 characters long")
+      !this.$v.fname.required && errors.push("Fist name is required.")
+      return errors
     },
 
     lnameErrors() {
-      const errors = [];
-      if (!this.$v.lname.$dirty) return errors;
+      const errors = []
+      if (!this.$v.lname.$dirty) return errors
       !this.$v.lname.maxLength &&
-        errors.push("Last name must be at most 30 characters long");
-      !this.$v.lname.required && errors.push("Last name is required.");
-      return errors;
+        errors.push("Last name must be at most 30 characters long")
+      !this.$v.lname.required && errors.push("Last name is required.")
+      return errors
     },
 
     genderErrors() {
-      const errors = [];
-      if (!this.$v.gender.$dirty) return errors;
-      !this.$v.gender.required && errors.push("Gender is required");
-      return errors;
+      const errors = []
+      if (!this.$v.gender.$dirty) return errors
+      !this.$v.gender.required && errors.push("Gender is required")
+      return errors
     },
 
     phoneErrors() {
-      const errors = [];
-      if (!this.$v.phone.$dirty) return errors;
-      !this.$v.phone.valid && errors.push("Phone must be digit only");
-      !this.$v.phone.maxLength && errors.push("Phone must be 10 digits");
-      !this.$v.phone.minLength && errors.push("Phone must be 10 digits");
-      !this.$v.phone.required && errors.push("Phone is required.");
-      return errors;
+      const errors = []
+      if (!this.$v.phone.$dirty) return errors
+      !this.$v.phone.valid && errors.push("Phone must be digit only")
+      !this.$v.phone.maxLength && errors.push("Phone must be 10 digits")
+      !this.$v.phone.minLength && errors.push("Phone must be 10 digits")
+      !this.$v.phone.required && errors.push("Phone is required.")
+      return errors
     },
 
     width() {
       switch (this.$vuetify.breakpoint.name) {
-        case 'md': return "70%";
-        case 'lg': return "50%";
-        case 'xl': return "40%";
-        default: return "100%";
+        case 'md': return "70%"
+        case 'lg': return "50%"
+        case 'xl': return "40%"
+        default: return "100%"
       }
     }
   },
@@ -280,73 +278,73 @@ export default {
     ]),
 
     async prepareData() {
-      let url = this.env.apiURL + "users/prepare-data";
+      let url = this.env.apiURL + "users/prepare-data"
       await axios.get(url).then((response) => {
-        this.roles = response.data.roles;
-      });
+        this.roles = response.data.roles
+      })
     },
 
     onHandle() {
-      if (this.validation()) return;
+      if (this.validation()) return
 
-      this.setUser();
-      if (this.action == "add") this.addUser({ user: this.user, file: this.file });
-      if (this.action == "upd") this.updateUser({ user: this.user, file: this.file });
+      this.setUser()
+      if (this.action == "add") this.addUser({ user: this.user, file: this.file })
+      if (this.action == "upd") this.updateUser({ user: this.user, file: this.file })
     },
 
     closeDialog() {
-      EventBus.$emit("dialog");
+      EventBus.$emit("closeDialog")
     },
 
     setUser() {
-      this.user.email = this.email;
-      this.user.password = this.password;
-      this.user.role = this.role;
-      this.user.active = this.active;
-      this.user.image = this.image;
-      this.user.fname = this.fname;
-      this.user.lname = this.lname;
-      this.user.address = this.address;
-      this.user.gender = this.gender;
-      this.user.phone = this.phone;
+      this.user.email = this.email
+      this.user.password = this.password
+      this.user.role = this.role
+      this.user.active = this.active
+      this.user.image = this.image
+      this.user.fname = this.fname
+      this.user.lname = this.lname
+      this.user.address = this.address
+      this.user.gender = this.gender
+      this.user.phone = this.phone
     },
 
     setField() {
-      const { email, password, role, active, image, fname, lname, address, gender, phone } = this.selectedUser;
-      this.user = Object.assign({}, this.selectedUser);
-      this.email = email;
-      this.password = password;
-      this.role = { name: role.name, id: role.id };
-      this.active = this.action == "add" ? 1 : parseInt(active);
-      this.image = image;
-      this.fname = fname;
-      this.lname = lname;
-      this.address = address;
-      this.gender = gender;
-      this.phone = phone;
+      const { email, password, role, active, image, fname, lname, address, gender, phone } = this.selectedUser
+      this.user = Object.assign({}, this.selectedUser)
+      this.email = email
+      this.password = password
+      this.role = { name: role.name, id: role.id }
+      this.active = this.action == "add" ? 1 : parseInt(active)
+      this.image = image
+      this.fname = fname
+      this.lname = lname
+      this.address = address
+      this.gender = gender
+      this.phone = phone
     },
 
     resetField() {
-      this.user = null;
-      this.fname = null;
-      this.lname = null;
-      this.email = null;
-      this.password = null;
-      this.role = null;
-      this.active = true;
-      this.address = null;
-      this.gender = null;
-      this.phone = null;
-      this.image = null;
-      this.file = null;
-      this.fileURL = null;
-      this.$v.$reset();
+      this.user = null
+      this.fname = null
+      this.lname = null
+      this.email = null
+      this.password = null
+      this.role = null
+      this.active = true
+      this.address = null
+      this.gender = null
+      this.phone = null
+      this.image = null
+      this.file = null
+      this.fileURL = null
+      this.$v.$reset()
     },
 
     validation() {
       if (this.action == "add" && this.$v.$invalid) {
-        this.$v.$touch();
-        return true;
+        this.$v.$touch()
+        return true
       }
 
       if (this.action == "upd" &&
@@ -356,37 +354,37 @@ export default {
           this.$v.gender.$invalid ||
           this.$v.phone.$invalid)
       ) {
-        this.$v.role.$touch();
-        this.$v.fname.$touch();
-        this.$v.lname.$touch();
-        this.$v.gender.$touch();
-        this.$v.phone.$touch();
-        return true;
+        this.$v.role.$touch()
+        this.$v.fname.$touch()
+        this.$v.lname.$touch()
+        this.$v.gender.$touch()
+        this.$v.phone.$touch()
+        return true
       }
-      return false;
+      return false
     }
   },
 
   created() {
-    this.show = this.dialog;
-    this.prepareData();
+    this.show = this.dialog
+    this.prepareData()
 
-    if (this.action != "add") this.setField();
+    if (this.action != "add") this.setField()
 
     EventBus.$on("file", (file) => {
-      this.file = file;
-    });
+      this.file = file
+    })
 
-    EventBus.$on("reset", () =>
+    EventBus.$on("resetField", () =>
       this.resetField()
-    );
+    )
   },
 
   watch: {
     file: function () {
-      this.image = this.file.name;
-      this.fileURL = URL.createObjectURL(this.file);
+      this.image = this.file.name
+      this.fileURL = URL.createObjectURL(this.file)
     },
   },
-};
+}
 </script>

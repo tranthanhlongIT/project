@@ -37,15 +37,13 @@
 </template>
 
 <script>
-import { EventBus } from "@/main";
+import { EventBus } from "@/main"
 
 export default {
-  name: "app-bar",
-
   methods: {
     toggleDrawer() {
-      EventBus.$emit("drawer");
+      EventBus.$emit("toggleDrawer")
     },
   },
-};
+}
 </script>

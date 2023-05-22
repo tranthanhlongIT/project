@@ -1,5 +1,5 @@
 <template>
-    <v-main style="background: #f5f7fb">
+    <v-main style="background: #ECEFF1">
         <v-container class="py-0" style="max-width: inherit">
             <router-view></router-view>
         </v-container>
@@ -8,6 +8,5 @@
 
 <script>
 export default {
-    name: "app-container"
 }
 </script>

@@ -51,7 +51,14 @@ export const reservationStore = {
             try {
                 await axios.post(url, formData);
                 commit("updateReservation", reservation);
-                this._vm.$toast.success("Update successful");
+
+                if (reservation.active == 0) {
+                    EventBus.$emit("updateList");
+                    EventBus.$emit("closeDialog");
+                    this._vm.$toast.success("Check-out successful");
+                }
+                else this._vm.$toast.success("Update successful");
+
             } catch (error) {
                 this._vm.$toast.error(error.response.data.message);
             }
@@ -64,27 +71,11 @@ export const reservationStore = {
                 await axios.patch(url);
                 commit("disableReservation");
                 EventBus.$emit("updateList");
-                EventBus.$emit("confirmation");
-                EventBus.$emit("dialog");
+                EventBus.$emit("closeConfirmation");
+                EventBus.$emit("closeDialog");
                 this._vm.$toast.success("Cancel successful");
             } catch (e) {
                 this._vm.$toast.error("Cancel failed");
-            }
-        },
-
-        async checkOutReservation({ commit }, { id, checkOut }) {
-            const formData = checkOutFormData(checkOut);
-            const url = this._vm.env.apiURL + "reservations/checkout/" + id;
-
-            try {
-                await axios.post(url, formData);
-                commit("checkOutReservation");
-                EventBus.$emit("updateList");
-                EventBus.$emit("confirmation");
-                EventBus.$emit("dialog");
-                this._vm.$toast.success("Check out successful");
-            } catch (e) {
-                this._vm.$toast.error("Check out failed");
             }
         },
     },

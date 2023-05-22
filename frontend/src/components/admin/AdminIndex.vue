@@ -7,12 +7,11 @@
 </template>
 
 <script>
-import NavDrawer from "./components/NavDrawer.vue";
-import AppBar from "./components/AppBar.vue";
-import AppContainer from "./components/AppContainer.vue";
+import NavDrawer from "./components/layouts/NavDrawer.vue";
+import AppBar from "./components/layouts/AppBar.vue";
+import AppContainer from "./components/layouts/AppContainer.vue";
 
 export default {
-  name: "AdminIndex",
   components: {
     "nav-drawer": NavDrawer,
     "app-bar": AppBar,

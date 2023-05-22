@@ -24,11 +24,9 @@
 </template>
 
 <script>
-import { EventBus } from "@/main";
+import { EventBus } from "@/main"
 
 export default {
-  name: "nav-drawer",
-
   data() {
     return {
       items: [
@@ -40,21 +38,21 @@ export default {
         { name: 'user', path: '/admin/user', icon: '' },
       ],
       drawer: this.$vuetify.breakpoint.lgAndUp ? true : false,
-    };
+    }
   },
 
   methods: {
     isActive(path) {
       if (path == this.$route.name) {
-        return "active";
+        return "active"
       }
     },
   },
 
   created() {
-    EventBus.$on("drawer", () => {
-      this.drawer = !this.drawer;
+    EventBus.$on("toggleDrawer", () => {
+      this.drawer = !this.drawer
     })
   },
-};
+}
 </script>

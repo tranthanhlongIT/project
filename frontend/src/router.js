@@ -6,6 +6,7 @@ Vue.use(Router);
 const routes = [
   {
     path: "/",
+    alias: "/home/",
     component: () => import("./components/home/HomeIndex.vue"),
     children: [
       {
@@ -22,32 +23,32 @@ const routes = [
       {
         name: "dashboard",
         path: "dashboard",
-        component: () => import("./components/admin/page/Dashboard.vue"),
+        component: () => import("./components/admin/pages/Dashboard.vue"),
       },
       {
         name: "guest",
         path: "guest",
-        component: () => import("./components/admin/page/GuestList.vue")
+        component: () => import("./components/admin/pages/GuestList.vue")
       },
       {
         name: "room",
         path: "room",
-        component: () => import("./components/admin/page/RoomList.vue"),
+        component: () => import("./components/admin/pages/RoomList.vue"),
       },
       {
         name: "reservation",
         path: "reservation",
-        component: () => import("./components/admin/page/ReservationList.vue"),
+        component: () => import("./components/admin/pages/ReservationList.vue"),
       },
       {
         name: "history",
         path: "history",
-        component: () => import("./components/admin/page/HistoryList.vue")
+        component: () => import("./components/admin/pages/HistoryList.vue")
       },
       {
         name: "user",
         path: "user",
-        component: () => import("./components/admin/page/UserList.vue"),
+        component: () => import("./components/admin/pages/UserList.vue"),
       },
     ],
   },

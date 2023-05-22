@@ -10,7 +10,7 @@
                             Add
                         </v-btn>
                         <v-btn color="warning" small class="mr-1" @click.prevent="openDialog('upd', room)">
-                            <v-icon left> mdi-pencil-box </v-icon>
+                            <v-icon left>mdi-pencil-box</v-icon>
                             Edit
                         </v-btn>
                         <v-btn color="error" small class="mr-1" @click.prevent="openDialog('del', {})">
@@ -142,7 +142,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import RoomDialog from '../components/RoomDialog.vue'
+import RoomDialog from '../components/dialogs/RoomDialog.vue'
 import { EventBus } from '@/main'
 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -190,10 +190,10 @@ export default {
     asyncComputed: {
         async selected() {
             if (!this.active.length) return undefined
-            const number = this.active[0].id;
-            await this.getRoom({ number: number });
+            const number = this.active[0].id
+            await this.getRoom({ number: number })
             await pause(1000)
-            return this.room;
+            return this.room
         },
     },
 
@@ -201,96 +201,96 @@ export default {
         ...mapActions(["getRooms", "getRoom"]),
 
         async fetchRooms(item) {
-            await this.getRooms();
+            await this.getRooms()
             await pause(1000)
-            return item.children.push(this.rooms);
+            return item.children.push(this.rooms)
         },
 
         openDialog(action, room) {
-            this.action = action;
-            this.newRoom = Object.assign(room);
-            this.oldRoomNumber = room.number;
+            this.action = action
+            this.newRoom = Object.assign(room)
+            this.oldRoomNumber = room.number
             if (action == "upd" && this.selected)
-                this.dialog = true;
-            else if (action != "upd") this.dialog = true;
+                this.dialog = true
+            else if (action != "upd") this.dialog = true
         },
 
         addChild(item, room) {
-            if (!item.children) this.$set(item, "children", []);
-            const id = room.number;
-            const name = room.number;
-            item.children.push({ id, name });
+            if (!item.children) this.$set(item, "children", [])
+            const id = room.number
+            const name = room.number
+            item.children.push({ id, name })
         },
 
         updateChild(room) {
-            this.removeChild();
-            this.addChild(this.findItem(room.floor.id), room);
-            this.active = [];
+            this.removeChild()
+            this.addChild(this.findItem(room.floor.id), room)
+            this.active = []
         },
 
         removeChild() {
-            this.active[0].status = "Deleted";
-            this.removeDeleted(this, this.items);
-            this.handleSearch(this.active[0].name);
+            this.active[0].status = "Deleted"
+            this.removeDeleted(this, this.items)
+            this.handleSearch(this.active[0].name)
         },
 
         removeDeleted(me, currentArray) {
-            const delItems = [];
+            const delItems = []
             currentArray.forEach(element => {
                 if (element.status == "Deleted") {
-                    delItems.push(element);
+                    delItems.push(element)
                 }
                 if (
                     element.children != undefined &&
                     element.children != null &&
                     element.children.length > 0
                 ) {
-                    me.removeDeleted(me, element.children);
+                    me.removeDeleted(me, element.children)
                 }
-            });
+            })
             delItems.forEach(item => {
-                currentArray.splice(currentArray.indexOf(item), 1);
-            });
+                currentArray.splice(currentArray.indexOf(item), 1)
+            })
         },
 
         findItem(id, items = null) {
-            if (!items) items = this.items;
+            if (!items) items = this.items
             return items.reduce((acc, item) => {
-                if (acc) return acc;
-                if (item.id == id) return item;
-                if (item.children) return this.findItem(id, item.children);
-                return acc;
-            }, null);
+                if (acc) return acc
+                if (item.id == id) return item
+                if (item.children) return this.findItem(id, item.children)
+                return acc
+            }, null)
         },
 
         handleSearch: function (val) {
             if (val) {
                 if (!this.allOpened) {
-                    this.lastOpen = this.open;
-                    this.allOpened = true;
-                    this.$refs.tree.updateAll(true);
+                    this.lastOpen = this.open
+                    this.allOpened = true
+                    this.$refs.tree.updateAll(true)
                 }
             } else {
-                this.$refs.tree.updateAll(false);
-                this.allOpened = false;
-                this.open = this.lastOpen;
+                this.$refs.tree.updateAll(false)
+                this.allOpened = false
+                this.open = this.lastOpen
             }
         },
     },
 
     created() {
-        EventBus.$on("dialog", () => {
+        EventBus.$on("closeDialog", () => {
             this.dialog = false
-        });
+        })
 
         EventBus.$on("addChild", (room) => {
-            this.addChild(this.findItem(room.floor.id), room);
-        });
+            this.addChild(this.findItem(room.floor.id), room)
+        })
 
         EventBus.$on("updateChild", (room) => {
             if (this.oldRoomNumber != room.number)
-                this.updateChild(room);
-        });
+                this.updateChild(room)
+        })
     },
 }
 </script>
