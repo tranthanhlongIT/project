@@ -6,7 +6,7 @@ Vue.use(Router);
 const routes = [
   {
     path: "/",
-    alias: "/home/",
+    redirect: "/home/",
     component: () => import("./components/home/HomeIndex.vue"),
     children: [
       {

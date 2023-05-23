@@ -55,7 +55,7 @@ export default {
                 { text: "Total stay", value: "total_stay", width: "10%", sortable: false, filterable: false },
                 { text: "Total price", value: "total_price", width: "10%", sortable: false, filterable: false },
             ],
-        }
+        };
     },
 
     computed: {
@@ -69,7 +69,7 @@ export default {
     },
 
     created() {
-        this.getReservations()
+        this.getReservations();
     },
-}
+};
 </script>

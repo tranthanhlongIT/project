@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-xl-2 col-lg-2">
                             <div class="logo-img">
-                                <img src="img/logo1.png" alt="">
+                                <v-icon x-large color="green">mdi-vuejs</v-icon>
                             </div>
                         </div>
                         <div class="col-xl-5 col-lg-4 d-none d-lg-block">

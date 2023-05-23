@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { EventBus } from "@/main"
+import { EventBus } from "@/main";
 
 export default {
   props: {
@@ -17,22 +17,22 @@ export default {
 
   methods: {
     onButtonClick() {
-      this.isSelecting = true
+      this.isSelecting = true;
       window.addEventListener(
         "focus",
         () => {
-          this.isSelecting = false
+          this.isSelecting = false;
         },
         { once: true }
-      )
+      );
 
-      this.$refs.uploader.click()
+      this.$refs.uploader.click();
     },
 
     onFileChange(e) {
-      this.selectedFile = e.target.files[0]
-      EventBus.$emit("file", this.selectedFile)
+      this.selectedFile = e.target.files[0];
+      EventBus.$emit("file", this.selectedFile);
     },
   },
-}
+};
 </script>

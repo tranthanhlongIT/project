@@ -42,14 +42,12 @@ export default {
         this.loaded = false
 
         try {
-            const response = await axios.get(this.env.apiURL + 'pie-chart-data')
-            this.chartData.datasets[0].data = response.data
+            const response = await axios.get(this.env.apiURL + 'dashboard/pie-chart-data');
+            this.chartData.datasets[0].data = response.data;
 
-            console.log(this.chartData.datasets[0].data)
-
-            this.loaded = true
+            this.loaded = true;
         } catch (e) {
-            console.error(e)
+            console.error(e);
         }
     }
 }

@@ -55,21 +55,21 @@ export default {
 
     onHandle() {
       if (this.type == 'dis') {
-        this.object.active = false
-        this[this.action]({ object: this.object })
+        this.object.active = false;
+        this[this.action]({ object: this.object });
       }
       if (this.type == 'del') {
-        this[this.action]({ id: this.object.id })
+        this[this.action]({ id: this.object.id });
       }
     },
 
     closeConfirmation() {
-      EventBus.$emit("closeConfirmation")
+      EventBus.$emit("closeConfirmation");
     }
   },
 
   created() {
-    this.show = this.confirmation
+    this.show = this.confirmation;
   }
 }
 </script>

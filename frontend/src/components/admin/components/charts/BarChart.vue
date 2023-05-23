@@ -49,17 +49,17 @@ export default {
     },
 
     async mounted() {
-        this.loaded = false
+        this.loaded = false;
 
         try {
-            const response = await axios.get(this.env.apiURL + 'bar-chart-data')
+            const response = await axios.get(this.env.apiURL + 'dashboard/bar-chart-data');
             this.chartOptions.scales.y.max = Math.ceil(response.data.max_value + response.data.max_value * 0.1);
-            this.chartData.datasets[0].data = response.data.data
-            this.chartData.labels = response.data.days_in_month
+            this.chartData.datasets[0].data = response.data.data;
+            this.chartData.labels = response.data.days_in_month;
 
-            this.loaded = true
+            this.loaded = true;
         } catch (e) {
-            console.error(e)
+            console.error(e);
         }
     }
 }

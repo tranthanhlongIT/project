@@ -117,11 +117,11 @@
 </template>
 
 <script>
-import vueFilePond from "vue-filepond"
-import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
-import FilePondPluginImagePreview from "filepond-plugin-image-preview"
-import "filepond/dist/filepond.min.css"
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
+import vueFilePond from "vue-filepond";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import "vue-custom-scrollbar/dist/vueScrollbar.css"
@@ -129,13 +129,13 @@ import "vue-custom-scrollbar/dist/vueScrollbar.css"
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
     FilePondPluginImagePreview,
-)
+);
 
-import { validationMixin } from "vuelidate"
-import { required, maxLength, } from "vuelidate/lib/validators"
-import axios from "axios"
-import { EventBus } from "@/main"
-import { mapActions } from "vuex"
+import { validationMixin } from "vuelidate";
+import { required, maxLength, } from "vuelidate/lib/validators";
+import axios from "axios";
+import { EventBus } from "@/main";
+import { mapActions } from "vuex";
 
 export default {
     mixins: [validationMixin],
@@ -151,12 +151,12 @@ export default {
         number: {
             required,
             valid: function (value) {
-                const restrictZero = /^[1-9][0-9]*$/.test(value)
-                return restrictZero
+                const restrictZero = /^[1-9][0-9]*$/.test(value);
+                return restrictZero;
             },
             validNumber: function (value) {
-                const allNumber = /^\d+$/.test(value)
-                return allNumber
+                const allNumber = /^\d+$/.test(value);
+                return allNumber;
             },
         },
     },
@@ -211,70 +211,70 @@ export default {
 
     computed: {
         typeErrors() {
-            const errors = []
-            if (!this.$v.type.$dirty) return errors
-            !this.$v.type.required && errors.push("Type is required")
-            return errors
+            const errors = [];
+            if (!this.$v.type.$dirty) return errors;
+            !this.$v.type.required && errors.push("Type is required");
+            return errors;
         },
 
         floorErrors() {
-            const errors = []
-            if (!this.$v.floor.$dirty) return errors
-            !this.$v.floor.required && errors.push("Floor is required")
-            return errors
+            const errors = [];
+            if (!this.$v.floor.$dirty) return errors;
+            !this.$v.floor.required && errors.push("Floor is required");
+            return errors;
         },
 
         sizeErrors() {
-            const errors = []
-            if (!this.$v.size.$dirty) return errors
-            !this.$v.size.required && errors.push("Size is required")
-            return errors
+            const errors = [];
+            if (!this.$v.size.$dirty) return errors;
+            !this.$v.size.required && errors.push("Size is required");
+            return errors;
         },
 
         priceErrors() {
-            const errors = []
-            if (!this.$v.price.$dirty) return errors
-            !this.$v.price.required && errors.push("Price is required")
-            return errors
+            const errors = [];
+            if (!this.$v.price.$dirty) return errors;
+            !this.$v.price.required && errors.push("Price is required");
+            return errors;
         },
 
         serviceErrors() {
-            const errors = []
-            if (!this.$v.service.$dirty) return errors
-            !this.$v.service.required && errors.push("Service is required")
-            return errors
+            const errors = [];
+            if (!this.$v.service.$dirty) return errors;
+            !this.$v.service.required && errors.push("Service is required");
+            return errors;
         },
 
         fileErrors() {
-            const errors = []
-            if (!this.$v.files.$dirty) return errors
-            !this.$v.files.required && errors.push("Image is required")
-            return errors
+            const errors = [];
+            if (!this.$v.files.$dirty) return errors;
+            !this.$v.files.required && errors.push("Image is required");
+            return errors;
         },
 
         nameErrors() {
-            const errors = []
-            if (!this.$v.name.$dirty) return errors
+            const errors = [];
+            if (!this.$v.name.$dirty) return errors;
             !this.$v.name.maxLength &&
-                errors.push("Room name must be at most 30 characters long")
-            !this.$v.name.required && errors.push("Room name is required.")
-            return errors
+                errors.push("Room name must be at most 30 characters long");
+            !this.$v.name.required && errors.push("Room name is required.");
+            return errors;
         },
 
         numberErrors() {
-            const errors = []
-            if (!this.$v.number.$dirty) return errors
-            !this.$v.number.required && errors.push("Room number is required.")
-            !this.$v.number.validNumber && errors.push("Room number must be digit only")
-            !this.$v.number.valid && errors.push("Room number must not begin with 0")
-            return errors
+            const errors = [];
+            if (!this.$v.number.$dirty) return errors;
+            !this.$v.number.required && errors.push("Room number is required.");
+            !this.$v.number.validNumber && errors.push("Room number must be digit only");
+            !this.$v.number.valid && errors.push("Room number must not begin with 0");
+            return errors;
         },
 
         width() {
             switch (this.$vuetify.breakpoint.name) {
-                case 'lg': return "80%"
-                case 'xl': return "60%"
-                default: return "100%"
+                case 'lg': return "80%";
+                case 'xl': return "60%";
+                default: return "100%";
             }
         }
     },
@@ -283,72 +283,72 @@ export default {
         ...mapActions(["addRoom", "updateRoom"]),
 
         setRoom() {
-            this.room.type = this.type
-            this.room.floor = this.floor
-            this.room.size = this.size
-            this.room.number = this.number
-            this.room.name = this.name
-            this.room.description = this.description
-            this.room.price = this.price
-            this.room.services = this.service
-            this.room.images = this.files.filter(file => file.name)
+            this.room.type = this.type;
+            this.room.floor = this.floor;
+            this.room.size = this.size;
+            this.room.number = this.number;
+            this.room.name = this.name;
+            this.room.description = this.description;
+            this.room.price = this.price;
+            this.room.services = this.service;
+            this.room.images = this.files.filter(file => file.name);
         },
 
         setField() {
-            const { type, floor, size, number, name, description, price, services, images } = this.selectedRoom
-            this.room = Object.assign({}, this.selectedRoom)
-            this.type = { id: type.id, name: type.name }
-            this.floor = { id: floor.id, name: floor.name }
-            this.size = { id: size.id, name: size.name }
-            this.number = number
-            this.name = name
-            this.description = description
-            this.price = price
-            this.service = services
-            this.images = images
+            const { type, floor, size, number, name, description, price, services, images } = this.selectedRoom;
+            this.room = Object.assign({}, this.selectedRoom);
+            this.type = { id: type.id, name: type.name };
+            this.floor = { id: floor.id, name: floor.name };
+            this.size = { id: size.id, name: size.name };
+            this.number = number;
+            this.name = name;
+            this.description = description;
+            this.price = price;
+            this.service = services;
+            this.images = images;
         },
 
         resetField() {
-            this.room = null
-            this.type = null
-            this.floor = null
-            this.size = null
-            this.number = null
-            this.name = null
-            this.description = null
-            this.price = null
-            this.service = []
-            this.images = []
-            this.files = []
-            this.$v.$reset()
+            this.room = null;
+            this.type = null;
+            this.floor = null;
+            this.size = null;
+            this.number = null;
+            this.name = null;
+            this.description = null;
+            this.price = null;
+            this.service = [];
+            this.images = [];
+            this.files = [];
+            this.$v.$reset();
         },
 
         async prepareData() {
-            let url = this.env.apiURL + "rooms/prepare-data"
+            let url = this.env.apiURL + "rooms/prepare-data";
             await axios.get(url).then((response) => {
-                this.types = response.data.types
-                this.floors = response.data.floors
-                this.sizes = response.data.sizes
-                this.services = response.data.services
-            })
+                this.types = response.data.types;
+                this.floors = response.data.floors;
+                this.sizes = response.data.sizes;
+                this.services = response.data.services;
+            });
         },
 
         onHandle() {
-            if (this.validation()) return
+            if (this.validation()) return;
 
-            this.setRoom()
-            if (this.action == "add") this.addRoom({ room: this.room, files: this.files })
-            if (this.action == "upd") this.updateRoom({ room: this.room, files: this.files })
+            this.setRoom();
+            if (this.action == "add") this.addRoom({ room: this.room, files: this.files });
+            if (this.action == "upd") this.updateRoom({ room: this.room, files: this.files });
         },
 
         closeDialog() {
-            EventBus.$emit("closeDialog")
+            EventBus.$emit("closeDialog");
         },
 
         validation() {
-            this.$v.$touch()
-            if (this.$v.$invalid) return true
-            return false
+            this.$v.$touch();
+            if (this.$v.$invalid) return true;
+            return false;
         },
 
         onFileInit() {
@@ -361,22 +361,22 @@ export default {
                                 type: 'local',
                             },
                         }
-                    )
+                    );
                 })
-            } else this.files = []
+            } else this.files = [];
         },
 
         onFileChange(files) {
-            var temp_files = []
+            var temp_files = [];
             files.forEach((file) => temp_files.push(file.file))
-            this.files = temp_files
+            this.files = temp_files;
         }
     },
 
     created() {
-        this.show = this.dialog
-        this.prepareData()
-        if (this.action != "add") this.setField()
+        this.show = this.dialog;
+        this.prepareData();
+        if (this.action != "add") this.setField();
     },
 }
 </script>
@@ -384,6 +384,6 @@ export default {
 <style>
 .scroll-area {
     width: inherit;
-    height: 400px
+    height: 400px;
 }
 </style>

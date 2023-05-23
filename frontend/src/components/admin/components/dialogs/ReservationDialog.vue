@@ -392,7 +392,6 @@ export default {
 
     components: {
         "confirmation-dialog": ConfirmationDialog,
-        "checkout-dialog": CheckOutDialog
     },
 
     data() {
@@ -653,7 +652,7 @@ export default {
         },
 
         closeDialog() {
-            EventBus.$emit("dialog");
+            EventBus.$emit("closeDialog");
         },
     },
 

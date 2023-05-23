@@ -24,8 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/bar-chart-data', [DashboardController::class, 'barChartData']);
-Route::get('/pie-chart-data', [DashboardController::class, 'pieChartData']);
+Route::get('/dashboard/room-data', [DashboardController::class, 'roomData']);
+Route::get('/dashboard/bar-chart-data', [DashboardController::class, 'barChartData']);
+Route::get('/dashboard/pie-chart-data', [DashboardController::class, 'pieChartData']);
 
 Route::get('/storage/app/images/{filename}', [ImageController::class, 'index']);
 Route::post('/upload-image', [ImageController::class, 'upload']);

@@ -13,7 +13,7 @@
         <div class="rooms_here">
             <div class="single_rooms">
                 <div class="room_thumb">
-                    <img src="img/rooms/1.png" alt="">
+                    <img src="img/rooms/1.jpg" alt="">
                     <div class="room_heading d-flex justify-content-between align-items-center">
                         <div class="room_heading_inner">
                             <span>From $250/night</span>
@@ -64,7 +64,7 @@
 </template>
 <script>
 export default {
-    
+
 }
 </script>
 <style lang="">

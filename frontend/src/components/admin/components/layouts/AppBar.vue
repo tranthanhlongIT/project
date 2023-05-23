@@ -42,7 +42,7 @@ import { EventBus } from "@/main"
 export default {
   methods: {
     toggleDrawer() {
-      EventBus.$emit("toggleDrawer")
+      EventBus.$emit("toggleDrawer");
     },
   },
 }

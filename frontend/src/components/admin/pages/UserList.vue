@@ -129,12 +129,12 @@ export default {
   created() {
     this.getUsers();
 
-    EventBus.$on("dialog", () => {
-      this.dialog = false
+    EventBus.$on("closeDialog", () => {
+      this.dialog = false;
     });
 
-    EventBus.$on("confirmation", () => {
-      this.confirmation = false
+    EventBus.$on("closeConfirmation", () => {
+      this.confirmation = false;
     });
   },
 };

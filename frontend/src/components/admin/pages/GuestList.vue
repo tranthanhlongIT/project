@@ -80,7 +80,7 @@ export default {
                 { text: "Email", value: "email", width: "15%", sortable: false, },
                 { text: "Operation", value: "operations", width: "15%", align: "center", sortable: false, filterable: false },
             ],
-        }
+        };
     },
 
     computed: {
@@ -93,27 +93,27 @@ export default {
         ...mapActions(["getGuests"]),
 
         openDialog(action, guest) {
-            this.action = action
-            this.guest = Object.assign(guest)
-            this.dialog = true
+            this.action = action;
+            this.guest = Object.assign(guest);
+            this.dialog = true;
         },
 
         openConfirmation(guest) {
-            this.confirmation = true
-            this.guest = Object.assign(guest)
+            this.confirmation = true;
+            this.guest = Object.assign(guest);
         }
     },
 
     created() {
-        this.getGuests()
+        this.getGuests();
 
         EventBus.$on("closeDialog", () => {
-            this.dialog = false
-        })
+            this.dialog = false;
+        });
 
         EventBus.$on("closeConfirmation", () => {
-            this.confirmation = false
-        })
+            this.confirmation = false;
+        });
     },
-}
+};
 </script>

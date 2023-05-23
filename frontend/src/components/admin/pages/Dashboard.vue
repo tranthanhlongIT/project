@@ -10,12 +10,20 @@
                             <v-card-text>
                                 <v-list-item>
                                     <v-list-item-content>
-                                        <v-list-item-title>Reserved Rooms:</v-list-item-title>
+                                        <v-list-item-title class="d-flex">
+                                            <div>Total Rooms: </div>
+                                            <div>{{ totalRooms }}</div>
+                                        </v-list-item-title>
                                     </v-list-item-content>
                                 </v-list-item>
                                 <v-list-item>
                                     <v-list-item-content>
-                                        <v-list-item-title>Vacant Rooms:</v-list-item-title>
+                                        <v-list-item-title>Reserved Rooms: {{ reservedRooms }}</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>Vacant Rooms: {{ vacantRooms }}</v-list-item-title>
                                     </v-list-item-content>
                                 </v-list-item>
                             </v-card-text>
@@ -65,12 +73,36 @@
 <script>
 import BarChart from "../components/charts/BarChart.vue"
 import PieChart from "../components/charts/PieChart.vue"
+import axios from "axios"
 
 export default {
     components: {
         "bar-chart": BarChart,
         "pie-chart": PieChart
     },
+
+    data() {
+        return {
+            totalRooms: null,
+            reservedRooms: null,
+            vacantRooms: null
+        }
+    },
+
+    methods: {
+        async prepareData() {
+            let url = this.env.apiURL + "dashboard/room-data";
+            await axios.get(url).then((response) => {
+                this.totalRooms = response.data.totalRooms;
+                this.reservedRooms = response.data.reservedRooms;
+                this.vacantRooms = response.data.vacantRooms;
+            })
+        },
+    },
+
+    created() {
+        this.prepareData();
+    }
 }
 </script>
 
