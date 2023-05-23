@@ -44,14 +44,14 @@ export default {
   methods: {
     isActive(path) {
       if (path == this.$route.name) {
-        return "active"
+        return "active";
       }
     },
   },
 
   created() {
     EventBus.$on("toggleDrawer", () => {
-      this.drawer = !this.drawer
+      this.drawer = !this.drawer;
     })
   },
 }
