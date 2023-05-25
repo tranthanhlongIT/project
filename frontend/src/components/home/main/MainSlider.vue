@@ -22,8 +22,6 @@ import 'vueperslides/dist/vueperslides.css'
 import { VueperSlides, VueperSlide } from 'vueperslides'
 
 export default {
-  name: "MainSlider",
-
   components: { VueperSlides, VueperSlide },
   data() {
     return {

@@ -12,7 +12,6 @@
 </template>
 <script>
 export default {
-    name: "VideoArea"
 }
 </script>
 <style lang="">

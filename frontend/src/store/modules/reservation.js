@@ -38,6 +38,7 @@ export const reservationStore = {
                 commit("addReservation");
                 EventBus.$emit("updateList");
                 EventBus.$emit("addId", response.data.id);
+                EventBus.$emit("changeStatus", reservation.status);
                 this._vm.$toast.success("Book successful");
             } catch (error) {
                 this._vm.$toast.error(error.response.data.message);
@@ -52,7 +53,7 @@ export const reservationStore = {
                 await axios.post(url, formData);
                 commit("updateReservation", reservation);
 
-                if (reservation.active == 0) {
+                if (reservation.check_out != null) {
                     EventBus.$emit("updateList");
                     EventBus.$emit("closeDialog");
                     this._vm.$toast.success("Check-out successful");

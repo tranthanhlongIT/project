@@ -61,6 +61,9 @@ class ReservationController extends Controller
         $this->validation($reservation);
 
         $data = $request->except(['room_id']);
+        if (!empty($data['check_out'])) {
+            $data['active'] = false;
+        }
 
         $endDate = $reservation->end_date;
 

@@ -263,10 +263,6 @@
                             <v-divider color="grey" class="m-0 p-0"></v-divider>
                             <v-card-actions class="pb-0">
                                 <v-spacer></v-spacer>
-                                <v-btn type="submit" class="mb-2" elevation="2" small color="info" v-if="active == 1"
-                                    @click.prevent="onCheckOut" :hidden="status == 'Available'">
-                                    Checkout
-                                </v-btn>
                                 <v-btn type="submit" class="mb-2" elevation="2" small color="primary" v-if="active == 1"
                                     @click.prevent="onConfirm" :disabled="selectedGuest == null && status == 'Available'">
                                     Confirm Booking
@@ -542,7 +538,7 @@ export default {
             this.reservation.start_date = moment(new Date(this.range.start)).format('YYYY-MM-DD');
             this.reservation.end_date = moment(new Date(this.range.end)).format('YYYY-MM-DD');
             this.reservation.status = this.status == "Available" ? "Pending" : this.status;
-            this.reservation.active = 1;
+            this.reservation.active = this.checkOut == null ? 1 : 0;
         },
 
         setField() {
@@ -589,10 +585,10 @@ export default {
 
         onConfirm() {
             this.setReservation();
+
             if (this.status == "Available") this.addReservation({ reservation: this.reservation });
             else if (this.status == "Pending" || this.status == "Reserved") this.updateReservation({ reservation: this.reservation });
 
-            this.status = this.reservation.status;
             this.getDisabledDate("update", this.room.id);
         },
 
@@ -600,10 +596,6 @@ export default {
             if (this.guestValidation()) return;
             this.setGuest();
             this.addGuest({ guest: this.guest })
-        },
-
-        onCheckOut() {
-            this.checkOutConfirmation = true;
         },
 
         onCancellation() {
@@ -688,6 +680,10 @@ export default {
             this.reservation.id = id;
             this.setGuests({ guest: this.selectedGuest });
         });
+
+        EventBus.$on("changeStatus", (status) => {
+            this.reservation.status = status;
+        })
     },
 
     watch: {

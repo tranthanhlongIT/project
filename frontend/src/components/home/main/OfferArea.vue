@@ -61,7 +61,6 @@
 </template>
 <script>
 export default {
-    name: "OfferArea"
 }
 </script>
 <style lang="">

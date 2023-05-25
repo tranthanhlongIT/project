@@ -24,8 +24,6 @@ import InstagramArea from './InstagramArea.vue';
 import MainFooter from './MainFooter.vue';
 
 export default {
-    name: "MainPage",
-
     components: {
         MainHeader,
         MainSlider,
