@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import Auth from "./plugins/auth";
 
 Vue.use(Router);
 
@@ -19,6 +20,9 @@ const routes = [
   {
     path: "/admin/login",
     component: () => import("./components/admin/pages/Login.vue"),
+    meta: {
+      requiresVisitor: true,
+    },
   },
   {
     path: "/admin",
@@ -55,7 +59,14 @@ const routes = [
         component: () => import("./components/admin/pages/UserList.vue"),
       },
     ],
+    meta: {
+      requiresAuth: true,
+    },
   },
+  {
+    path: '*',
+    component: () => import("./components/errors/404.vue"),
+  }
 ];
 
 const router = new Router({
@@ -63,20 +74,20 @@ const router = new Router({
   routes: routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some((record) => record.meta.requiresAuth)) {
-//     if (Auth.check()) {
-//       next();
-//     } else {
-//       router.push("login");
-//     }
-//   } else if (to.matched.some((record) => record.meta.requiresVisitor)) {
-//     if (Auth.check()) {
-//       router.push("products");
-//     } else {
-//       next();
-//     }
-//   } else next();
-// });
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (Auth.check()) {
+      next();
+    } else {
+      router.push("/admin/login");
+    }
+  } else if (to.matched.some((record) => record.meta.requiresVisitor)) {
+    if (Auth.check()) {
+      router.push("/admin/dashboard");
+    } else {
+      next();
+    }
+  } else next();
+});
 
 export default router;

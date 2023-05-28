@@ -353,9 +353,6 @@
             </div>
             <div slot="message" class="text-center text-subtitle-1">Are you sure want to cancel</div>
         </confirmation-dialog>
-
-        <checkout-dialog v-if="checkOutConfirmation" :id="reservation.id" :checkOut="checkOut"
-            :checkOutConfirmation="checkOutConfirmation" />
     </v-row>
 </template>
 
@@ -682,7 +679,7 @@ export default {
         });
 
         EventBus.$on("changeStatus", (status) => {
-            this.reservation.status = status;
+            this.status = status;
         })
     },
 

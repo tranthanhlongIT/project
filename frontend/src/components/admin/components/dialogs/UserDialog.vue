@@ -373,7 +373,7 @@ export default {
       this.file = file;
     });
 
-    EventBus.$on("reset", () =>
+    EventBus.$on("resetField", () =>
       this.resetField()
     );
   },

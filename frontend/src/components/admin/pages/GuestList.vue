@@ -19,7 +19,7 @@
                     </v-row>
                 </v-sheet>
                 <v-data-table :headers="headers" :items="guests" :search="search">
-                    <template v-slot:[`item.operations`]="{ item }">
+                    <!-- <template v-slot:[`item.operations`]="{ item }">
                         <v-icon small class="mr-2" @click.prevent="openDialog('det', item)">
                             mdi-eye
                         </v-icon>
@@ -29,7 +29,10 @@
                         <v-icon small @click.prevent="openConfirmation(item)">
                             mdi-delete
                         </v-icon>
-                    </template>
+                    </template> -->
+                    <!-- <template v-slot:no-data>
+                        No data
+                    </template> -->
                 </v-data-table>
             </v-card>
             <guest-dialog v-if="dialog" :dialog="dialog" :action="action" :selectedGuest="guest">
@@ -49,7 +52,7 @@
                 <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                     <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Delete Guest
                 </div>
-                <div slot="message" class="text-center text-subtitle-1">Are you sure want to delete guest</div>
+                <div slot="message" class="text-center text-subtitle-1">Are you sure want to delete</div>
             </confirmation-dialog>
         </div>
         <v-progress-linear v-else indeterminate class="p-0 m-0" absolute></v-progress-linear>
@@ -113,6 +116,8 @@ export default {
         this.loading = true;
 
         this.getGuests();
+
+        console.log(this.guests);
 
         EventBus.$on("closeDialog", () => {
             this.dialog = false;

@@ -13,10 +13,22 @@ class UserController extends Controller
 {
     public function index()
     {
-        $data = User::with('role:id,name')
-            ->select('id', 'email', 'image', 'active', 'role_id', 'gender', 'address', 'fname', 'lname', 'phone')
-            ->get();
-        return response()->json($data);
+        try {
+            $data = User::with('role:id,name')
+                ->select('id', 'email', 'image', 'active', 'role_id', 'gender', 'address', 'fname', 'lname', 'phone')
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -94,6 +106,7 @@ class UserController extends Controller
         $validator = Validator::make(request()->all(), $rules);
 
         if ($validator->fails()) {
+
             return response()->json([
                 'message' => $validator->messages()->first()
             ], 400)->throwResponse();

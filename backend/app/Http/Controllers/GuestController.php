@@ -12,11 +12,22 @@ class GuestController extends Controller
 {
     public function index()
     {
-        $data = Guest::select('id', 'title', 'fname', 'lname', 'phone', 'email', 'address', 'description')
-            ->addSelect(DB::raw('CONCAT(guests.fname, " ", guests.lname) AS name'))
-            ->get();
+        try {
+            $data = Guest::select('id', 'title', 'fname', 'lname', 'phone', 'email', 'address', 'description')
+                ->addSelect(DB::raw('CONCAT(guests.fname, " ", guests.lname) AS name'))
+                ->get();
 
-        return response()->json($data);
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -71,6 +82,7 @@ class GuestController extends Controller
         $validator = Validator::make(request()->all(), $rules);
 
         if ($validator->fails()) {
+
             return response()->json([
                 'message' => $validator->messages()->first()
             ], 400)->throwResponse();

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('room_id')->constrained();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('name');
         });

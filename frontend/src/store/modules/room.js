@@ -1,5 +1,6 @@
-import { EventBus } from "@/main";
 import axios from "axios";
+import Auth from "@/plugins/auth";
+import { EventBus } from "@/main";
 
 export const roomStore = {
   state: {
@@ -26,24 +27,49 @@ export const roomStore = {
 
   actions: {
     async getRooms({ commit }) {
-      const url = this._vm.env.apiURL + "rooms";
-      await axios.get(url).then((response) => {
-        commit("setRooms", response.data);
-      });
+      try {
+        const url = this._vm.env.apiURL + "rooms";
+
+        await axios.get(url).then((response) => {
+          commit("setRooms", response.data.data);
+        });
+
+      } catch (error) {
+
+        if (error.response.status == 401) {
+          Auth.logout();
+          router.push("/admin/login");
+        }
+
+        this._vm.$toast.error(error.response.data.message);
+      }
     },
 
     async getReservationRooms({ commit }, { date }) {
-      const url = this._vm.env.apiURL + "rooms/reservation-rooms?date=" + date;
-      await axios.get(url).then((response) => {
-        commit("setReservationRooms", response.data);
-      });
+      try {
+        const url = this._vm.env.apiURL + "rooms/reservation-rooms?date=" + date;
+
+        await axios.get(url).then((response) => {
+          commit("setReservationRooms", response.data.data);
+        });
+
+      } catch (error) {
+        this._vm.$toast.error(error.response.data.message);
+      }
     },
 
     async getRoom({ commit }, { number }) {
-      const url = this._vm.env.apiURL + "rooms/" + number;
-      await axios.get(url).then((response) => {
-        commit("setRoom", response.data);
-      });
+      try {
+        const url = this._vm.env.apiURL + "rooms/" + number;
+
+        await axios.get(url).then((response) => {
+          commit("setRoom", response.data.data);
+        });
+
+      } catch (error) {
+        this._vm.$toast.error(error.response.data.message);
+      }
+
     },
 
     async addRoom({ commit }, { room, files }) {
@@ -53,9 +79,11 @@ export const roomStore = {
 
       try {
         await axios.post(url, formData, config);
-        EventBus.$emit("reset");
+
+        EventBus.$emit("resetField");
         EventBus.$emit("addChild", room);
         this._vm.$toast.success("Add successful");
+
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
@@ -68,9 +96,11 @@ export const roomStore = {
 
       try {
         await axios.post(url, formData, config);
+
         commit("setRoom", room);
         EventBus.$emit("updateChild", room);
         this._vm.$toast.success("Update successful");
+
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
@@ -89,6 +119,7 @@ function addFormData(room, files) {
   formData.append("price", room.price);
   formData.append("services", JSON.stringify(room.services));
   files.forEach((file) => { formData.append("images[]", file) });
+
   return formData;
 }
 
@@ -104,6 +135,7 @@ function updateFormData(room, files) {
   formData.append("services", JSON.stringify(room.services));
   files.forEach((file) => formData.append("images[]", processFile(file)));
   formData.append("_method", "PATCH");
+
   return formData;
 }
 
@@ -111,5 +143,6 @@ function processFile(file) {
   if (file instanceof File) {
     return file;
   }
+
   return new File([file.blob], file.name, { type: file.type });
 }

@@ -138,6 +138,14 @@
                     <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Show Room
                 </div>
             </room-dialog>
+
+            <confirmation-dialog v-if="confirmation" :object="guest" action="deleteRoom" :confirmation="confirmation"
+                type="del">
+                <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+                    <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Delete Room
+                </div>
+                <div slot="message" class="text-center text-subtitle-1">Are you sure want to delete</div>
+            </confirmation-dialog>
         </div>
         <v-progress-linear v-else indeterminate class="p-0 m-0" absolute></v-progress-linear>
     </div>

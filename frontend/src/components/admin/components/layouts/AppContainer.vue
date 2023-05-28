@@ -5,8 +5,3 @@
         </v-container>
     </v-main>
 </template>
-
-<script>
-export default {
-}
-</script>

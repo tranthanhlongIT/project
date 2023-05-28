@@ -42,7 +42,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .main-slider-title {
   color: #ffffff;
   font-family: 'Raleway', sans-serif;

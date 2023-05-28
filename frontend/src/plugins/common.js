@@ -25,6 +25,7 @@ Vue.use(excel);
 Vue.use(Toast, options);
 Vue.use(Vuelidate);
 Vue.use(AsyncComputed);
+Vue.use(excel);
 
 Vue.use(VCalendar, {
   componentPrefix: 'vc',

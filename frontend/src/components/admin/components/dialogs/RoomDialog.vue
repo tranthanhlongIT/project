@@ -377,11 +377,15 @@ export default {
         this.show = this.dialog;
         this.prepareData();
         if (this.action != "add") this.setField();
+
+        EventBus.$on("resetField", () =>
+            this.resetField()
+        );
     },
 }
 </script>
 
-<style>
+<style scoped>
 .scroll-area {
     width: inherit;
     height: 400px;

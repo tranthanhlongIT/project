@@ -50,7 +50,7 @@
                                     </v-list-item>
                                 </template>
                             </v-list-item-group>
-                            <v-subheader class="text-h6 indigo--text font-weight-medium">
+                            <v-subheader v-if="sizes.length > 0" class="text-h6 indigo--text font-weight-medium">
                                 Size
                             </v-subheader>
                             <v-list-item-group multiple v-model="selectedSize">

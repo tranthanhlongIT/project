@@ -14,29 +14,51 @@ class RoomController extends Controller
 {
     public function index()
     {
-        $data = Floor::with('children:number as id,number as name,floor_id')->get();
+        try {
+            $data = Floor::with('children:number as id,number as name,floor_id')->get();
 
-        return response()->json($data);
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function getReservationRooms(Request $request)
     {
-        $data = Floor::with(['rooms.reservations' => function ($query) use ($request) {
-            $query->select(
-                'reservations.id',
-                'reservations.guest_id',
-                'reservations.total_stay',
-                'reservations.total_price',
-                'reservations.check_in',
-                'reservations.check_out',
-                'reservations.start_date',
-                'reservations.end_date',
-                'reservations.status',
-                'reservations.active'
-            )->where('reservations.active', '=', 1)->wherePivot('occupied_date', '=', $request->date);
-        }, 'rooms.reservations.guest', 'rooms.images:id,room_id,name', 'rooms.type:id,name', 'rooms.size:id,name', 'rooms.floor:id,name'])->get();
+        try {
+            $data = Floor::with(['rooms.reservations' => function ($query) use ($request) {
+                $query->select(
+                    'reservations.id',
+                    'reservations.guest_id',
+                    'reservations.total_stay',
+                    'reservations.total_price',
+                    'reservations.check_in',
+                    'reservations.check_out',
+                    'reservations.start_date',
+                    'reservations.end_date',
+                    'reservations.status',
+                    'reservations.active'
+                )->where('reservations.active', '=', 1)->wherePivot('occupied_date', '=', $request->date);
+            }, 'rooms.reservations.guest', 'rooms.images:id,room_id,name', 'rooms.type:id,name', 'rooms.size:id,name', 'rooms.floor:id,name'])->get();
 
-        return response()->json($data);
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -56,14 +78,25 @@ class RoomController extends Controller
 
     public function show($number)
     {
-        $room = Room::with([
-            'type:id,name', 'images:id,name,room_id', 'size:id,name,icon',
-            'floor:id,name', 'services:id,name,icon'
-        ])
-            ->where('number', '=', $number)
-            ->first();
+        try {
+            $data = Room::with([
+                'type:id,name', 'images:id,name,room_id', 'size:id,name,icon',
+                'floor:id,name', 'services:id,name,icon'
+            ])
+                ->where('number', '=', $number)
+                ->first();
 
-        return response()->json($room);
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function update(Request $request, Room $room)
@@ -83,7 +116,11 @@ class RoomController extends Controller
 
     public function destroy(Room $room)
     {
-        //
+        $room->delete();
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function prepareData()
@@ -120,6 +157,7 @@ class RoomController extends Controller
         $validator = Validator::make(request()->all(), $rules);
 
         if ($validator->fails()) {
+
             return response()->json([
                 'message' => $validator->messages()->first()
             ], 400)->throwResponse();

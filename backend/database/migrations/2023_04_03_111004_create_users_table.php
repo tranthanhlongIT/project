@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('phone');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['fname', 'lname']);
         });

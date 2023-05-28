@@ -54,14 +54,9 @@
                     <v-row no-gutters>
                         <v-col cols="12">
                             <v-card height="792">
-                                <v-card-title>Revenue</v-card-title>
+                                <v-card-title>Ranking Rooms</v-card-title>
                                 <v-card-text>
-                                    <p>Total revenue: $10,000</p>
-                                    <p>Total revenue: $10,000</p>
-                                    <p>Total revenue: $10,000</p>
-                                    <p>Total revenue: $10,000</p>
-                                    <p>Total revenue: $10,000</p>
-                                    <p>Total revenue: $10,000</p>
+                                    <p>IN DEVELOPMENT</p>
                                 </v-card-text>
                             </v-card>
                         </v-col>
@@ -116,7 +111,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .no-select {
     -webkit-touch-callout: none;
     /* iOS Safari */

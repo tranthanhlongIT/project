@@ -3,7 +3,7 @@
         style="height:100vh; background-image: url('/admin/img/login-image.png'); background-position: center; background-repeat: no-repeat; background-size: cover; ">
         <div class="container">
             <div class="row justify-content-center mt-5">
-                <div class="col-md-6 text-center mb-5">
+                <div class="col-md-6 text-center mb-3">
                     <h2 class="heading-section">
                         <v-icon x-large color="green" left>mdi-vuejs</v-icon>
                         Vue Hotel
@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-5">
                     <div class="login-wrap p-0">
                         <form @submit.prevent="onLogin" class="signin-form">
                             <div class="form-group">
@@ -33,26 +33,44 @@
 </template>
 
 <script>
+import axios from "axios";
+import Auth from "@/plugins/auth";
+import router from "@/router";
+
 export default {
     data() {
         return {
-            email: null,
-            password: null
+            email: "long@gmail.com",
+            password: "password"
         }
     },
 
     methods: {
-        onLogin() {
-            let user = {
-                email: this.email,
-                password: this.password,
-            }
-        }
+        async onLogin() {
+            try {
+                const formData = new FormData();
+                formData.append("email", this.email);
+                formData.append("password", this.password);
+
+                const url = this.env.apiURL + "admin/login";
+
+                const response = await axios.post(url, formData);
+
+                if (response.data.status) {
+                    Auth.login(response.data.token, response.data.current_user);
+                    router.push("/admin/dashboard");
+                    this.$toast.success("Login successful");
+                } else this.$toast.error(response.data.message);
+
+            } catch (e) {
+                this.$toast.error("Login failed");
+            };
+        },
     }
 }
 </script>
 
-<style>
+<style scoped>
 ::-webkit-scrollbar {
     width: 0px;
 }

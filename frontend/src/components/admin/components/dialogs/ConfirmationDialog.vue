@@ -51,7 +51,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["disableUser", "deleteGuest", "disableReservation"]),
+    ...mapActions(["disableUser", "disableReservation", "deleteGuest", "deleteRoom"]),
 
     onHandle() {
       if (this.type == 'dis') {

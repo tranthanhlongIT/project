@@ -1,5 +1,5 @@
 import axios from "axios";
-// import router from "../../router";
+import Auth from "@/plugins/auth";
 import { EventBus } from "@/main";
 
 export const userStore = {
@@ -30,10 +30,22 @@ export const userStore = {
 
   actions: {
     async getUsers({ commit }) {
-      const url = this._vm.env.apiURL + "users";
-      await axios.get(url).then((response) => {
-        commit("setUsers", response.data);
-      });
+      try {
+        const url = this._vm.env.apiURL + "users";
+
+        await axios.get(url).then((response) => {
+          commit("setUsers", response.data.data);
+        });
+
+      } catch (error) {
+
+        if (error.response.status == 401) {
+          Auth.logout();
+          router.push("/admin/login");
+        }
+
+        this._vm.$toast.error(error.response.data.message);
+      }
     },
 
     async addUser({ commit }, { user, file }) {
@@ -43,10 +55,12 @@ export const userStore = {
 
       try {
         const response = await axios.post(url, formData, config);
+
         user.id = response.data.id;
         commit("addUser", user);
-        EventBus.$emit("reset");
+        EventBus.$emit("resetField");
         this._vm.$toast.success("Add successful");
+
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
@@ -59,8 +73,10 @@ export const userStore = {
 
       try {
         await axios.post(url, formData, config);
+
         commit("updateUser", user);
         this._vm.$toast.success("Update successful");
+
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);
       }
@@ -71,9 +87,11 @@ export const userStore = {
 
       try {
         await axios.patch(url);
+
         commit("disableUser", object);
         EventBus.$emit("confirmation");
         this._vm.$toast.success("Disable successful");
+
       } catch (e) {
         this._vm.$toast.error("Disable failed");
       }
@@ -94,6 +112,7 @@ function addFormData(user, file) {
   formData.append("gender", user.gender);
   formData.append("phone", user.phone);
   formData.append("image", file ?? "");
+
   return formData;
 }
 
@@ -108,5 +127,6 @@ function updateFormData(user, file) {
   formData.append("phone", user.phone);
   formData.append("image", file ?? "");
   formData.append("_method", "PATCH");
+
   return formData;
 }

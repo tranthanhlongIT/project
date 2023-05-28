@@ -19,8 +19,8 @@ export default {
                 labels: ['Reserved', 'Pending', 'Canceled'],
                 datasets: [
                     {
-                        label: 'Status',
-                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                        label: 'Reservation',
+                        backgroundColor: ['#5cc064', '#ffce56', '#ff6384'],
                         data: []
                     }
                 ]
@@ -31,7 +31,10 @@ export default {
                 plugins: {
                     legend: {
                         position: 'left',
-                        align: 'start'
+                        align: 'start',
+                        labels: {
+                            color: "#ffffff",
+                        },
                     }
                 }
             }
@@ -43,7 +46,14 @@ export default {
 
         try {
             const response = await axios.get(this.env.apiURL + 'dashboard/pie-chart-data');
-            this.chartData.datasets[0].data = response.data;
+            this.chartData.datasets[0].data = response.data.data;
+
+            this.chartData.datasets.forEach(dataset => {
+                if (dataset.data.every(el => el === 0)) {
+                    dataset.backgroundColor.push('rgba(255,255,255,0)');
+                    dataset.data.push(1);
+                }
+            })
 
             this.loaded = true;
         } catch (e) {

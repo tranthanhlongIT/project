@@ -71,7 +71,7 @@
         <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
           <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Disable User
         </div>
-        <div slot="message" class="text-center text-subtitle-1">Are you sure want to disable user</div>
+        <div slot="message" class="text-center text-subtitle-1">Are you sure want to disable</div>
       </confirmation-dialog>
     </div>
     <v-progress-linear v-else indeterminate class="p-0 m-0" absolute></v-progress-linear>

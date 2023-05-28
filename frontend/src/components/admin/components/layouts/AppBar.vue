@@ -12,7 +12,7 @@
                 <img src="https://picsum.photos/200" alt="" />
               </v-avatar>
               <div class="text-subtitle-1" style="text-transform: capitalize">
-                Username
+                {{ user.fname }}
               </div>
               <v-icon>mdi-chevron-down</v-icon>
             </v-btn>
@@ -27,7 +27,7 @@
             </v-list-item>
             <v-divider class="m-0 p0"></v-divider>
             <v-list-item link>
-              <v-list-item-title @click.prevent="">Logout</v-list-item-title>
+              <v-list-item-title @click.prevent="onLogout">Logout</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -37,12 +37,36 @@
 </template>
 
 <script>
-import { EventBus } from "@/main"
+import axios from "axios";
+import Auth from "@/plugins/auth";
+import router from "@/router";
+import { EventBus } from "@/main";
 
 export default {
+  data() {
+    return {
+      user: this.auth.user
+    }
+  },
+
   methods: {
     toggleDrawer() {
       EventBus.$emit("toggleDrawer");
+    },
+
+    async onLogout() {
+      try {
+        const url = this.env.apiURL + "admin/logout";
+
+        await axios.post(url)
+
+        Auth.logout();
+        router.push("/admin/login");
+        this.$toast.success("Logout successful");
+
+      } catch (e) {
+        this.$toast.error("Logout failed");
+      };
     },
   },
 }
