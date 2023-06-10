@@ -23,6 +23,10 @@ export const roomStore = {
       const index = state.rooms.findIndex((r) => r.id == room.id);
       state.rooms.splice(index, 1, room);
     },
+    deleteRoom: (state, id) => {
+      // const index = state.rooms.findIndex((r) => r.id == id);
+      // state.rooms.splice(index, 1);
+    }
   },
 
   actions: {
@@ -103,6 +107,22 @@ export const roomStore = {
 
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);
+      }
+    },
+
+    async deleteRoom({ commit }, { id }) {
+      const url = this._vm.env.apiURL + "rooms/" + id;
+
+      try {
+        await axios.delete(url);
+
+        commit("deleteRoom", id);
+        EventBus.$emit("deleteChild");
+        EventBus.$emit("closeConfirmation");
+        this._vm.$toast.success("Delete successful");
+
+      } catch (e) {
+        this._vm.$toast.error("Delete failed");
       }
     },
   },

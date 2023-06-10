@@ -19,7 +19,7 @@
                     </v-row>
                 </v-sheet>
                 <v-data-table :headers="headers" :items="guests" :search="search">
-                    <!-- <template v-slot:[`item.operations`]="{ item }">
+                    <template v-slot:[`item.operations`]="{ item }">
                         <v-icon small class="mr-2" @click.prevent="openDialog('det', item)">
                             mdi-eye
                         </v-icon>
@@ -29,10 +29,7 @@
                         <v-icon small @click.prevent="openConfirmation(item)">
                             mdi-delete
                         </v-icon>
-                    </template> -->
-                    <!-- <template v-slot:no-data>
-                        No data
-                    </template> -->
+                    </template>
                 </v-data-table>
             </v-card>
             <guest-dialog v-if="dialog" :dialog="dialog" :action="action" :selectedGuest="guest">

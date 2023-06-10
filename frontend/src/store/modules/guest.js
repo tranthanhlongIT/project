@@ -95,8 +95,8 @@ export const guestStore = {
             try {
                 await axios.delete(url);
 
-                EventBus.$emit("confirmation");
                 commit("deleteGuest", id);
+                EventBus.$emit("closeConfirmation");
                 this._vm.$toast.success("Delete successful");
 
             } catch (e) {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -72,7 +72,7 @@ class UserController extends Controller
 
     public function prepareData()
     {
-        $roles = DB::table('roles')->select('id', 'name')->get();
+        $roles = Role::select('id', 'name')->get();
 
         return response()->json([
             'roles' => $roles

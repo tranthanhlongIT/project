@@ -101,12 +101,11 @@
                     <v-divider color="grey" class="m-0 p-0"></v-divider>
                     <v-card-actions class="pb-0">
                         <v-spacer></v-spacer>
-                        <v-btn type="submit" class="mb-2" elevation="2" small color="primary"
-                            v-if="action == 'add' || action == 'upd'" @click.prevent="onHandle">
+                        <v-btn class="mb-2" elevation="2" small color="primary" v-if="action == 'add' || action == 'upd'"
+                            @click.prevent="onHandle">
                             Save
                         </v-btn>
-                        <v-btn type="button" class="mr-5 mb-3" elevation="2" small color="warning"
-                            @click.prevent="closeDialog">
+                        <v-btn class="mr-5 mb-3" elevation="2" small color="warning" @click.prevent="closeDialog">
                             Back
                         </v-btn>
                     </v-card-actions>
@@ -309,10 +308,10 @@ export default {
         },
 
         resetField() {
-            this.room = null;
-            this.type = null;
-            this.floor = null;
-            this.size = null;
+            this.room = {};
+            this.type = {};
+            this.floor = {};
+            this.size = {};
             this.number = null;
             this.name = null;
             this.description = null;

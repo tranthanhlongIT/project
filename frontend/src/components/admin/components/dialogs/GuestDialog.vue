@@ -195,7 +195,7 @@ export default {
         },
 
         resetField() {
-            this.guest = null;
+            this.guest = {};
             this.title = null;
             this.fname = null;
             this.lname = null;

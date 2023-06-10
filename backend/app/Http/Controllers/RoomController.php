@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Floor;
 use App\Models\Room;
+use App\Models\Service;
+use App\Models\Size;
+use App\Models\Type;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -125,10 +128,10 @@ class RoomController extends Controller
 
     public function prepareData()
     {
-        $types = DB::table('types')->select('id', 'name')->get();
-        $sizes = DB::table('sizes')->select('id', 'name', 'icon')->get();
-        $floors = DB::table('floors')->select('id', 'name')->get();
-        $services = DB::table('services')->select('id', 'name', 'icon')->get();
+        $types = Type::select('id', 'name')->get();
+        $sizes = Size::select('id', 'name', 'icon')->get();
+        $floors = Floor::select('id', 'name')->get();
+        $services = Service::select('id', 'name', 'icon')->get();
 
         return response()->json([
             'types' => $types,

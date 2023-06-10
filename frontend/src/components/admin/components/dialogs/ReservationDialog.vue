@@ -505,17 +505,6 @@ export default {
             });
         },
 
-        setGuest() {
-            this.guest.title = this.title;
-            this.guest.name = this.fname + " " + this.lname;
-            this.guest.fname = this.fname;
-            this.guest.lname = this.lname;
-            this.guest.phone = this.phone;
-            this.guest.email = this.email;
-            this.guest.address = this.address;
-            this.guest.description = this.description;
-        },
-
         setCheckIn() {
             this.checkIn = moment(new Date()).format('MM/DD/YYYY HH:mm');
         },
@@ -548,8 +537,19 @@ export default {
             this.range.end = moment(new Date(this.reservation.end_date)).format("MM/DD/YYYY")
         },
 
-        resetField() {
-            this.guest = null;
+        setGuest() {
+            this.guest.title = this.title;
+            this.guest.name = this.fname + " " + this.lname;
+            this.guest.fname = this.fname;
+            this.guest.lname = this.lname;
+            this.guest.phone = this.phone;
+            this.guest.email = this.email;
+            this.guest.address = this.address;
+            this.guest.description = this.description;
+        },
+
+        resetGuestField() {
+            this.guest = {};
             this.title = null;
             this.fname = null;
             this.lname = null;
@@ -661,8 +661,8 @@ export default {
             this.getDisabledDate("update", this.room.id, this.reservation.id);
         }
 
-        EventBus.$on("reset", () =>
-            this.resetField()
+        EventBus.$on("resetField", () =>
+            this.resetGuestField()
         );
 
         EventBus.$on("closeConfirmation", () => {

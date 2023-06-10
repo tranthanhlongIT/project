@@ -323,7 +323,7 @@ export default {
     },
 
     resetField() {
-      this.user = null;
+      this.user = {};
       this.fname = null;
       this.lname = null;
       this.email = null;

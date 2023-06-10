@@ -89,7 +89,7 @@ export const userStore = {
         await axios.patch(url);
 
         commit("disableUser", object);
-        EventBus.$emit("confirmation");
+        EventBus.$emit("closeConfirmation");
         this._vm.$toast.success("Disable successful");
 
       } catch (e) {

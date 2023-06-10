@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Reservation;
+use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -12,10 +11,9 @@ class DashboardController extends Controller
     public function roomData()
     {
         try {
-            $totalRooms = DB::table('rooms')->count();
+            $totalRooms = Room::count();
 
-            $reservedRooms = DB::table('rooms')
-                ->join('reservation_room', 'rooms.id', '=', 'reservation_room.room_id')
+            $reservedRooms = Room::join('reservation_room', 'rooms.id', '=', 'reservation_room.room_id')
                 ->join('reservations', 'reservations.id', '=', 'reservation_room.reservation_id')
                 ->where('reservations.active', 1)
                 ->groupBy('rooms.id')

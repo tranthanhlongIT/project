@@ -14,7 +14,7 @@
                                 <v-icon left>mdi-pencil-box</v-icon>
                                 Edit
                             </v-btn>
-                            <v-btn color="error" small class="mr-1" @click.prevent="openDialog('del', {})">
+                            <v-btn color="error" small class="mr-1" @click.prevent="openConfirmation">
                                 <v-icon left> mdi-delete </v-icon>
                                 Delete
                             </v-btn>
@@ -139,7 +139,7 @@
                 </div>
             </room-dialog>
 
-            <confirmation-dialog v-if="confirmation" :object="guest" action="deleteRoom" :confirmation="confirmation"
+            <confirmation-dialog v-if="confirmation" :object="room" action="deleteRoom" :confirmation="confirmation"
                 type="del">
                 <div slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
                     <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Delete Room
@@ -152,15 +152,17 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import RoomDialog from '../components/dialogs/RoomDialog.vue'
-import { EventBus } from '@/main'
+import { mapActions, mapGetters } from 'vuex';
+import { EventBus } from '@/main';
+import RoomDialog from '../components/dialogs/RoomDialog.vue';
+import ConfirmationDialog from '../components/dialogs/ConfirmationDialog.vue';
 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export default {
     components: {
-        "room-dialog": RoomDialog
+        "room-dialog": RoomDialog,
+        "confirmation-dialog": ConfirmationDialog
     },
 
     data() {
@@ -168,6 +170,7 @@ export default {
             newRoom: {},
             action: null,
             dialog: false,
+            confirmation: false,
             active: [],
             avatar: null,
             open: [0],
@@ -177,7 +180,7 @@ export default {
             treeViewKey: 0,
             lastOpen: [],
             images: [],
-            oldRoomNumber: null,
+            oldRoomFloor: null,
 
             loading: false,
         }
@@ -205,7 +208,7 @@ export default {
             if (!this.active.length) return undefined;
             const number = this.active[0].id;
             await this.getRoom({ number: number });
-            await pause(2000);
+            await pause(1000);
             return this.room;
         },
     },
@@ -215,16 +218,22 @@ export default {
 
         async fetchRooms(item) {
             await this.getRooms();
-            await pause(2000);
+            await pause(1000);
             return item.children.push(this.rooms);
         },
 
         openDialog(action, room) {
             this.action = action;
             this.newRoom = Object.assign(room);
-            this.oldRoomNumber = room.number;
+            this.oldRoomFloor = room.flood?.id ?? null;
             if (action == "upd" && this.selected) this.dialog = true;
             else if (action != "upd") this.dialog = true;
+        },
+
+        openConfirmation() {
+            if (this.selected) {
+                this.confirmation = true;
+            }
         },
 
         addChild(item, room) {
@@ -235,34 +244,22 @@ export default {
         },
 
         updateChild(room) {
-            this.removeChild();
+            this.deleteChild();
             this.addChild(this.findItem(room.floor.id), room);
+            this.handleSearch(this.active[0].name);
             this.active = [];
         },
 
-        removeChild() {
-            this.active[0].status = "Deleted";
-            this.removeDeleted(this, this.items);
-            this.handleSearch(this.active[0].name);
-        },
+        deleteChild() {
+            for (let floor of this.items[0].children) {
+                let index = floor.children.findIndex(room => room.id === this.active[0].id);
+                if (index !== -1) {
+                    floor.children.splice(index, 1);
+                    break;
+                }
+            }
 
-        removeDeleted(me, currentArray) {
-            const delItems = [];
-            currentArray.forEach(element => {
-                if (element.status == "Deleted") {
-                    delItems.push(element);
-                }
-                if (
-                    element.children != undefined &&
-                    element.children != null &&
-                    element.children.length > 0
-                ) {
-                    me.removeDeleted(me, element.children);
-                }
-            })
-            delItems.forEach(item => {
-                currentArray.splice(currentArray.indexOf(item), 1);
-            })
+            this.active = [];
         },
 
         findItem(id, items = null) {
@@ -305,6 +302,14 @@ export default {
             if (this.oldRoomNumber != room.number)
                 this.updateChild(room);
         })
+
+        EventBus.$on("deleteChild", () => {
+            this.deleteChild();
+        })
+
+        EventBus.$on("closeConfirmation", () => {
+            this.confirmation = false;
+        });
 
         setTimeout(() => {
             this.loading = false;
