@@ -50,7 +50,7 @@ class DashboardController extends Controller
 
             for ($day = 1; $day <= $totalDayInMonth; $day++) {
                 $totalPriceByDay = DB::table('reservations')
-                    ->whereDate('start_date', $currentYear)
+                    ->whereYear('start_date', $currentYear)
                     ->whereMonth('start_date', $currentMonth)
                     ->whereDay('start_date', $day)
                     ->sum('total_price');

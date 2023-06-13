@@ -23,7 +23,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'current_user' => auth()->user(),
+                'current_user' => User::with('role')->find(auth()->id()),
                 'token' => 'Bearer ' . $token
             ]);
         } catch (ValidationException $e) {

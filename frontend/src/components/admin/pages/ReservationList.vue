@@ -1,140 +1,150 @@
 <template>
     <div>
-        <div v-if="!loading" class="m-3">
-            <h5 class="indigo--text">Reservation</h5>
-            <v-card>
-                <v-sheet class="px-4 py-2" style="border-bottom: 1px solid #E0E0E0;">
+        <template v-if="canView">
+            <div v-if="!loading" class="m-3">
+                <h5 class="indigo--text">Reservation</h5>
+                <v-card>
+                    <v-sheet class="px-4 py-2" style="border-bottom: 1px solid #E0E0E0;">
+                        <v-row no-gutters>
+                            <v-col cols="6">
+                                <v-menu v-model="datepicker" :close-on-content-click="false" transition="scale-transition"
+                                    offset-y max-width="290px" min-width="auto">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field v-model="dateFormatted" prepend-icon="mdi-calendar" v-bind="attrs"
+                                            v-on="on" class="p-0 m-0 d-inline-flex" solo flat readonly dense hide-details>
+                                            <template v-slot:append>
+                                                <v-btn icon @click.prevent="onChangeDateLeft">
+                                                    <v-icon>mdi-chevron-left</v-icon>
+                                                </v-btn>
+                                                <v-btn icon @click.prevent="onChangeDateRight">
+                                                    <v-icon>mdi-chevron-right</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-text-field>
+                                    </template>
+                                    <v-date-picker v-model="date" no-title @input="datepicker = false"></v-date-picker>
+                                </v-menu>
+                            </v-col>
+                            <v-col cols="6">
+                                <v-text-field v-model="search" dense label="Search" single-line hide-details
+                                    append-icon="mdi-magnify"></v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-sheet>
                     <v-row no-gutters>
-                        <v-col cols="6">
-                            <v-menu v-model="datepicker" :close-on-content-click="false" transition="scale-transition"
-                                offset-y max-width="290px" min-width="auto">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="dateFormatted" prepend-icon="mdi-calendar" v-bind="attrs"
-                                        v-on="on" class="p-0 m-0 d-inline-flex" solo flat readonly dense hide-details>
-                                        <template v-slot:append>
-                                            <v-btn icon @click.prevent="onChangeDateLeft">
-                                                <v-icon>mdi-chevron-left</v-icon>
-                                            </v-btn>
-                                            <v-btn icon @click.prevent="onChangeDateRight">
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-btn>
-                                        </template>
-                                    </v-text-field>
-                                </template>
-                                <v-date-picker v-model="date" no-title @input="datepicker = false"></v-date-picker>
-                            </v-menu>
+                        <v-col cols="3" xl="2" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
+                            <v-list flat subheader>
+                                <v-subheader class="text-h6 indigo--text font-weight-medium">
+                                    Status
+                                </v-subheader>
+                                <v-list-item-group multiple v-model="selectedStatus">
+                                    <template v-for="status in statuses">
+                                        <v-list-item :value="status" :ripple="false">
+                                            <template v-slot:default="{ active }">
+                                                <v-list-item-action class="mr-1">
+                                                    <v-checkbox :ripple="false" :input-value="active"></v-checkbox>
+                                                </v-list-item-action>
+                                                <v-list-item-content>
+                                                    <v-list-item-title v-text="status.name"></v-list-item-title>
+                                                </v-list-item-content>
+                                            </template>
+                                        </v-list-item>
+                                    </template>
+                                </v-list-item-group>
+                                <v-subheader v-if="sizes.length > 0" class="text-h6 indigo--text font-weight-medium">
+                                    Size
+                                </v-subheader>
+                                <v-list-item-group multiple v-model="selectedSize">
+                                    <template v-for="size in sizes">
+                                        <v-list-item :value="size" :ripple="false">
+                                            <template v-slot:default="{ active }">
+                                                <v-list-item-action class="mr-1">
+                                                    <v-checkbox :ripple="false" :input-value="active"></v-checkbox>
+                                                </v-list-item-action>
+                                                <v-list-item-content>
+                                                    <v-list-item-title v-text="size.name"></v-list-item-title>
+                                                </v-list-item-content>
+                                                <v-list-item-icon>
+                                                    <v-icon v-text="size.icon"></v-icon>
+                                                </v-list-item-icon>
+                                            </template>
+                                        </v-list-item>
+                                    </template>
+                                </v-list-item-group>
+                            </v-list>
                         </v-col>
-                        <v-col cols="6">
-                            <v-text-field v-model="search" dense label="Search" single-line hide-details
-                                append-icon="mdi-magnify"></v-text-field>
+                        <v-col cols="9" xl="10">
+                            <v-container fluid class="pt-0 m-0">
+                                <template v-for="floor in filteredRooms">
+                                    <div class="text-h6 indigo--text font-weight-medium mt-5">{{ floor.name }}</div>
+                                    <v-row dense class="px-3">
+                                        <template v-if="floor.rooms.length > 0">
+                                            <template v-for="room in floor.rooms">
+                                                <v-col cols="12" md="6" lg="4" xl="3">
+                                                    <v-hover v-slot="{ hover }">
+                                                        <v-card
+                                                            @click.prevent="openDialog(room, roomImage(room), room.reservations[0] ?? {})"
+                                                            class="hover-card" :elevation="hover ? 12 : 2"
+                                                            :class="{ 'on-hover': hover }" tile :color="statusColor(room)">
+                                                            <v-img :src="roomImage(room)" class="white--text align-end"
+                                                                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+                                                                height="100px">
+                                                                <v-card-title>{{ room.number }}</v-card-title>
+                                                            </v-img>
+                                                            <v-card-actions>
+                                                                <div class="text-subtitle-2">{{ room.size.name }}</div>
+                                                                <v-spacer></v-spacer>
+                                                                <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
+                                                            </v-card-actions>
+                                                        </v-card>
+                                                    </v-hover>
+                                                </v-col>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <div class="ml-0 pl-0 text-h6 grey--text text--lighten-1 font-weight-light">
+                                                No room found
+                                            </div>
+                                        </template>
+                                    </v-row>
+                                </template>
+                            </v-container>
                         </v-col>
                     </v-row>
-                </v-sheet>
-                <v-row no-gutters>
-                    <v-col cols="3" xl="2" class="pt-2" style="height:inherit; border-right: 1px solid #E0E0E0;">
-                        <v-list flat subheader>
-                            <v-subheader class="text-h6 indigo--text font-weight-medium">
-                                Status
-                            </v-subheader>
-                            <v-list-item-group multiple v-model="selectedStatus">
-                                <template v-for="status in statuses">
-                                    <v-list-item :value="status" :ripple="false">
-                                        <template v-slot:default="{ active }">
-                                            <v-list-item-action class="mr-1">
-                                                <v-checkbox :ripple="false" :input-value="active"></v-checkbox>
-                                            </v-list-item-action>
-                                            <v-list-item-content>
-                                                <v-list-item-title v-text="status.name"></v-list-item-title>
-                                            </v-list-item-content>
-                                        </template>
-                                    </v-list-item>
-                                </template>
-                            </v-list-item-group>
-                            <v-subheader v-if="sizes.length > 0" class="text-h6 indigo--text font-weight-medium">
-                                Size
-                            </v-subheader>
-                            <v-list-item-group multiple v-model="selectedSize">
-                                <template v-for="size in sizes">
-                                    <v-list-item :value="size" :ripple="false">
-                                        <template v-slot:default="{ active }">
-                                            <v-list-item-action class="mr-1">
-                                                <v-checkbox :ripple="false" :input-value="active"></v-checkbox>
-                                            </v-list-item-action>
-                                            <v-list-item-content>
-                                                <v-list-item-title v-text="size.name"></v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-icon>
-                                                <v-icon v-text="size.icon"></v-icon>
-                                            </v-list-item-icon>
-                                        </template>
-                                    </v-list-item>
-                                </template>
-                            </v-list-item-group>
-                        </v-list>
-                    </v-col>
-                    <v-col cols="9" xl="10">
-                        <v-container fluid class="pt-0 m-0">
-                            <template v-for="floor in filteredRooms">
-                                <div class="text-h6 indigo--text font-weight-medium mt-5">{{ floor.name }}</div>
-                                <v-row dense class="px-3">
-                                    <template v-if="floor.rooms.length > 0">
-                                        <template v-for="room in floor.rooms">
-                                            <v-col cols="12" md="6" lg="4" xl="3">
-                                                <v-hover v-slot="{ hover }">
-                                                    <v-card
-                                                        @click.prevent="openDialog(room, roomImage(room), room.reservations[0] ?? {})"
-                                                        class="hover-card" :elevation="hover ? 12 : 2"
-                                                        :class="{ 'on-hover': hover }" tile :color="statusColor(room)">
-                                                        <v-img :src="roomImage(room)" class="white--text align-end"
-                                                            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-                                                            height="100px">
-                                                            <v-card-title>{{ room.number }}</v-card-title>
-                                                        </v-img>
-                                                        <v-card-actions>
-                                                            <div class="text-subtitle-2">{{ room.size.name }}</div>
-                                                            <v-spacer></v-spacer>
-                                                            <div class="text-subtitle-2">{{ roomStatus(room) }}</div>
-                                                        </v-card-actions>
-                                                    </v-card>
-                                                </v-hover>
-                                            </v-col>
-                                        </template>
-                                    </template>
-                                    <template v-else>
-                                        <div class="ml-0 pl-0 text-h6 grey--text text--lighten-1 font-weight-light">
-                                            No room found
-                                        </div>
-                                    </template>
-                                </v-row>
-                            </template>
-                        </v-container>
-                    </v-col>
-                </v-row>
-            </v-card>
+                </v-card>
 
-            <reservation-dialog v-if="dialog" :dialog="dialog" :image="image" :currentReservation="reservation"
-                :selectedRoom="room" :selectedDate="date">
-                <div v-if="reservation.status == null" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
-                    <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Make Reservation
-                </div>
-                <div v-else slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
-                    <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Change Reservation
-                </div>
-            </reservation-dialog>
-        </div>
-        <v-progress-linear v-else indeterminate class="p-0 m-0" absolute></v-progress-linear>
+                <reservation-dialog v-if="dialog" :dialog="dialog" :image="image" :currentReservation="reservation"
+                    :selectedRoom="room" :selectedDate="date">
+                    <div v-if="reservation.status == null" slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+                        <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Make Reservation
+                    </div>
+                    <div v-else slot="header" class="ma-1 ml-2 text-subtitle-1 indigo--text">
+                        <v-icon dense color="indigo" class="mr-1 mb-1">mdi-information</v-icon>Change Reservation
+                    </div>
+                </reservation-dialog>
+            </div>
+            <v-progress-linear v-else indeterminate class="p-0 m-0" absolute></v-progress-linear>
+        </template>
+        <template v-else>
+            <div class="mt-5">
+                <no-permission />
+            </div>
+        </template>
     </div>
 </template>
 
 <script>
-import ReservationDialog from '../components/dialogs/ReservationDialog.vue'
 import axios from 'axios'
 import { mapActions, mapGetters } from 'vuex'
 import { EventBus } from "@/main"
 
+import ReservationDialog from '../components/dialogs/ReservationDialog.vue'
+import NoPermissionCard from "../components/layouts/NoPermissionCard.vue"
+
 export default {
     components: {
-        "reservation-dialog": ReservationDialog
+        "reservation-dialog": ReservationDialog,
+        "no-permission": NoPermissionCard
     },
 
     data() {
@@ -190,6 +200,14 @@ export default {
                 rooms = this.filterRoomsBySearch(rooms, this.search);
             }
             return rooms;
+        },
+
+        canView() {
+            if (this.auth.user.role.name == "admin") {
+                return true;
+            }
+
+            return false;
         }
     },
 
