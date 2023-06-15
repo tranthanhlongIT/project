@@ -79,7 +79,7 @@ router.beforeEach((to, from, next) => {
     if (Auth.check()) {
       next();
     } else {
-      router.push("/admin/login");
+      router.go("/admin/login");
     }
   } else if (to.matched.some((record) => record.meta.requiresVisitor)) {
     if (Auth.check()) {

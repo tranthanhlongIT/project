@@ -61,7 +61,7 @@ export default {
         await axios.post(url)
 
         Auth.logout();
-        router.push("/admin/login");
+        router.go("/admin/login");
         this.$toast.success("Logout successful");
 
       } catch (e) {

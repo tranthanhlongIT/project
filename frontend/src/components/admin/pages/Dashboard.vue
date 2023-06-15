@@ -13,19 +13,25 @@
                                         <v-list-item>
                                             <v-list-item-content>
                                                 <v-list-item-title class="d-flex">
-                                                    <div>Total Rooms: </div>
+                                                    <div class="text-right">Total Rooms: </div>
                                                     <div>{{ totalRooms }}</div>
                                                 </v-list-item-title>
                                             </v-list-item-content>
                                         </v-list-item>
                                         <v-list-item>
                                             <v-list-item-content>
-                                                <v-list-item-title>Reserved Rooms: {{ reservedRooms }}</v-list-item-title>
+                                                <v-list-item-title class="d-flex">
+                                                    <div class="text-right">Reserved Rooms: </div>
+                                                    <div>{{ reservedRooms }}</div>
+                                                </v-list-item-title>
                                             </v-list-item-content>
                                         </v-list-item>
                                         <v-list-item>
                                             <v-list-item-content>
-                                                <v-list-item-title>Vacant Rooms: {{ vacantRooms }}</v-list-item-title>
+                                                <v-list-item-title class="d-flex">
+                                                    <div class="text-right">Vacant Rooms: </div>
+                                                    <div>{{ vacantRooms }}</div>
+                                                </v-list-item-title>
                                             </v-list-item-content>
                                         </v-list-item>
                                     </v-card-text>
@@ -101,6 +107,14 @@ export default {
     computed: {
         canView() {
             if (this.auth.user.role.name == "admin") {
+                return true;
+            }
+
+            if (this.auth.user.role.name == "manager") {
+                return true;
+            }
+
+            if (this.auth.user.role.name == "accountant") {
                 return true;
             }
 

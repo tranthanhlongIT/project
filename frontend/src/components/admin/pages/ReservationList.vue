@@ -74,7 +74,7 @@
                             </v-list>
                         </v-col>
                         <v-col cols="9" xl="10">
-                            <v-container fluid class="pt-0 m-0">
+                            <v-container fluid class="pt-0 m-0 pb-5">
                                 <template v-for="floor in filteredRooms">
                                     <div class="text-h6 indigo--text font-weight-medium mt-5">{{ floor.name }}</div>
                                     <v-row dense class="px-3">
@@ -204,6 +204,14 @@ export default {
 
         canView() {
             if (this.auth.user.role.name == "admin") {
+                return true;
+            }
+
+            if (this.auth.user.role.name == "manager") {
+                return true;
+            }
+
+            if (this.auth.user.role.name == "receptionist") {
                 return true;
             }
 
@@ -354,5 +362,11 @@ export default {
 
 .hover-card:not(.on-hover) {
     opacity: 0.7;
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width: max-content;
+    }
 }
 </style>

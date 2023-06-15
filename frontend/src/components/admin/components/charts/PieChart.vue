@@ -20,7 +20,7 @@ export default {
                 datasets: [
                     {
                         label: 'Reservation',
-                        backgroundColor: ['#5cc064', '#ffce56', '#ff6384'],
+                        backgroundColor: ['#81C784', '#FFF9C4', '#FF6384'],
                         data: []
                     }
                 ]

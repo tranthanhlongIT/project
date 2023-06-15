@@ -76,7 +76,6 @@ class GuestController extends Controller
             'fname' => ['bail', 'required', 'max:30'],
             'lname' => ['bail', 'required', 'max:30'],
             'phone' => ['bail', 'required', 'digits:10', 'numeric'],
-            'email' => ['bail', Rule::excludeIf(isset($guest)), 'email', 'unique:guests'],
         ];
 
         $validator = Validator::make(request()->all(), $rules);

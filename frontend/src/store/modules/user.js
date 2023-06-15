@@ -1,5 +1,6 @@
 import axios from "axios";
 import Auth from "@/plugins/auth";
+import router from "@/router";
 import { EventBus } from "@/main";
 
 export const userStore = {
@@ -41,7 +42,7 @@ export const userStore = {
 
         if (error.response.status == 401) {
           Auth.logout();
-          router.push("/admin/login");
+          router.go("/admin/login");
         }
 
         this._vm.$toast.error(error.response.data.message);
@@ -74,8 +75,26 @@ export const userStore = {
       try {
         await axios.post(url, formData, config);
 
-        commit("updateUser", user);
-        this._vm.$toast.success("Update successful");
+        if (this._vm.auth.user.id == user.id) {
+
+          if (this._vm.auth.user.role.name != user.role.name) {
+            Auth.logout();
+            router.go("/admin/login");
+            this._vm.$toast.success("Update successful. Please login again");
+          }
+
+          if (!user.active) {
+            Auth.logout();
+            router.go("/admin/login");
+            this._vm.$toast.success("Disable successful");
+          }
+
+        } else {
+
+          commit("updateUser", user);
+          this._vm.$toast.success("Update successful");
+
+        }
 
       } catch (error) {
         this._vm.$toast.error(error.response.data.message);

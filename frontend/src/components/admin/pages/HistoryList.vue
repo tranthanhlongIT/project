@@ -105,6 +105,14 @@ export default {
                 return true;
             }
 
+            if (this.auth.user.role.name == "manager") {
+                return true;
+            }
+
+            if (this.auth.user.role.name == "accountant") {
+                return true;
+            }
+
             return false;
         }
     },

@@ -40,7 +40,7 @@ export const guestStore = {
 
                 if (error.response.status == 401) {
                     Auth.logout();
-                    router.push("/admin/login");
+                    router.go("/admin/login");
                 }
 
                 this._vm.$toast.error(error.response.data.message);
